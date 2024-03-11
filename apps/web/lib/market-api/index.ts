@@ -7,6 +7,8 @@ interface MarketApi {
       endTime?: number;
     }
   ): Promise<Kline[]>;
+
+  symbols(): Promise<Symbol[]>;
 }
 
 interface Kline {

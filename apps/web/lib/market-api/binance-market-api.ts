@@ -1,7 +1,18 @@
 import { queryBuilder } from '../helpers/url';
 
-export class Binance implements MarketApi {
+export class BinanceMarketApi implements MarketApi {
   private readonly baseUrl = 'https://api.binance.com/api/v3';
+
+  async symbols(): Promise<Symbol[]> {
+    const { symbols } = await this.exchangeInfo();
+    return symbols;
+  }
+
+  async exchangeInfo(): Promise<any> {
+    const response = await fetch(`${this.baseUrl}/exchangeInfo`);
+    const data = await response.json();
+    return data;
+  }
 
   async klines(
     symbol: string,
@@ -22,23 +33,11 @@ export class Binance implements MarketApi {
 
     const data = await response.json();
 
-    return Binance.responseToKlines(data);
-  }
-  async symbols(): Promise<Symbol[]> {
-    const info = await this.exchangeInfo();
-    return info.symbols;
+    return BinanceMarketApi.responseToKlines(data);
   }
 
-  async exchangeInfo(): Promise<any> {
-    const response = await fetch(`${this.baseUrl}/exchangeInfo`);
-    const data = await response.json();
-    return data;
-  }
-
-  private static responseToKlines(
-    responseData: BinanceKlineResponse[]
-  ): Kline[] {
-    return responseData.map((data: BinanceKlineResponse) => ({
+  private static responseToKlines(responseData: any): Kline[] {
+    return responseData.map((data: any) => ({
       openTime: data[0],
       open: data[1],
       high: data[2],
@@ -53,17 +52,3 @@ export class Binance implements MarketApi {
     }));
   }
 }
-
-type BinanceKlineResponse = [
-  number,
-  string,
-  string,
-  string,
-  string,
-  string,
-  number,
-  string,
-  number,
-  string,
-  string,
-];
