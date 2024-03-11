@@ -7,17 +7,13 @@ import {
 } from '@/components/ui/card';
 import Link from 'next/link';
 
-export function CardSymbol({
-  symbol: { symbol, description },
-}: {
-  symbol: Symbol;
-}) {
+export function CardSymbol({ symbol: { symbol } }: { symbol: Symbol }) {
   return (
-    <Link href={`symbols/${symbol}`}>
+    <Link href={`/symbols/${symbol}`}>
       <Card>
         <CardHeader>
           <CardTitle>{symbol}</CardTitle>
-          <CardDescription>{description}</CardDescription>
+          {/* <CardDescription>{description}</CardDescription> */}
         </CardHeader>
       </Card>
     </Link>

@@ -1,14 +1,12 @@
 interface MarketApi {
-  klines(
-    symbol: string,
-    interval: string,
-    options?: {
-      startTime?: number;
-      endTime?: number;
-    }
-  ): Promise<Kline[]>;
+  klines(params: {
+    symbol: string;
+    interval: string;
+    startTime?: number;
+    endTime?: number;
+  }): Promise<Kline[]>;
 
-  symbols(): Promise<Symbol[]>;
+  symbols(params?: { query?: string }): Promise<Symbol[]>;
 }
 
 interface Kline {
