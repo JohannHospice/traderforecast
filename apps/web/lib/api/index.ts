@@ -1,7 +1,7 @@
-import { BinanceMarketApi } from './market-api/binance-market-api';
+import { BinanceMarket } from './market/binance-market';
 
 export default {
-  market: new BinanceMarketApi(),
+  market: new BinanceMarket(),
 } as {
-  market: MarketApi;
+  market: Market;
 };

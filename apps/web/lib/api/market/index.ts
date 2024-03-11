@@ -1,4 +1,4 @@
-interface MarketApi {
+interface Market {
   klines(params: {
     symbol: string;
     interval: string;

@@ -1,6 +1,6 @@
 import { queryBuilder } from '../../helpers/url';
 
-export class BinanceMarketApi implements MarketApi {
+export class BinanceMarket implements Market {
   private readonly baseUrl = 'https://api.binance.com/api/v3';
 
   async symbols(params?: { query?: string }): Promise<Symbol[]> {
@@ -35,7 +35,7 @@ export class BinanceMarketApi implements MarketApi {
 
     if (data.code) throw new Error(data.msg);
 
-    return BinanceMarketApi.responseToKlines(data);
+    return BinanceMarket.responseToKlines(data);
   }
 
   private static responseToKlines(responseData: any): Kline[] {
