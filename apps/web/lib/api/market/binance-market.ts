@@ -1,6 +1,16 @@
-import { queryBuilder } from '../../helpers/url';
+import { queryBuilder } from '@/helpers/url';
 
+/**
+ * @deprecated
+ */
 export class BinanceMarket implements Market {
+  intervals: string[] = [];
+  lastKline(params: { slug: string; interval: string }): Promise<Kline> {
+    throw new Error('Method not implemented.');
+  }
+  isRealTimeEnabled(): boolean {
+    throw new Error('Method not implemented.');
+  }
   private readonly baseUrl = 'https://api.binance.com/api/v3';
 
   async symbols(params?: { query?: string }): Promise<Symbol[]> {

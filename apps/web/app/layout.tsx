@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import { Navigation } from '../components/navigation';
-import '../styles/globals.css';
+import { Navigation } from '@/components/navigation';
+import '@/styles/globals.css';
 
 export const metadata: Metadata = {
   title: 'Trading patterns',
@@ -14,9 +14,9 @@ export default function RootLayout({
 }): JSX.Element {
   return (
     <html lang='en'>
-      <body className='flex flex-col min-h-[100vh] '>
+      <body className='flex flex-col min-h-[100vh]'>
         <Navigation />
-        <div className='p-4 flex flex-col flex-1'>{children}</div>
+        <div className='py-8 px-8 flex flex-col flex-1'>{children}</div>
       </body>
     </html>
   );

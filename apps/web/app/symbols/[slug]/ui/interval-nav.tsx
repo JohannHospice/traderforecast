@@ -2,7 +2,7 @@
 
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useRedirectWithSearchParams } from '@/lib/hooks/useRedirectWithSearchParams';
-import { SEARCH_PARAMS_SYMBOL } from '../page';
+import { SEARCH_PARAMS_SYMBOL } from '../constants';
 
 export function IntervalNav({ intervals }: { intervals: string[] }) {
   const { redirectWithSearchParams, searchParams } =

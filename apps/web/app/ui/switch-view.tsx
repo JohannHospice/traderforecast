@@ -1,9 +1,9 @@
 'use client';
 
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useRedirectWithSearchParams } from '@/lib/hooks/useRedirectWithSearchParams';
 import { GridIcon, TableIcon } from '@radix-ui/react-icons';
-import { useRedirectWithSearchParams } from '../../lib/hooks/useRedirectWithSearchParams';
 import { SEARCH_PARAMS_LIST_SYMBOLS, SYMBOL_VIEWS } from '../constants';
-import { Tabs, TabsList, TabsTrigger } from '../../components/ui/tabs';
 
 export function SwitchView() {
   const { searchParams, redirectWithSearchParams } =

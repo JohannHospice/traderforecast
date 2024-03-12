@@ -29,13 +29,13 @@ interface Symbol {
   name: string;
   ticker?: string;
   logoUrl?: string;
-  price_usd?: string;
-  price_usd_change_1d?: string;
-  volume_usd?: string;
-  volume_usd_change_1d?: string;
-  marketcap_usd?: string;
-  rank?: string;
-  dev_activity_1d?: string;
-  daily_active_addresses?: string;
+  price_usd?: number;
+  price_usd_change_1d?: number;
+  volume_usd?: number;
+  volume_usd_change_1d?: number;
+  marketcap_usd?: number;
+  rank?: number;
+  dev_activity_1d?: number;
+  daily_active_addresses?: number;
   market_segments?: string[];
 }

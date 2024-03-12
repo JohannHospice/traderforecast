@@ -1,5 +1,5 @@
-import api from '../../../../../lib/api';
-import { SEARCH_PARAMS_SYMBOL } from '../../../../symbols/[slug]/page';
+import api from '@/../lib/api';
+import { SEARCH_PARAMS_SYMBOL } from '@/symbols/[slug]/page';
 
 export const dynamic = 'force-dynamic'; // defaults to auto
 

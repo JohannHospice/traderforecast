@@ -8,6 +8,7 @@ import {
 import { PriceTitle } from './price-title';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Badge } from './ui/badge';
+import { formatNumber, formatPercent } from '../lib/helpers/string';
 
 export default function CardSymbol({
   symbol,
@@ -45,25 +46,56 @@ export default function CardSymbol({
       </CardHeader>
       <CardContent
         className={
-          'flex gap-2 ' +
+          'flex gap-4 ' +
           (horizontal ? 'flex-row items-center gap-8 p-0' : 'flex-col')
         }
       >
-        <PriceTitle
-          title='Price'
-          value={symbol.price_usd}
-          notation='standard'
-        />
-        <PriceTitle
-          title='Market Cap'
-          value={symbol.marketcap_usd}
-          notation='compact'
-        />
-        <PriceTitle
-          title='Volume'
-          value={symbol.volume_usd}
-          notation='compact'
-        />
+        <div
+          className={
+            horizontal
+              ? 'flex flex-row items-center gap-8 p-0'
+              : 'flex flex-col  gap-2'
+          }
+        >
+          <PriceTitle
+            title='Price'
+            value={formatNumber(symbol.price_usd, 'standard')}
+          />
+          <PriceTitle
+            title='Market Cap'
+            value={formatNumber(symbol.marketcap_usd, 'compact')}
+          />
+          <PriceTitle
+            title='Volume'
+            value={formatNumber(symbol.volume_usd, 'compact')}
+          />
+          <PriceTitle
+            value={
+              <div
+                className={
+                  symbol.price_usd_change_1d && symbol.price_usd_change_1d > 0
+                    ? 'text-green-500'
+                    : 'text-red-500'
+                }
+              >
+                {formatPercent(symbol.price_usd_change_1d)}
+              </div>
+            }
+            title='Change 24h'
+          />
+        </div>
+        <div className='flex flex-wrap overflow-hidden gap-2'>
+          {symbol.market_segments &&
+            symbol.market_segments.map((segment) => (
+              <Badge
+                key={segment}
+                variant='secondary'
+                className='text-sm text-nowrap'
+              >
+                {segment}
+              </Badge>
+            ))}
+        </div>
       </CardContent>
     </Card>
   );

@@ -1,7 +1,8 @@
 import { redirect } from 'next/navigation';
-import CardSymbol from '../../../components/card-symbol';
-import api from '../../../lib/api/';
+import CardSymbol from '@/components/card-symbol';
+import api from '@/lib/api/';
 import { KlinesChart } from './ui/klines-chart';
+import { SEARCH_PARAMS_SYMBOL } from './constants';
 
 export default async function Page({
   params,
@@ -21,12 +22,10 @@ export default async function Page({
       startTime: searchParams[SEARCH_PARAMS_SYMBOL.START_TIME],
     });
 
-    console.log(klines);
     return (
       <>
         <CardSymbol className='mb-8' symbol={symbol} horizontal />
         <KlinesChart
-          className='mb-8'
           klines={klines}
           intervals={api.market.intervals}
           interval={searchParams[SEARCH_PARAMS_SYMBOL.INTERVAL]}
@@ -38,9 +37,4 @@ export default async function Page({
     console.error(e);
     return redirect('/');
   }
-}
-
-export enum SEARCH_PARAMS_SYMBOL {
-  INTERVAL = 'i',
-  START_TIME = 's',
 }

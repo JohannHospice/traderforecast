@@ -1,10 +1,10 @@
 import { Cross1Icon, ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
-import CardSymbol from '../components/card-symbol';
-import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
-import api from '../lib/api';
+import CardSymbol from '@/components/card-symbol';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import api from '@/lib/api';
 import { SEARCH_PARAMS_LIST_SYMBOLS, SYMBOL_VIEWS } from './constants';
-import { TableCardSymbols } from './ui/table-symbols';
+import { TableSymbols } from './ui/table-symbols';
 import { SwitchView } from './ui/switch-view';
 import { redirect } from 'next/navigation';
 
@@ -29,10 +29,12 @@ export default async function Page({
 
   return (
     <div className='flex flex-col gap-4'>
-      <h1 className='scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl'>
-        Available Symbols
+      <h1 className='scroll-m-20 text-lg font-extrabold tracking-tight lg:text-4xl'>
+        The Market is open for you
       </h1>
-      <p className='leading-7'>Search for a symbol to view its details.</p>
+      <p className='leading-7 text-gray-500'>
+        Here's a list of all the symbols available on the exchange.
+      </p>
       {/* <p>
         {Array.from(
           symbols.reduce((acc, symbol) => {
@@ -56,13 +58,13 @@ export default async function Page({
       ) : isGrid ? (
         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
           {symbols.map((symbol) => (
-            <Link href={`/symbols/${symbol.slug}`}>
-              <CardSymbol key={symbol.slug} symbol={symbol} />
+            <Link key={symbol.slug} href={`/symbols/${symbol.slug}`}>
+              <CardSymbol symbol={symbol} />
             </Link>
           ))}
         </div>
       ) : (
-        <TableCardSymbols symbols={symbols} />
+        <TableSymbols symbols={symbols} />
       )}
     </div>
   );

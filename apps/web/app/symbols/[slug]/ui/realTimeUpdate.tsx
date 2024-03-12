@@ -1,7 +1,7 @@
 'use client';
 import { ISeriesApi } from 'lightweight-charts';
-import { SEARCH_PARAMS_SYMBOL } from '../page';
-import { LightWeightChartHandler } from '../../../../lib/chart/lightweight-chart';
+import { LightWeightChartHandler } from '@/lib/chart/lightweight-chart';
+import { SEARCH_PARAMS_SYMBOL } from '../constants';
 
 export function realTimeUpdate({
   chart,

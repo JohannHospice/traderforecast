@@ -3,77 +3,82 @@ import { DataTable } from '@/components/ui/data-table';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { CaretSortIcon } from '@radix-ui/react-icons';
 import { useRouter } from 'next/navigation';
-import { Button } from '../../components/ui/button';
-import { formatNumber } from '../../lib/helpers/string';
+import { Button } from '@/components/ui/button';
+import { formatNumber, formatPercent } from '@/lib/helpers/string';
 
-export function TableCardSymbols({ symbols }: { symbols: Symbol[] }) {
+export function TableSymbols({ symbols }: { symbols: Symbol[] }) {
   const router = useRouter();
 
   return (
-    <>
-      <DataTable
-        columns={[
-          {
-            accessorKey: 'rank',
-            header: createSortButton('#', false),
-          },
-          {
-            accessorKey: 'name',
-            accessorFn: (row) => row,
-            header: createSortButton('Name', false),
-            cell: ({ getValue }) => (
-              <div className='flex gap-2 items-center'>
-                <div className='w-6 h-6'>
-                  <Avatar>
-                    <AvatarImage src={getValue().logoUrl} />
-                    <AvatarFallback>{getValue().slug}</AvatarFallback>
-                  </Avatar>
-                </div>
-                <div>
-                  <span className=''>{getValue().name}</span>
-                  <span className='text-muted-foreground ml-2'>
-                    {getValue().ticker}
-                  </span>
-                </div>
+    <DataTable
+      columns={[
+        {
+          accessorKey: 'rank',
+          header: createSortButton('#', false),
+        },
+        {
+          accessorKey: 'name',
+          accessorFn: (row) => row,
+          header: createSortButton('Name', false),
+          cell: ({ getValue }) => (
+            <div className='flex gap-2 items-center'>
+              <div className='w-6 h-6'>
+                <Avatar>
+                  <AvatarImage src={getValue().logoUrl} />
+                  <AvatarFallback>{getValue().slug}</AvatarFallback>
+                </Avatar>
               </div>
-            ),
-          },
-          {
-            accessorKey: 'price_usd',
-            header: createSortButton('Price', true),
-            cell: createCellNumber(),
-          },
-          {
-            accessorKey: 'marketcap_usd',
-            header: createSortButton('Market Cap', true),
-            cell: createCellNumber(),
-          },
-          {
-            accessorKey: 'volume_usd',
-            cell: createCellNumber(),
-            header: createSortButton('Volume', true),
-          },
-          {
-            accessorKey: 'market_segments',
-            header: createSortButton('Market Segments', true),
-            cell: ({ getValue }: any) => (
-              <div className='text-right'>
-                {(getValue() as unknown as string[]).join(', ')}
+              <div className='flex flex-col'>
+                <div className='text-ellipsis text-nowrap overflow-hidden max-w-[140px]'>
+                  {getValue().name}
+                </div>
+                <span className='text-muted-foreground'>
+                  {getValue().ticker}
+                </span>
               </div>
-            ),
-          },
-        ]}
-        data={symbols}
-        onRowClick={(row) => router.push(`/symbols/${row.original.slug}`)}
-      />
-    </>
+            </div>
+          ),
+        },
+        {
+          accessorKey: 'price_usd',
+          header: createSortButton('Price', true),
+          cell: createCellNumber(formatNumber),
+        },
+        {
+          accessorKey: 'marketcap_usd',
+          header: createSortButton('Market Cap', true),
+          cell: createCellNumber(formatNumber),
+        },
+        {
+          accessorKey: 'volume_usd',
+          cell: createCellNumber(formatNumber),
+          header: createSortButton('Volume', true),
+        },
+        {
+          accessorKey: 'price_usd_change_1d',
+          header: createSortButton('Change (24h)', true),
+          cell: createCellNumber(formatPercent, (value) =>
+            value > 0 ? 'text-green-500' : 'text-red-500'
+          ),
+        },
+      ]}
+      data={symbols}
+      onRowClick={(row) => router.push(`/symbols/${row.original.slug}`)}
+    />
   );
 }
 
-function createCellNumber() {
-  return ({ getValue }: any) => (
-    <div className='text-right'>
-      {formatNumber(getValue() as unknown as number)}
+function createCellNumber<T extends { getValue: () => any }>(
+  formatNumber: (value: string | number | undefined) => string,
+  getClassName?: (value: any) => string
+) {
+  return (param: T) => (
+    <div
+      className={
+        'text-right ' + (getClassName && getClassName(param.getValue()))
+      }
+    >
+      {formatNumber(param.getValue() as unknown as number)}
     </div>
   );
 }
