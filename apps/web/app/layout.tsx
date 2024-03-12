@@ -9,16 +9,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  searchParams,
 }: {
   children: React.ReactNode;
-  searchParams?: { q?: string };
 }): JSX.Element {
   return (
     <html lang='en'>
-      <body>
-        <Navigation symbol={searchParams?.q} />
-        <div className='p-4'>{children}</div>
+      <body className='flex flex-col min-h-[100vh] bg-slate-100'>
+        <Navigation />
+        <div className='p-4 flex flex-col flex-1'>{children}</div>
       </body>
     </html>
   );

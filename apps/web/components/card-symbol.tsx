@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import Link from 'next/link';
+import { PriceTitle } from './price-title';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Badge } from './ui/badge';
 
@@ -45,36 +45,22 @@ export default function CardSymbol({
           (horizontal ? 'flex-row items-center gap-8 p-0' : 'flex-col')
         }
       >
-        <Price title='Price' value={symbol.price_usd} notation='standard' />
-        <Price
+        <PriceTitle
+          title='Price'
+          value={symbol.price_usd}
+          notation='standard'
+        />
+        <PriceTitle
           title='Market Cap'
           value={symbol.marketcap_usd}
           notation='compact'
         />
+        <PriceTitle
+          title='Volume'
+          value={symbol.volume_usd}
+          notation='compact'
+        />
       </CardContent>
     </Card>
-  );
-}
-
-function Price({
-  value,
-  title,
-  notation,
-}: {
-  value?: string | number;
-  title?: React.ReactNode;
-  notation?: 'standard' | 'scientific' | 'engineering' | 'compact';
-}) {
-  return (
-    <div className='flex items-baseline gap-2'>
-      <span className='text-sm text-muted-foreground'>{title}</span>
-      <small className='text-sm font-medium leading-none'>
-        {new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: 'USD',
-          notation,
-        }).format(Number(value))}
-      </small>
-    </div>
   );
 }

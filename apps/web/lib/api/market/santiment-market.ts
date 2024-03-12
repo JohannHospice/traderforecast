@@ -1,4 +1,5 @@
 import { ApolloClient, gql } from '@apollo/client';
+import dayjs from 'dayjs';
 
 export class SantimentMarket<T> implements Market {
   client: ApolloClient<T>;
@@ -114,17 +115,12 @@ export class SantimentMarket<T> implements Market {
     return {
       symbol,
       klines: klines.map((kline: any) => ({
-        openTime: new Date(kline.datetime).getTime(),
-        open: kline.openPriceUsd,
-        high: kline.highPriceUsd,
-        low: kline.lowPriceUsd,
-        close: kline.closePriceUsd,
-        volume: '0',
-        closeTime: new Date(kline.datetime).getTime(),
-        quoteAssetVolume: '0',
-        numberOfTrades: 0,
-        takerBuyBaseAssetVolume: '0',
-        takerBuyQuoteAssetVolume: '0',
+        open: parseFloat(kline.openPriceUsd),
+        high: parseFloat(kline.highPriceUsd),
+        low: parseFloat(kline.lowPriceUsd),
+        close: parseFloat(kline.closePriceUsd),
+        openTime: dayjs(kline.datetime).valueOf(),
+        closeTime: dayjs(kline.datetime).valueOf(),
       })),
     };
   }
@@ -136,13 +132,8 @@ export class SantimentMarket<T> implements Market {
       data: { allProjects },
     } = await this.client.query<{ allProjects: Symbol[] }>({
       query: gql`
-        query ($slug: String) {
-          allProjects(
-            page: 1
-            pageSize: 30
-            minVolume: 50
-            selector: { baseProjects: { slugs: $slug } }
-          ) {
+        query ($minVolume: Int) {
+          allProjects(minVolume: $minVolume) {
             slug
             name
             ticker
@@ -196,16 +187,16 @@ export class SantimentMarket<T> implements Market {
       `,
       variables: {
         slug: params?.query,
+        minVolume: 99999999,
       },
     });
     if (params?.query) {
       const query = params.query.toLowerCase();
-      return allProjects;
-      // .filter(
-      //   (project) =>
-      //     project.slug.toLowerCase().includes(query) ||
-      //     project.name.toLowerCase().includes(query)
-      // )
+      return allProjects.filter(
+        (project) =>
+          project.slug.toLowerCase().includes(query) ||
+          project.name.toLowerCase().includes(query)
+      );
       // .sort((a, b) => a.slug.localeCompare(b.slug));
     }
     console.log(allProjects);

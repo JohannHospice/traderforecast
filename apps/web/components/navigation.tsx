@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { SEARCH_PARAMS_LIST_SYMBOLS } from '@/app/constants';
+import { useRedirectWithSearchParams } from '../lib/hooks/useRedirectWithSearchParams';
 import { Input } from './ui/input';
 import {
   NavigationMenu,
@@ -11,17 +13,24 @@ import {
   navigationMenuTriggerStyle,
 } from './ui/navigation-menu';
 
-export function Navigation({ symbol }: { symbol?: string }) {
+export function Navigation() {
   const router = useRouter();
+  const pathname = usePathname();
+  const { redirectWithSearchParams, searchParams } =
+    useRedirectWithSearchParams();
+
   return (
-    <nav className='p-2 border-b-[1px]'>
+    <nav className='p-2 border-b-[1px] bg-white'>
       <div className='relative flex'>
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
               <Link href='/' legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Home
+                <NavigationMenuLink
+                  className={navigationMenuTriggerStyle()}
+                  active={pathname === '/'}
+                >
+                  Market
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
@@ -31,8 +40,14 @@ export function Navigation({ symbol }: { symbol?: string }) {
           <Input
             type='symbol'
             placeholder='Symbol'
-            defaultValue={symbol || ''}
-            onChange={(e) => router.replace(`/?q=${e.target.value}`)}
+            defaultValue={
+              searchParams.get(SEARCH_PARAMS_LIST_SYMBOLS.QUERY) || ''
+            }
+            onChange={(e) => {
+              redirectWithSearchParams({
+                [SEARCH_PARAMS_LIST_SYMBOLS.QUERY]: e.target.value,
+              });
+            }}
           />
         </div>
       </div>
