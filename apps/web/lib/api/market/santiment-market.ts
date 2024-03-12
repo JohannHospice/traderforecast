@@ -8,6 +8,37 @@ export class SantimentMarket<T> implements Market {
     this.client = client;
   }
 
+  intervals: string[] = ['1h', '4h', '1d', '1w'];
+
+  async lastKline(params: { slug: string; interval: string }): Promise<Kline> {
+    const {
+      data: { klines },
+    } = await this.client.query({
+      query: gql`
+        query ($slug: String!, $from: DateTime!, $interval: interval!) {
+          klines: ohlc(
+            slug: $slug
+            interval: $interval
+            from: $from
+            to: "utc_now"
+          ) {
+            lowPriceUsd
+            highPriceUsd
+            openPriceUsd
+            closePriceUsd
+            datetime
+          }
+        }
+      `,
+      variables: {
+        slug: params.slug,
+        interval: params.interval,
+        from: 'utc_now-' + 1 + params.interval.slice(-1),
+      },
+    });
+    return klines[0];
+  }
+
   async klines({
     slug,
     interval = '1d',
@@ -28,7 +59,6 @@ export class SantimentMarket<T> implements Market {
           $from: DateTime!
           $to: DateTime!
           $interval: interval!
-          $withMarketcap: Boolean!
         ) {
           klines: ohlc(slug: $slug, from: $from, to: $to, interval: $interval) {
             lowPriceUsd
@@ -38,24 +68,13 @@ export class SantimentMarket<T> implements Market {
             datetime
           }
 
-          marketcap: getMetric(metric: "marketcap_usd")
-            @include(if: $withMarketcap) {
-            timeseriesData(
-              slug: $slug
-              from: $from
-              to: $to
-              interval: $interval
-            ) {
-              datetime
-              value
-            }
-          }
-
           symbol: projectBySlug(slug: $slug) {
             slug
             name
             ticker
             logoUrl
+            rank
+            market_segments
             price_usd: aggregatedTimeseriesData(
               metric: "price_usd"
               from: "utc_now-1d"
@@ -86,7 +105,6 @@ export class SantimentMarket<T> implements Market {
               to: "utc_now"
               aggregation: LAST
             )
-            rank
             dev_activity_1d: aggregatedTimeseriesData(
               metric: "dev_activity_1d"
               from: "utc_now-30d"
@@ -99,7 +117,6 @@ export class SantimentMarket<T> implements Market {
               to: "utc_now"
               aggregation: AVG
             )
-            market_segments
           }
         }
       `,
@@ -108,7 +125,6 @@ export class SantimentMarket<T> implements Market {
         interval: interval,
         from: startTime,
         to: endTime,
-        withMarketcap: false,
       },
     });
 
@@ -190,17 +206,29 @@ export class SantimentMarket<T> implements Market {
         minVolume: 99999999,
       },
     });
-    if (params?.query) {
-      const query = params.query.toLowerCase();
-      return allProjects.filter(
-        (project) =>
-          project.slug.toLowerCase().includes(query) ||
-          project.name.toLowerCase().includes(query)
-      );
-      // .sort((a, b) => a.slug.localeCompare(b.slug));
-    }
-    console.log(allProjects);
 
-    return allProjects;
+    const query = params?.query ? params.query.toLowerCase() : undefined;
+
+    const allUniqueProjects = allProjects.filter(
+      ({ ticker, slug, name }, index, self) => {
+        const duplicate = self.findIndex((p) => p.ticker === ticker) === index;
+        if (query) {
+          return (
+            duplicate &&
+            (slug.toLowerCase().includes(query) ||
+              name.toLowerCase().includes(query) ||
+              ticker?.toLowerCase().includes(query))
+          );
+        }
+
+        return duplicate;
+      }
+    );
+
+    return allUniqueProjects;
+  }
+
+  isRealTimeEnabled(): boolean {
+    return false;
   }
 }

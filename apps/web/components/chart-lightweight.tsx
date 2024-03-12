@@ -6,13 +6,16 @@ import { LightWeightChartHandler } from '@/lib/chart/lightweight-chart';
 import { DeepPartial } from '@apollo/client/utilities';
 
 export function LightWeightChart({
-  onInit,
   className,
   options,
+  onInit,
 }: {
-  onInit: (lightweightChart: LightWeightChartHandler) => void;
   className?: string;
   options?: DeepPartial<TimeChartOptions>;
+  onInit: (
+    lightweightChart: LightWeightChartHandler
+  ) => undefined | (() => void);
+  onRealTimeUpdate?: (lightweightChart: LightWeightChartHandler) => void;
 }) {
   const chartContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -24,12 +27,15 @@ export function LightWeightChart({
 
     const lightweightChart = new LightWeightChartHandler(current, options);
 
-    onInit(lightweightChart);
+    const onDestroy = onInit(lightweightChart);
 
     return () => {
+      if (onDestroy) {
+        onDestroy();
+      }
       lightweightChart.remove();
     };
-  }, [chartContainerRef, options, onInit]);
+  }, [onInit]);
 
   return <div ref={chartContainerRef} className={className} />;
 }

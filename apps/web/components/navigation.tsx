@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { SEARCH_PARAMS_LIST_SYMBOLS } from '@/app/constants';
 import { useRedirectWithSearchParams } from '../lib/hooks/useRedirectWithSearchParams';
 import { Input } from './ui/input';
@@ -12,16 +12,16 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from './ui/navigation-menu';
+import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 
 export function Navigation() {
-  const router = useRouter();
   const pathname = usePathname();
   const { redirectWithSearchParams, searchParams } =
     useRedirectWithSearchParams();
 
   return (
     <nav className='p-2 border-b-[1px] bg-white'>
-      <div className='relative flex'>
+      <div className=' flex gap-4'>
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
@@ -36,10 +36,12 @@ export function Navigation() {
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
-        <div className='flex w-full max-w-sm items-center space-x-2 absolute left-0 right-0 mx-auto'>
+        <div className='relative '>
+          <MagnifyingGlassIcon className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
           <Input
+            className='w-full max-w-[400px] pl-8'
             type='symbol'
-            placeholder='Symbol'
+            placeholder='Search'
             defaultValue={
               searchParams.get(SEARCH_PARAMS_LIST_SYMBOLS.QUERY) || ''
             }

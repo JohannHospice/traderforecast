@@ -1,4 +1,6 @@
 interface Market {
+  intervals: string[];
+
   klines(params: {
     slug: string;
     interval: string;
@@ -7,6 +9,10 @@ interface Market {
   }): Promise<{ symbol: Symbol; klines: Kline[] }>;
 
   symbols(params?: { query?: string }): Promise<Symbol[]>;
+
+  lastKline(params: { slug: string; interval: string }): Promise<Kline>;
+
+  isRealTimeEnabled(): boolean;
 }
 
 interface Kline {
@@ -31,5 +37,5 @@ interface Symbol {
   rank?: string;
   dev_activity_1d?: string;
   daily_active_addresses?: string;
-  market_segments?: string;
+  market_segments?: string[];
 }

@@ -1,24 +1,19 @@
 'use client';
-import dayjs from 'dayjs';
 import {
-  createChart,
-  DeepPartial,
-  TimeChartOptions,
-  IChartApi,
-  AreaStyleOptions,
-  SeriesOptionsCommon,
-  AreaData,
-  Time,
-  WhitespaceData,
-  ISeriesApi,
-  SeriesType,
   CandlestickData,
+  DeepPartial,
+  IChartApi,
+  Time,
+  TimeChartOptions,
   UTCTimestamp,
+  WhitespaceData,
+  createChart,
 } from 'lightweight-charts';
 
 export class LightWeightChartHandler {
   chart: IChartApi;
   handleResize?: () => void;
+  element: HTMLDivElement;
 
   constructor(
     element: HTMLDivElement,
@@ -26,14 +21,15 @@ export class LightWeightChartHandler {
   ) {
     this.chart = createChart(element, options);
     this.config();
+    this.element = element;
   }
 
   config() {
     this.chart.timeScale().fitContent();
     this.handleResize = () => {
       this.chart.applyOptions({
-        width: this.chart.chartElement().clientWidth,
-        height: this.chart.chartElement().clientHeight,
+        width: this.element.clientWidth,
+        height: this.element.clientHeight,
       });
     };
     window.addEventListener('resize', this.handleResize);
@@ -47,12 +43,16 @@ export class LightWeightChartHandler {
   klinesToCandlestickSeries(
     klines: Kline[]
   ): (WhitespaceData<Time> | CandlestickData<Time>)[] {
-    return klines.map((k) => ({
-      time: (k.closeTime / 1000) as UTCTimestamp,
-      open: k.open,
-      high: k.high,
-      low: k.low,
-      close: k.close,
-    }));
+    return klines.map((k) => this.klineToCandlestick(k));
+  }
+
+  klineToCandlestick(kline: Kline): CandlestickData<Time> {
+    return {
+      time: (kline.closeTime / 1000) as UTCTimestamp,
+      open: kline.open,
+      high: kline.high,
+      low: kline.low,
+      close: kline.close,
+    };
   }
 }

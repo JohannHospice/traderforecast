@@ -34,12 +34,16 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   onRowClick,
-}: DataTableProps<TData, TValue> & { onRowClick?: (row: Row<TData>) => void }) {
+  pageSize = 10,
+}: DataTableProps<TData, TValue> & {
+  onRowClick?: (row: Row<TData>) => void;
+  pageSize?: number;
+}) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const [pagination, setPagination] = useState({ pageSize: 50, pageIndex: 0 });
+  const [pagination, setPagination] = useState({ pageSize, pageIndex: 0 });
   const table = useReactTable({
     data,
     columns,
@@ -89,6 +93,7 @@ export function DataTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                   onClick={onRowClick && (() => onRowClick(row))}
+                  className={onRowClick && 'cursor-pointer'}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className='py-4'>
@@ -115,8 +120,11 @@ export function DataTable<TData, TValue>({
       </div>
       <div className='flex items-center justify-end space-x-2 pt-4'>
         <div className='flex-1 text-sm text-muted-foreground'>
-          {table.getFilteredSelectedRowModel().rows.length} of{' '}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredSelectedRowModel().rows.length > 0
+            ? `${table.getFilteredSelectedRowModel().rows.length} of ${table.getFilteredRowModel().rows.length} row(s) selected.`
+            : `Page ${pagination.pageIndex + 1} of ${Math.ceil(
+                data.length / pagination.pageSize
+              )}`}
         </div>
         <div className='space-x-2'>
           <Button

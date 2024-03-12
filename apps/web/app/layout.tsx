@@ -14,7 +14,7 @@ export default function RootLayout({
 }): JSX.Element {
   return (
     <html lang='en'>
-      <body className='flex flex-col min-h-[100vh] bg-slate-100'>
+      <body className='flex flex-col min-h-[100vh] '>
         <Navigation />
         <div className='p-4 flex flex-col flex-1'>{children}</div>
       </body>

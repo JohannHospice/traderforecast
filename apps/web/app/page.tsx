@@ -1,25 +1,31 @@
+import { Cross1Icon, ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
 import CardSymbol from '../components/card-symbol';
-import api from '../lib/api';
-import { SwitchGridView } from './ui/switch-grid-view';
-import { SEARCH_PARAMS_LIST_SYMBOLS, SYMBOL_VIEWS } from './constants';
-import { formatNumber } from '../lib/helpers/string';
-import { GridCardSymbols } from './ui/grid-card-symbols';
 import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
-import { Cross1Icon } from '@radix-ui/react-icons';
+import api from '../lib/api';
+import { SEARCH_PARAMS_LIST_SYMBOLS, SYMBOL_VIEWS } from './constants';
+import { TableCardSymbols } from './ui/table-symbols';
+import { SwitchView } from './ui/switch-view';
+import { redirect } from 'next/navigation';
 
 export default async function Page({
   searchParams,
 }: {
   searchParams: Record<SEARCH_PARAMS_LIST_SYMBOLS, string>;
 }) {
+  if (searchParams[SEARCH_PARAMS_LIST_SYMBOLS.VIEWS] === undefined) {
+    return redirect(
+      `?${SEARCH_PARAMS_LIST_SYMBOLS.VIEWS}=${SYMBOL_VIEWS.TABLE}`
+    );
+  }
+
   const symbols = await api.market.symbols({
     query: searchParams[SEARCH_PARAMS_LIST_SYMBOLS.QUERY],
   });
+
   const isEmpty = symbols.length === 0;
   const isGrid =
     searchParams[SEARCH_PARAMS_LIST_SYMBOLS.VIEWS] === SYMBOL_VIEWS.GRID;
-  console.log('symbols', symbols);
 
   return (
     <div className='flex flex-col gap-4'>
@@ -27,10 +33,23 @@ export default async function Page({
         Available Symbols
       </h1>
       <p className='leading-7'>Search for a symbol to view its details.</p>
-      <SwitchGridView />
+      {/* <p>
+        {Array.from(
+          symbols.reduce((acc, symbol) => {
+            symbol.market_segments?.forEach((segment) => {
+              acc.add(segment);
+            });
+            return acc;
+          }, new Set())
+        ).join(', ')}
+      </p> */}
+      <div className='self-end'>
+        <SwitchView />
+      </div>
+
       {isEmpty ? (
         <Alert>
-          <Cross1Icon className='h-4 w-4' />
+          <ExclamationTriangleIcon className='h-4 w-4' />
           <AlertTitle>No symbols found</AlertTitle>
           <AlertDescription>Try a different search query.</AlertDescription>
         </Alert>
@@ -43,7 +62,7 @@ export default async function Page({
           ))}
         </div>
       ) : (
-        <GridCardSymbols symbols={symbols} />
+        <TableCardSymbols symbols={symbols} />
       )}
     </div>
   );

@@ -12,12 +12,16 @@ import { Badge } from './ui/badge';
 export default function CardSymbol({
   symbol,
   horizontal,
+  className,
 }: {
   symbol: Symbol;
   horizontal?: boolean;
+  className?: string;
 }) {
   return (
-    <Card className={'relative  ' + (horizontal ? ' flex m-0' : '')}>
+    <Card
+      className={'relative ' + (horizontal ? ' flex m-0 ' : '') + className}
+    >
       <Badge variant='outline' className='absolute top-0 right-0 mt-2 mr-2'>
         Rank #{symbol.rank}
       </Badge>
