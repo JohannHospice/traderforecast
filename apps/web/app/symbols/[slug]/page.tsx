@@ -1,16 +1,16 @@
-import Link from 'next/link';
-import { Button } from '../../../components/ui/button';
+import CardSymbol from '../../../components/card-symbol';
 import api from '../../../lib/api/';
 
 export default async function Page({ params }: { params: { slug: string } }) {
-  const klines = await api.market.klines({
-    symbol: params.slug,
+  const { symbol, klines } = await api.market.klines({
+    slug: params.slug,
     interval: '1d',
+    startTime: 'utc_now-365d',
   });
 
   return (
     <>
-      <div>My Post: {params.slug}</div>
+      <CardSymbol symbol={symbol} horizontal />
       {JSON.stringify(klines)}
     </>
   );

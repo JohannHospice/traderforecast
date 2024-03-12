@@ -1,7 +1,6 @@
-import '../styles/globals.css';
 import type { Metadata } from 'next';
 import { Navigation } from '../components/navigation';
-import { useRouter } from 'next/navigation';
+import '../styles/globals.css';
 
 export const metadata: Metadata = {
   title: 'Trading patterns',

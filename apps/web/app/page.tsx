@@ -1,4 +1,5 @@
-import { CardSymbol } from '../components/card-symbol';
+import Link from 'next/link';
+import CardSymbol from '../components/card-symbol';
 import api from '../lib/api';
 
 export default async function Page({
@@ -20,9 +21,11 @@ export default async function Page({
       {symbols.length === 0 ? (
         <div>No symbols found</div>
       ) : (
-        <div className='grid grid-cols-5 grid-rows-5 gap-4'>
+        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
           {symbols.map((symbol) => (
-            <CardSymbol key={symbol.symbol} symbol={symbol} />
+            <Link href={`/symbols/${symbol.slug}`}>
+              <CardSymbol key={symbol.slug} symbol={symbol} />
+            </Link>
           ))}
         </div>
       )}

@@ -4,11 +4,16 @@ export class BinanceMarket implements Market {
   private readonly baseUrl = 'https://api.binance.com/api/v3';
 
   async symbols(params?: { query?: string }): Promise<Symbol[]> {
-    const { symbols } = (await this.exchangeInfo()) as { symbols: Symbol[] };
+    const { symbols } = await this.exchangeInfo();
 
-    return symbols.filter(({ symbol }) =>
-      params?.query ? symbol.includes(params?.query.toUpperCase()) : true
-    );
+    return symbols
+      .filter(({ symbol }: any) =>
+        params?.query ? symbol.includes(params?.query.toUpperCase()) : true
+      )
+      .map((symbol: any) => ({
+        slug: symbol.symbol,
+        name: symbol.symbol,
+      })) as Symbol[];
   }
 
   async exchangeInfo(): Promise<any> {
@@ -18,14 +23,14 @@ export class BinanceMarket implements Market {
   }
 
   async klines(options: {
-    symbol: string;
+    slug: string;
     interval: string;
     startTime?: number;
     endTime?: number;
-  }): Promise<Kline[]> {
+  }): Promise<{ symbol: Symbol; klines: Kline[] }> {
     const response = await fetch(
       `${this.baseUrl}/klines?${queryBuilder({
-        symbol: options.symbol,
+        symbol: options.slug,
         interval: options.interval,
         startTime: options?.startTime,
         endTime: options?.endTime,
@@ -35,7 +40,13 @@ export class BinanceMarket implements Market {
 
     if (data.code) throw new Error(data.msg);
 
-    return BinanceMarket.responseToKlines(data);
+    return {
+      symbol: {
+        slug: options.slug,
+        name: options.slug,
+      },
+      klines: BinanceMarket.responseToKlines(data),
+    };
   }
 
   private static responseToKlines(responseData: any): Kline[] {
