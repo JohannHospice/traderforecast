@@ -15,8 +15,9 @@ import {
 import { IChartApi } from 'lightweight-charts';
 import { useTheme } from 'next-themes';
 import { useCallback, useMemo, useState } from 'react';
-import { TimeIntervalTabs } from './time-interval-tabs';
 import { klineToCandlestick } from '../helpers/klineToCandlestick';
+import { TimeIntervalTabs } from './time-interval-tabs';
+
 const ENABLE_REALTIME = false;
 export default function CandelstickChart({
   slug,
@@ -80,7 +81,7 @@ export default function CandelstickChart({
   );
 
   return (
-    <Card className={'flex flex-1 gap-8 ' + className}>
+    <Card className={'flex flex-1 gap-8' + className}>
       <CardContent className='flex flex-col flex-1 gap-8 p-8'>
         <div className='flex gap-4'>
           <TimeIntervalTabs intervals={intervals} />
@@ -103,13 +104,11 @@ export default function CandelstickChart({
             }}
           />
         </div>
-        <div className='flex flex-col flex-1 overflow-hidden'>
-          <LightWeightChart
-            className='flex-1 pr-2'
-            onInit={onInit}
-            options={isLight ? OPTIONS_LIGHT : OPTIONS_DARK}
-          />
-        </div>
+        <LightWeightChart
+          className='flex-1 min-h-[480px] mr-2'
+          onInit={onInit}
+          options={isLight ? OPTIONS_LIGHT : OPTIONS_DARK}
+        />
       </CardContent>
     </Card>
   );

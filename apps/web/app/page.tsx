@@ -3,10 +3,10 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import api from '@/lib/api';
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import { redirect } from 'next/navigation';
-import { SEARCH_PARAMS, SYMBOL_VIEWS } from './constants/navigation';
+import { SEARCH_PARAMS, SYMBOL_VIEWS } from '../lib/constants/navigation';
+import { GridSymbols } from './ui/grid-symbols';
 import { SwitchView } from './ui/switch-view';
 import { TableSymbols } from './ui/table-symbols';
-import { GridSymbols } from './ui/grid-symbols';
 
 export default async function Page({
   searchParams,

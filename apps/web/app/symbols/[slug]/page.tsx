@@ -1,4 +1,4 @@
-import { SEARCH_PARAMS } from '@/app/constants/navigation';
+import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import CardSymbol from '@/components/card-symbol';
 import api from '@/lib/api/';
 import { redirect } from 'next/navigation';

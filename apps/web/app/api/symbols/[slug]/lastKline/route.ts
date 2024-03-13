@@ -1,5 +1,5 @@
 import api from '@/lib/api';
-import { SEARCH_PARAMS } from '@/app/constants/navigation';
+import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 
 export const dynamic = 'force-dynamic'; // defaults to auto
 

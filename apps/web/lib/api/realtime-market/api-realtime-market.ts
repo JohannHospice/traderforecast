@@ -1,4 +1,4 @@
-import { SEARCH_PARAMS } from '../../../app/constants/navigation';
+import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import { RealtimeMarket } from '.';
 
 export class ApiRealtimeMarket implements RealtimeMarket {

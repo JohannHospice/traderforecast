@@ -1,7 +1,7 @@
 'use client';
 import CardSymbol from '@/components/card-symbol';
-import Link from 'next/link';
 import { useItemsOnScroll } from '@/lib/hooks/useItemsOnScroll';
+import Link from 'next/link';
 
 export function GridSymbols({ symbols }: { symbols: Symbol[] }) {
   const items = useItemsOnScroll(symbols, 20, 400);

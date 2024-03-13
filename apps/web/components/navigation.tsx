@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { SEARCH_PARAMS } from '@/app/constants/navigation';
+import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import { useRedirectWithSearchParams } from '@/lib/hooks/useRedirectWithSearchParams';
 import { Input } from './ui/input';
 import {
