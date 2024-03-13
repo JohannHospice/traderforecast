@@ -17,7 +17,7 @@ import { useTheme } from 'next-themes';
 import { useCallback, useMemo, useState } from 'react';
 import { TimeIntervalTabs } from './time-interval-tabs';
 import { klineToCandlestick } from '../helpers/klineToCandlestick';
-
+const ENABLE_REALTIME = false;
 export default function CandelstickChart({
   slug,
   interval,
@@ -62,7 +62,7 @@ export default function CandelstickChart({
 
       // hot reload
       const realtimeApi = new Realtime(1000);
-      if (slug && interval) {
+      if (ENABLE_REALTIME && slug && interval) {
         realtimeApi.watch(async () => {
           const kline = await api.realtimeMarket.hotKline(slug, interval);
 
