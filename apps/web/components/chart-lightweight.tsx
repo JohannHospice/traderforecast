@@ -1,7 +1,7 @@
 'use client';
 
-import { DeepPartial, TimeChartOptions } from 'lightweight-charts';
-import React, { useEffect, useRef } from 'react';
+import { DeepPartial, IChartApi, TimeChartOptions } from 'lightweight-charts';
+import React, { useEffect, useRef, useState } from 'react';
 import { LightWeightChartHandler } from '@/lib/chart/lightweight-chart';
 
 export function LightWeightChart({
@@ -11,28 +11,39 @@ export function LightWeightChart({
 }: {
   className?: string;
   options?: DeepPartial<TimeChartOptions>;
-  onInit: (lightweightChart: LightWeightChartHandler) => void | (() => void);
-  onRealTimeUpdate?: (lightweightChart: LightWeightChartHandler) => void;
+  onInit: (chart: IChartApi) => void | (() => void);
 }) {
   const chartContainerRef = useRef<HTMLDivElement | null>(null);
+  const [handler, setHandler] = useState<LightWeightChartHandler | null>(null);
 
   useEffect(() => {
-    if (chartContainerRef.current === null) {
-      return;
-    }
     const { current } = chartContainerRef;
 
-    const lightweightChart = new LightWeightChartHandler(current, options);
+    if (current === null) {
+      return;
+    }
 
-    const onDestroy = onInit(lightweightChart);
+    const handler = new LightWeightChartHandler(current, options);
+
+    setHandler(handler);
+
+    let onDestroy = onInit(handler.chart);
 
     return () => {
       if (onDestroy) {
         onDestroy();
       }
-      lightweightChart.remove();
+      if (handler) {
+        handler.remove();
+      }
     };
-  }, [onInit, options]);
+  }, [onInit]);
+
+  useEffect(() => {
+    if (handler && options) {
+      handler.chart.applyOptions(options);
+    }
+  }, [handler, options]);
 
   return <div ref={chartContainerRef} className={className} />;
 }

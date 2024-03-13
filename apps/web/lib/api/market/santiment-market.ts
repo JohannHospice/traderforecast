@@ -203,7 +203,7 @@ export class SantimentMarket<T> implements Market {
       `,
       variables: {
         slug: params?.query,
-        minVolume: 99999999,
+        minVolume: 0,
       },
     });
 
@@ -226,9 +226,5 @@ export class SantimentMarket<T> implements Market {
     );
 
     return allUniqueProjects;
-  }
-
-  isRealTimeEnabled(): boolean {
-    return false;
   }
 }

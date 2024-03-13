@@ -1,21 +1,22 @@
 'use client';
 
-import { SEARCH_PARAMS } from '@/app/constants/navigation';
 import { LightWeightChart } from '@/components/chart-lightweight';
 import { Combobox } from '@/components/combobox';
 import { Card, CardContent } from '@/components/ui/card';
 import api from '@/lib/api';
-import { LightWeightChartHandler } from '@/lib/chart/lightweight-chart';
 import { MarkerDetector } from '@/lib/chart/marker-detector';
 import { TopAndBottomMarkers } from '@/lib/chart/marker-detector/top-and-bottom-markers';
 import { TopMarkers } from '@/lib/chart/marker-detector/top-markers';
+import { Realtime } from '@/lib/helpers/realtime';
 import {
   OPTIONS_DARK,
   OPTIONS_LIGHT,
 } from '@/styles/lightweight-charts-options';
+import { IChartApi } from 'lightweight-charts';
 import { useTheme } from 'next-themes';
 import { useCallback, useMemo, useState } from 'react';
 import { TimeIntervalTabs } from './time-interval-tabs';
+import { klineToCandlestick } from '../helpers/klineToCandlestick';
 
 export default function CandelstickChart({
   slug,
@@ -45,11 +46,13 @@ export default function CandelstickChart({
   );
 
   const onInit = useCallback(
-    (handler: LightWeightChartHandler) => {
-      const series = handler.chart.addCandlestickSeries();
+    (chart: IChartApi) => {
+      const series = chart.addCandlestickSeries();
 
-      series.setData(handler.klinesToCandlestickSeries(klines));
+      // creating candlestick series
+      series.setData(klines.map(klineToCandlestick));
 
+      // applying strategy markers
       series.setMarkers(
         comboboxValues
           .map((option) => markerDetectorSet[option].execute(klines))
@@ -57,15 +60,25 @@ export default function CandelstickChart({
           .sort((a, b) => +a.time - +b.time)
       );
 
-      if (api.market.isRealTimeEnabled()) {
-        handler.realTimeUpdate({
-          series,
-          url: `/api/symbols/${slug}/lastKline?${SEARCH_PARAMS.INTERVAL}=${interval}`,
+      // hot reload
+      const realtimeApi = new Realtime(1000);
+      if (slug && interval) {
+        realtimeApi.watch(async () => {
+          const kline = await api.realtimeMarket.hotKline(slug, interval);
+
+          series.update(klineToCandlestick(kline));
         });
       }
+
+      // cleanup
+      return () => {
+        chart.removeSeries(series);
+        realtimeApi.clear();
+      };
     },
     [klines, slug, interval, comboboxValues]
   );
+
   return (
     <Card className={'flex flex-1 gap-8 ' + className}>
       <CardContent className='flex flex-col flex-1 gap-8 p-8'>

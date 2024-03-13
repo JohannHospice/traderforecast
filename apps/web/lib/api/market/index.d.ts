@@ -11,8 +11,6 @@ interface Market {
   symbols(params?: { query?: string }): Promise<Symbol[]>;
 
   lastKline(params: { slug: string; interval: string }): Promise<Kline>;
-
-  isRealTimeEnabled(): boolean;
 }
 
 interface Kline {
