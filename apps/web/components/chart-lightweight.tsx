@@ -32,7 +32,7 @@ export function LightWeightChart({
       }
       lightweightChart.remove();
     };
-  }, [onInit]);
+  }, [onInit, options]);
 
   return <div ref={chartContainerRef} className={className} />;
 }

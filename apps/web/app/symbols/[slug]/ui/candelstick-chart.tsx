@@ -3,7 +3,6 @@
 import { SEARCH_PARAMS } from '@/app/constants/navigation';
 import { LightWeightChart } from '@/components/chart-lightweight';
 import api from '@/lib/api';
-import { findTopsAndBottoms } from '@/lib/chart/find-tops-and-bottoms';
 import { LightWeightChartHandler } from '@/lib/chart/lightweight-chart';
 import {
   OPTIONS_DARK,
@@ -12,6 +11,11 @@ import {
 import { useTheme } from 'next-themes';
 import { useCallback } from 'react';
 import { TimeIntervalTabs } from './time-interval-tabs';
+import { TopAndBottomMarkers } from '@/lib/chart/marker-detector/top-and-bottom-markers';
+import { MarkerDetector } from '@/lib/chart/marker-detector';
+import { TopMarkers } from '../../../../lib/chart/marker-detector/top-markers';
+
+const detectors: MarkerDetector[] = [new TopMarkers()];
 
 export default function CandelstickChart({
   slug,
@@ -31,7 +35,13 @@ export default function CandelstickChart({
       const series = handler.chart.addCandlestickSeries();
 
       series.setData(handler.klinesToCandlestickSeries(klines));
-      series.setMarkers(findTopsAndBottoms(klines));
+
+      const markers = detectors
+        .map((detector) => detector.execute(klines))
+        .flat()
+        .sort((a, b) => +a.time - +b.time);
+
+      series.setMarkers(markers);
 
       if (api.market.isRealTimeEnabled()) {
         handler.realTimeUpdate({

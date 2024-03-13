@@ -1,8 +1,10 @@
-import { redirect } from 'next/navigation';
+import { SEARCH_PARAMS } from '@/app/constants/navigation';
 import CardSymbol from '@/components/card-symbol';
 import api from '@/lib/api/';
+import { TopMarkers } from '@/lib/chart/marker-detector/top-markers';
+import { redirect } from 'next/navigation';
 import CandelstickChart from './ui/candelstick-chart';
-import { SEARCH_PARAMS } from '@/app/constants/navigation';
+import { TopAndBottomMarkers } from '../../../lib/chart/marker-detector/top-and-bottom-markers';
 
 export default async function Page({
   params,

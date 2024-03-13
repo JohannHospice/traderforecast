@@ -7,10 +7,10 @@ import {
   ISeriesApi,
   Time,
   TimeChartOptions,
-  UTCTimestamp,
   WhitespaceData,
   createChart,
 } from 'lightweight-charts';
+import { millisecondsToTime } from '../helpers/unit';
 
 export class LightWeightChartHandler {
   chart: IChartApi;
@@ -52,7 +52,7 @@ export class LightWeightChartHandler {
 
   klineToCandlestick(kline: Kline): CandlestickData<Time> {
     return {
-      time: (kline.closeTime / 1000) as UTCTimestamp,
+      time: millisecondsToTime(kline.closeTime),
       open: kline.open,
       high: kline.high,
       low: kline.low,
