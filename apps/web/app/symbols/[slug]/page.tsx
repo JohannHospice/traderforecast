@@ -36,11 +36,13 @@ export default async function Page({
         {symbol.name} is a trading pair available on the exchange.
       </p>
 
-      <div className='grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] gap-4 flex-1 '>
+      <div className='grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] gap-y-4 flex-1 '>
         <div className='col-span-2'>
           <CardSymbol className='my-8' symbol={symbol} horizontal />
         </div>
-        <div className='row-start-2 gap-4 flex flex-col'></div>
+        <div className='row-start-2 gap-4 flex flex-col'>
+          {/* todo sidemenu */}
+        </div>
         <div className='row-start-2 flex'>
           <CandelstickChart
             klines={klines}
