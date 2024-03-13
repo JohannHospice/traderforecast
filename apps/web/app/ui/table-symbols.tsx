@@ -1,5 +1,5 @@
 'use client';
-import { DataTable } from '@/components/ui/data-table';
+import { DataTable } from '@/components/data-table';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { CaretSortIcon } from '@radix-ui/react-icons';
 import { useRouter } from 'next/navigation';

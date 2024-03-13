@@ -1,10 +1,10 @@
 'use client';
 
+import { SEARCH_PARAMS_SYMBOL } from '@/app/constants/navigation';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useRedirectWithSearchParams } from '@/lib/hooks/useRedirectWithSearchParams';
-import { SEARCH_PARAMS_SYMBOL } from '../constants';
 
-export function IntervalNav({ intervals }: { intervals: string[] }) {
+export function TimeIntervalTabs({ intervals }: { intervals: string[] }) {
   const { redirectWithSearchParams, searchParams } =
     useRedirectWithSearchParams();
 

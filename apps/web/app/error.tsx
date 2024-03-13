@@ -1,19 +1,7 @@
-// export default function Custom404() {
-//   return (
-//     <div>
-//       <h1>
-//         <span>404</span>
-//         <span>Looks like you're lost.</span>
-//       </h1>
-//       <p>
-//         <span>The page you are looking for is not available.</span>
-//         <span>Please check the URL or go to the main page.</span>
-//       </p>
-//     </div>
-//   );
-// }
 'use client';
+
 import { useEffect } from 'react';
+import { Button } from '../components/ui/button';
 
 export default function Error({
   error,
@@ -23,21 +11,21 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
     console.error(error);
   }, [error]);
 
   return (
-    <div>
-      <h2>Something went wrong!</h2>
-      <button
-        onClick={
-          // Attempt to recover by trying to re-render the segment
-          () => reset()
-        }
-      >
-        Try again
-      </button>
+    <div className='flex flex-col gap-4 w-full max-w-[512px]'>
+      <h1 className='text-4xl font-bold'>Something went wrong!</h1>
+      <p className='text-lg'>
+        We're sorry, something went wrong. Please try again.
+      </p>
+      <pre className='text-sm text-wrap text-gray-500 overflow-auto bg-gray-100 p-4'>
+        {error.message}
+      </pre>
+      <div>
+        <Button onClick={() => reset()}>Let's try again</Button>
+      </div>
     </div>
   );
 }

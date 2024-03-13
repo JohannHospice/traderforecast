@@ -1,8 +1,10 @@
 'use client';
+
 import {
   CandlestickData,
   DeepPartial,
   IChartApi,
+  ISeriesApi,
   Time,
   TimeChartOptions,
   UTCTimestamp,
@@ -14,6 +16,7 @@ export class LightWeightChartHandler {
   chart: IChartApi;
   handleResize?: () => void;
   element: HTMLDivElement;
+  realtimeTimeout?: NodeJS.Timeout;
 
   constructor(
     element: HTMLDivElement,
@@ -38,6 +41,7 @@ export class LightWeightChartHandler {
   remove() {
     window.removeEventListener('resize', this.handleResize!);
     this.chart.remove();
+    clearInterval(this.realtimeTimeout);
   }
 
   klinesToCandlestickSeries(
@@ -54,5 +58,23 @@ export class LightWeightChartHandler {
       low: kline.low,
       close: kline.close,
     };
+  }
+
+  realTimeUpdate({
+    series,
+    url,
+  }: {
+    series: ISeriesApi<'Candlestick'>;
+    url: string;
+  }) {
+    this.realtimeTimeout = setInterval(
+      () =>
+        fetch(url)
+          .then((res) => res.json())
+          .then((kline) => {
+            series.update(this.klineToCandlestick(kline));
+          }),
+      1000
+    );
   }
 }

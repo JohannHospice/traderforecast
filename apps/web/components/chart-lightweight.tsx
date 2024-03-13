@@ -12,9 +12,7 @@ export function LightWeightChart({
 }: {
   className?: string;
   options?: DeepPartial<TimeChartOptions>;
-  onInit: (
-    lightweightChart: LightWeightChartHandler
-  ) => undefined | (() => void);
+  onInit: (lightweightChart: LightWeightChartHandler) => void | (() => void);
   onRealTimeUpdate?: (lightweightChart: LightWeightChartHandler) => void;
 }) {
   const chartContainerRef = useRef<HTMLDivElement | null>(null);

@@ -10,9 +10,9 @@ export default function Custom404() {
       <p className='text-lg'>
         Sorry about that! Please visit our hompage to get where you need to go.
       </p>
-      <Link href='/'>
-        <Button>Take me there</Button>
-      </Link>
+      <Button asChild>
+        <Link href='/'>Take me there</Link>
+      </Button>
     </div>
   );
 }

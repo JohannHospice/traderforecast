@@ -21,7 +21,9 @@ export default function CardSymbol({
 }) {
   return (
     <Card
-      className={'relative ' + (horizontal ? ' flex m-0 ' : '') + className}
+      className={
+        'relative ' + (horizontal ? ' flex m-0 pr-24 ' : '') + className
+      }
     >
       <Badge variant='outline' className='absolute top-0 right-0 mt-2 mr-2'>
         Rank #{symbol.rank}

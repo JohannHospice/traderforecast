@@ -1,42 +1,40 @@
 'use client';
 
+import { SEARCH_PARAMS_SYMBOL } from '@/app/constants/navigation';
 import { LightWeightChart } from '@/components/chart-lightweight';
+import api from '@/lib/api';
+import { findTopsAndBottoms } from '@/lib/chart/findTopsAndBottoms';
+import { LightWeightChartHandler } from '@/lib/chart/lightweight-chart';
 import { ColorType } from 'lightweight-charts';
 import { useCallback } from 'react';
-import api from '@/lib/api';
-import { LightWeightChartHandler } from '@/lib/chart/lightweight-chart';
-import { IntervalNav } from './interval-nav';
-import { realTimeUpdate } from './realTimeUpdate';
+import { COLOR_GRAY_200 } from '../../../../styles/colors';
+import { TimeIntervalTabs } from './time-interval-tabs';
 
-export function KlinesChart({
+export default function CandelstickChart({
   slug,
   interval,
   klines,
-  intervals,
+  intervals = [],
   className,
 }: {
-  slug: string;
+  slug?: string;
   klines: Kline[];
-  intervals: string[];
+  intervals?: string[];
   className?: string;
-  interval: string;
+  interval?: string;
 }) {
   const onInit = useCallback(
-    (chart: LightWeightChartHandler) => {
-      const series = chart.chart.addCandlestickSeries();
+    (handler: LightWeightChartHandler) => {
+      const series = handler.chart.addCandlestickSeries();
 
-      series.setData(chart.klinesToCandlestickSeries(klines));
-      // serie.setMarkers(findTopsAndBottoms(klines));
+      series.setData(handler.klinesToCandlestickSeries(klines));
+      series.setMarkers(findTopsAndBottoms(klines));
 
       if (api.market.isRealTimeEnabled()) {
-        const timeoutInterval = realTimeUpdate({
-          chart,
+        handler.realTimeUpdate({
           series,
-          slug: slug,
-          interval: interval,
+          url: `/api/symbols/${slug}/lastKline?${SEARCH_PARAMS_SYMBOL.INTERVAL}=${interval}`,
         });
-
-        return () => clearInterval(timeoutInterval);
       }
     },
     [klines, slug, interval]
@@ -44,7 +42,7 @@ export function KlinesChart({
 
   return (
     <div className={'flex flex-col flex-1 gap-4 ' + className}>
-      <IntervalNav intervals={intervals} />
+      <TimeIntervalTabs intervals={intervals} />
       <div className='flex flex-col flex-1 border-[1px] border-gray-200 rounded-lg overflow-hidden'>
         <LightWeightChart
           className='flex-1 pr-2'
@@ -77,5 +75,3 @@ export function KlinesChart({
     </div>
   );
 }
-
-const COLOR_GRAY_200 = 'rgba(197, 203, 206, 0.5)';

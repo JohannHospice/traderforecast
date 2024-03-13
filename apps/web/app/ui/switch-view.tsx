@@ -3,7 +3,10 @@
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useRedirectWithSearchParams } from '@/lib/hooks/useRedirectWithSearchParams';
 import { GridIcon, TableIcon } from '@radix-ui/react-icons';
-import { SEARCH_PARAMS_LIST_SYMBOLS, SYMBOL_VIEWS } from '../constants';
+import {
+  SEARCH_PARAMS_LIST_SYMBOLS,
+  SYMBOL_VIEWS,
+} from '../constants/navigation';
 
 export function SwitchView() {
   const { searchParams, redirectWithSearchParams } =

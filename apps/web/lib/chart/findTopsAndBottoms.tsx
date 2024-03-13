@@ -1,7 +1,6 @@
-'use client';
 import { SeriesMarker, Time, UTCTimestamp } from 'lightweight-charts';
 
-function findTopsAndBottoms(klines: Kline[]) {
+export function findTopsAndBottoms(klines: Kline[]) {
   const markers: SeriesMarker<Time>[] = [];
   const significatKlines = [klines[0]];
 
