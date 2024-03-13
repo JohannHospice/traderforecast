@@ -1,11 +1,13 @@
 'use client';
 import { DataTable } from '@/components/data-table';
-import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
-import { CaretSortIcon } from '@radix-ui/react-icons';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+import {
+  createCellNumber,
+  createSortButton,
+} from '@/components/template-data-table';
 import { formatNumber, formatPercent } from '@/lib/helpers/string';
+import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { ColumnDef } from '@tanstack/react-table';
+import { useRouter } from 'next/navigation';
 
 export function TableSymbols({ symbols }: { symbols: Symbol[] }) {
   const router = useRouter();
@@ -69,34 +71,5 @@ export function TableSymbols({ symbols }: { symbols: Symbol[] }) {
       }
       onRowClick={(row) => router.push(`/symbols/${row.original.slug}`)}
     />
-  );
-}
-
-function createCellNumber<T extends { getValue: () => any }>(
-  formatNumber: (value: string | number | undefined) => string,
-  getClassName?: (value: any) => string
-) {
-  return (param: T) => (
-    <div
-      className={
-        'text-right ' + (getClassName && getClassName(param.getValue()))
-      }
-    >
-      {formatNumber(param.getValue() as unknown as number)}
-    </div>
-  );
-}
-
-function createSortButton(title: string, isRight?: boolean) {
-  return ({ column }: any) => (
-    <div className={isRight ? 'text-right' : 'text-left'}>
-      <Button
-        variant='ghost'
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        {title}
-        <CaretSortIcon className='ml-2 h-4 w-4' />
-      </Button>
-    </div>
   );
 }
