@@ -1,13 +1,12 @@
-import CardSymbol from '@/components/card-symbol';
+import { Combobox } from '@/components/combobox';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import api from '@/lib/api';
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { Combobox } from '@/components/combobox';
 import { SEARCH_PARAMS, SYMBOL_VIEWS } from './constants/navigation';
 import { SwitchView } from './ui/switch-view';
 import { TableSymbols } from './ui/table-symbols';
+import { GridSymbols } from './ui/grid-symbols';
 
 export default async function Page({
   searchParams,
@@ -60,13 +59,7 @@ export default async function Page({
           <AlertDescription>Try a different search query.</AlertDescription>
         </Alert>
       ) : isGrid ? (
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-          {symbols.map((symbol) => (
-            <Link key={symbol.slug} href={`/symbols/${symbol.slug}`}>
-              <CardSymbol symbol={symbol} />
-            </Link>
-          ))}
-        </div>
+        <GridSymbols symbols={symbols} />
       ) : (
         <TableSymbols symbols={symbols} />
       )}
