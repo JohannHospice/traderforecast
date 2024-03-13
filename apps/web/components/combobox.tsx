@@ -17,21 +17,26 @@ import {
 } from '@/components/ui/command';
 import { cn } from '../lib/tailwind/utils';
 
-export function Combobox({
-  values,
+export function Combobox<T extends string>({
+  options: options = [],
   placeholder,
   search,
   noOptions,
   disabled,
+  multiple,
+  values,
+  onSelect,
 }: {
   placeholder: string;
   search: string;
   noOptions: string;
-  values: { value: string; label: string }[];
+  options?: { value: T; label: string }[];
   disabled?: boolean;
+  multiple?: boolean;
+  values: T[];
+  onSelect?: (value: T) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState('');
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -43,31 +48,37 @@ export function Combobox({
           className='w-[220px] justify-between'
           disabled={disabled}
         >
-          {value
-            ? values.find((option) => option.value === value)?.label
+          {values.length > 0
+            ? values
+                .map((v) => options.find((option) => option.value === v)?.label)
+                .join(', ')
             : placeholder}
           <CaretSortIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className='w-[220px] p-0'>
+      <PopoverContent className='w-[220px] p-0 max-h-[300px] overflow-y-auto'>
         <Command>
           <CommandInput placeholder={search} className='h-9' />
           <CommandEmpty>{noOptions}</CommandEmpty>
           <CommandGroup>
-            {values.map((option) => (
+            {options.map((option) => (
               <CommandItem
                 key={option.value}
                 value={option.value}
                 onSelect={(currentValue) => {
-                  setValue(currentValue === value ? '' : currentValue);
-                  setOpen(false);
+                  if (onSelect) {
+                    onSelect(currentValue as T);
+                  }
+                  if (!multiple) {
+                    setOpen(false);
+                  }
                 }}
               >
                 {option.label}
                 <CheckIcon
                   className={cn(
                     'ml-auto h-4 w-4',
-                    value === option.value ? 'opacity-100' : 'opacity-0'
+                    values.includes(option.value) ? 'opacity-100' : 'opacity-0'
                   )}
                 />
               </CommandItem>

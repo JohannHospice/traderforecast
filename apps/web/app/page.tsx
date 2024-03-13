@@ -38,7 +38,7 @@ export default async function Page({
           placeholder='Select market segment...'
           search='Search market segment...'
           noOptions='No market segment found.'
-          values={Array.from(
+          options={Array.from(
             symbols.reduce((acc, symbol) => {
               symbol.market_segments?.forEach((segment) => {
                 acc.add(segment);
@@ -49,6 +49,7 @@ export default async function Page({
             value: segment,
             label: segment,
           }))}
+          values={[]}
         />
         <SwitchView />
       </div>
