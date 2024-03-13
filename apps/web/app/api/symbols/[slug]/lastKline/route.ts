@@ -1,5 +1,5 @@
 import api from '@/lib/api';
-import { SEARCH_PARAMS_SYMBOL } from '@/app/constants/navigation';
+import { SEARCH_PARAMS } from '@/app/constants/navigation';
 
 export const dynamic = 'force-dynamic'; // defaults to auto
 
@@ -10,7 +10,7 @@ export async function GET(
   console.log('GET:lastKline');
 
   const { searchParams } = new URL(request.url);
-  const interval = searchParams.get(SEARCH_PARAMS_SYMBOL.INTERVAL);
+  const interval = searchParams.get(SEARCH_PARAMS.INTERVAL);
 
   if (!interval) {
     return new Response('Interval is required', { status: 400 });

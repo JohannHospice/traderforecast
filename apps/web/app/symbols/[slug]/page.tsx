@@ -2,23 +2,25 @@ import { redirect } from 'next/navigation';
 import CardSymbol from '@/components/card-symbol';
 import api from '@/lib/api/';
 import CandelstickChart from './ui/candelstick-chart';
-import { SEARCH_PARAMS_SYMBOL } from '@/app/constants/navigation';
+import { SEARCH_PARAMS } from '@/app/constants/navigation';
 
 export default async function Page({
   params,
   searchParams,
 }: {
   params: { slug: string };
-  searchParams: Record<SEARCH_PARAMS_SYMBOL, string>;
+  searchParams: Record<SEARCH_PARAMS, string>;
 }) {
-  if (searchParams[SEARCH_PARAMS_SYMBOL.INTERVAL] === undefined) {
-    return redirect('?i=1d&s=utc_now-365d');
+  if (searchParams[SEARCH_PARAMS.INTERVAL] === undefined) {
+    return redirect(
+      `?${SEARCH_PARAMS.INTERVAL}=1d&${SEARCH_PARAMS.START_TIME}=utc_now-365d`
+    );
   }
 
   const { symbol, klines } = await api.market.klines({
     slug: params.slug,
-    interval: searchParams[SEARCH_PARAMS_SYMBOL.INTERVAL],
-    startTime: searchParams[SEARCH_PARAMS_SYMBOL.START_TIME],
+    interval: searchParams[SEARCH_PARAMS.INTERVAL],
+    startTime: searchParams[SEARCH_PARAMS.START_TIME],
   });
 
   return (
@@ -33,7 +35,7 @@ export default async function Page({
       <CandelstickChart
         klines={klines}
         intervals={api.market.intervals}
-        interval={searchParams[SEARCH_PARAMS_SYMBOL.INTERVAL]}
+        interval={searchParams[SEARCH_PARAMS.INTERVAL]}
         slug={params.slug}
       />
     </>

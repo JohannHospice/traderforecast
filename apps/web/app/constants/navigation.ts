@@ -3,12 +3,9 @@ export enum SYMBOL_VIEWS {
   TABLE = 'table',
 }
 
-export enum SEARCH_PARAMS_LIST_SYMBOLS {
-  VIEWS = 't',
-  QUERY = 'q',
-}
-
-export enum SEARCH_PARAMS_SYMBOL {
-  INTERVAL = 'i',
-  START_TIME = 's',
+export enum SEARCH_PARAMS {
+  VIEWS = 'view',
+  QUERY = 'slug',
+  INTERVAL = 'interval',
+  START_TIME = 'from',
 }

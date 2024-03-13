@@ -1,6 +1,6 @@
 'use client';
 
-import { SEARCH_PARAMS_SYMBOL } from '@/app/constants/navigation';
+import { SEARCH_PARAMS } from '@/app/constants/navigation';
 import { LightWeightChart } from '@/components/chart-lightweight';
 import api from '@/lib/api';
 import { findTopsAndBottoms } from '@/lib/chart/find-tops-and-bottoms';
@@ -36,7 +36,7 @@ export default function CandelstickChart({
       if (api.market.isRealTimeEnabled()) {
         handler.realTimeUpdate({
           series,
-          url: `/api/symbols/${slug}/lastKline?${SEARCH_PARAMS_SYMBOL.INTERVAL}=${interval}`,
+          url: `/api/symbols/${slug}/lastKline?${SEARCH_PARAMS.INTERVAL}=${interval}`,
         });
       }
     },

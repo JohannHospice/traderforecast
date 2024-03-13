@@ -5,31 +5,25 @@ import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { Combobox } from '@/components/combobox';
-import {
-  SEARCH_PARAMS_LIST_SYMBOLS,
-  SYMBOL_VIEWS,
-} from './constants/navigation';
+import { SEARCH_PARAMS, SYMBOL_VIEWS } from './constants/navigation';
 import { SwitchView } from './ui/switch-view';
 import { TableSymbols } from './ui/table-symbols';
 
 export default async function Page({
   searchParams,
 }: {
-  searchParams: Record<SEARCH_PARAMS_LIST_SYMBOLS, string>;
+  searchParams: Record<SEARCH_PARAMS, string>;
 }) {
-  if (searchParams[SEARCH_PARAMS_LIST_SYMBOLS.VIEWS] === undefined) {
-    return redirect(
-      `?${SEARCH_PARAMS_LIST_SYMBOLS.VIEWS}=${SYMBOL_VIEWS.TABLE}`
-    );
+  if (searchParams[SEARCH_PARAMS.VIEWS] === undefined) {
+    return redirect(`?${SEARCH_PARAMS.VIEWS}=${SYMBOL_VIEWS.TABLE}`);
   }
 
   const symbols = await api.market.symbols({
-    query: searchParams[SEARCH_PARAMS_LIST_SYMBOLS.QUERY],
+    query: searchParams[SEARCH_PARAMS.QUERY],
   });
 
   const isEmpty = symbols.length === 0;
-  const isGrid =
-    searchParams[SEARCH_PARAMS_LIST_SYMBOLS.VIEWS] === SYMBOL_VIEWS.GRID;
+  const isGrid = searchParams[SEARCH_PARAMS.VIEWS] === SYMBOL_VIEWS.GRID;
 
   return (
     <div className='flex flex-col gap-4'>

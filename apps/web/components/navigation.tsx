@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { SEARCH_PARAMS_LIST_SYMBOLS } from '@/app/constants/navigation';
+import { SEARCH_PARAMS } from '@/app/constants/navigation';
 import { useRedirectWithSearchParams } from '@/lib/hooks/useRedirectWithSearchParams';
 import { Input } from './ui/input';
 import {
@@ -46,13 +46,11 @@ export function Navigation() {
               className='w-full max-w-[400px] pl-8'
               type='symbol'
               placeholder='Search'
-              defaultValue={
-                searchParams.get(SEARCH_PARAMS_LIST_SYMBOLS.QUERY) || ''
-              }
+              defaultValue={searchParams.get(SEARCH_PARAMS.QUERY) || ''}
               onChange={(e) => {
                 redirectWithSearchParams(
                   {
-                    [SEARCH_PARAMS_LIST_SYMBOLS.QUERY]: e.target.value,
+                    [SEARCH_PARAMS.QUERY]: e.target.value,
                   },
                   '/'
                 );
