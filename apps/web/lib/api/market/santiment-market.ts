@@ -8,7 +8,7 @@ export class SantimentMarket<T> implements Market {
     this.client = client;
   }
 
-  intervals: string[] = ['1h', '4h', '1d', '1w'];
+  intervals: string[] = ['1h', '4h', '1d', '1w', '2w'];
 
   async lastKline(params: { slug: string; interval: string }): Promise<Kline> {
     const {

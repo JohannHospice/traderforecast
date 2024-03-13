@@ -1,9 +1,8 @@
 'use client';
 
-import { TimeChartOptions } from 'lightweight-charts';
+import { DeepPartial, TimeChartOptions } from 'lightweight-charts';
 import React, { useEffect, useRef } from 'react';
 import { LightWeightChartHandler } from '@/lib/chart/lightweight-chart';
-import { DeepPartial } from '@apollo/client/utilities';
 
 export function LightWeightChart({
   className,

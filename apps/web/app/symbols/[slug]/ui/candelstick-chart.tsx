@@ -3,11 +3,14 @@
 import { SEARCH_PARAMS_SYMBOL } from '@/app/constants/navigation';
 import { LightWeightChart } from '@/components/chart-lightweight';
 import api from '@/lib/api';
-import { findTopsAndBottoms } from '@/lib/chart/findTopsAndBottoms';
+import { findTopsAndBottoms } from '@/lib/chart/find-tops-and-bottoms';
 import { LightWeightChartHandler } from '@/lib/chart/lightweight-chart';
-import { ColorType } from 'lightweight-charts';
+import {
+  OPTIONS_DARK,
+  OPTIONS_LIGHT,
+} from '@/styles/lightweight-charts-options';
+import { useTheme } from 'next-themes';
 import { useCallback } from 'react';
-import { COLOR_GRAY_200 } from '../../../../styles/colors';
 import { TimeIntervalTabs } from './time-interval-tabs';
 
 export default function CandelstickChart({
@@ -40,36 +43,21 @@ export default function CandelstickChart({
     [klines, slug, interval]
   );
 
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
+
   return (
-    <div className={'flex flex-col flex-1 gap-4 ' + className}>
+    <div
+      className={
+        'flex flex-col flex-1 gap-8 p-8 border-[1px] rounded-lg ' + className
+      }
+    >
       <TimeIntervalTabs intervals={intervals} />
-      <div className='flex flex-col flex-1 border-[1px] border-gray-200 rounded-lg overflow-hidden'>
+      <div className='flex flex-col flex-1 overflow-hidden'>
         <LightWeightChart
           className='flex-1 pr-2'
           onInit={onInit}
-          options={{
-            layout: {
-              background: {
-                type: ColorType.Solid,
-                color: 'white',
-              },
-              textColor: 'black',
-            },
-            grid: {
-              vertLines: {
-                color: COLOR_GRAY_200,
-              },
-              horzLines: {
-                color: COLOR_GRAY_200,
-              },
-            },
-            timeScale: {
-              borderColor: COLOR_GRAY_200,
-            },
-            rightPriceScale: {
-              borderColor: COLOR_GRAY_200,
-            },
-          }}
+          options={isLight ? OPTIONS_LIGHT : OPTIONS_DARK}
         />
       </div>
     </div>

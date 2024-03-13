@@ -56,7 +56,7 @@ export default function CardSymbol({
           className={
             horizontal
               ? 'flex flex-row items-center gap-8 p-0'
-              : 'flex flex-col  gap-2'
+              : 'flex flex-col gap-2'
           }
         >
           <PriceTitle

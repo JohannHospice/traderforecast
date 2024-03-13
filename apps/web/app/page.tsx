@@ -1,16 +1,16 @@
-import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
-import Link from 'next/link';
 import CardSymbol from '@/components/card-symbol';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import api from '@/lib/api';
+import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { Combobox } from '@/components/combobox';
 import {
   SEARCH_PARAMS_LIST_SYMBOLS,
   SYMBOL_VIEWS,
 } from './constants/navigation';
-import { TableSymbols } from './ui/table-symbols';
 import { SwitchView } from './ui/switch-view';
-import { redirect } from 'next/navigation';
-import { Combobox } from '../components/combobox';
+import { TableSymbols } from './ui/table-symbols';
 
 export default async function Page({
   searchParams,

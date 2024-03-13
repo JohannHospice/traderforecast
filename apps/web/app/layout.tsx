@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
-import { Navigation } from '@/components/navigation';
 import '@/styles/globals.css';
+import { Navigation } from '@/components/navigation';
+import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
   title: 'Trading patterns',
@@ -13,10 +14,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }): JSX.Element {
   return (
-    <html lang='en'>
-      <body className='flex flex-col min-h-[100vh]'>
-        <Navigation />
-        <div className='py-8 px-8 flex flex-col flex-1'>{children}</div>
+    <html lang='en' suppressHydrationWarning>
+      <head />
+      <body>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='system'
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className='flex flex-col min-h-[100vh]'>
+            <Navigation />
+            <div className='py-8 px-8 flex flex-col flex-1'>{children}</div>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

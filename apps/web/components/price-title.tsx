@@ -1,5 +1,3 @@
-import { formatNumber } from '@/lib/helpers/string';
-
 export function PriceTitle({
   value,
   title,
