@@ -1,8 +1,12 @@
 'use client';
 
-import { DeepPartial, IChartApi, TimeChartOptions } from 'lightweight-charts';
-import React, { useEffect, useRef, useState } from 'react';
-import { LightWeightChartHandler } from '@/lib/chart/lightweight-chart';
+import {
+  DeepPartial,
+  IChartApi,
+  TimeChartOptions,
+  createChart,
+} from 'lightweight-charts';
+import { useEffect, useRef } from 'react';
 
 export function LightWeightChart({
   className,
@@ -14,36 +18,56 @@ export function LightWeightChart({
   onInit: (chart: IChartApi) => void | (() => void);
 }) {
   const chartContainerRef = useRef<HTMLDivElement | null>(null);
-  const [handler, setHandler] = useState<LightWeightChartHandler | null>(null);
+  const chart = useRef<IChartApi | null>(null);
+
+  /**
+   * FIXME: This is a workaround to fix the chart width when the window is resized
+   * Hints:
+   * - when the winddow is sized down the chart width is not updated because the element html keeps the same width
+   * - this is maybe due to the css grid layout
+   */
+  const offsetOnResize = useRef<{ x: number; y: number }>();
 
   useEffect(() => {
     const { current } = chartContainerRef;
-
     if (current === null) {
       return;
     }
 
-    const handler = new LightWeightChartHandler(current, options);
+    chart.current = createChart(current, { ...options });
+    chart.current.timeScale().fitContent();
 
-    setHandler(handler);
+    const onDestroy = onInit(chart.current);
 
-    let onDestroy = onInit(handler.chart);
+    const handleResize = () => {
+      if (!offsetOnResize.current) {
+        offsetOnResize.current = {
+          x: current.clientWidth - window.innerWidth,
+          y: current.clientHeight - window.innerHeight,
+        };
+      }
+      chart.current?.applyOptions({
+        width: window.innerWidth + offsetOnResize.current.x,
+        height: window.innerHeight + offsetOnResize.current.y,
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
 
     return () => {
       if (onDestroy) {
         onDestroy();
       }
-      if (handler) {
-        handler.remove();
-      }
+      chart.current?.remove();
+      window.removeEventListener('resize', handleResize!);
     };
   }, [onInit]);
 
   useEffect(() => {
-    if (handler && options) {
-      handler.chart.applyOptions(options);
+    if (options) {
+      chart.current?.applyOptions(options);
     }
-  }, [handler, options]);
+  }, [options]);
 
   return <div ref={chartContainerRef} className={className} />;
 }

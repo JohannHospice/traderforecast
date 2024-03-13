@@ -1,5 +1,5 @@
 import { CandlestickData, Time } from 'lightweight-charts';
-import { millisecondsToTime } from '../../../../lib/helpers/unit';
+import { millisecondsToTime } from '@/lib/helpers/unit';
 
 export function klineToCandlestick(kline: Kline): CandlestickData<Time> {
   return {

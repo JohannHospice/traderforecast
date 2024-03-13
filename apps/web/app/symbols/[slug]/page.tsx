@@ -2,7 +2,7 @@ import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import CardSymbol from '@/components/card-symbol';
 import api from '@/lib/api/';
 import { redirect } from 'next/navigation';
-import CandelstickChart from './ui/candelstick-chart';
+import CardChart from './components/card-chart';
 
 export default async function Page({
   params,
@@ -40,7 +40,7 @@ export default async function Page({
           {/* todo sidemenu */}
         </div>
         <div className='row-start-2 flex'>
-          <CandelstickChart
+          <CardChart
             klines={klines}
             intervals={api.market.intervals}
             interval={searchParams[SEARCH_PARAMS.INTERVAL]}
