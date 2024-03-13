@@ -25,17 +25,14 @@ import {
 import { useState } from 'react';
 import { Button } from './ui/button';
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-}
-
 export function DataTable<TData, TValue>({
   columns,
   data,
   onRowClick,
   pageSize = 10,
-}: DataTableProps<TData, TValue> & {
+}: {
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
   onRowClick?: (row: Row<TData>) => void;
   pageSize?: number;
 }) {
