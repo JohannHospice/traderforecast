@@ -7,6 +7,8 @@ export class ResistanceDetector
   implements ChartDetector<CreatePriceLineOptions[]>
 {
   execute(klines: Kline[]): CreatePriceLineOptions[] {
-    return [{ price: klines[klines.length - 100].close }];
+    return [
+      { price: klines[klines.length - 100].close, title: 'test resistance' },
+    ];
   }
 }

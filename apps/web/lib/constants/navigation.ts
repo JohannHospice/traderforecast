@@ -8,4 +8,7 @@ export enum SEARCH_PARAMS {
   QUERY = 'slug',
   INTERVAL = 'interval',
   START_TIME = 'from',
+  SEGMENTS = 'segments',
 }
+
+export const SEARCH_PARAM_ARRAY_SEPARATOR = ',';

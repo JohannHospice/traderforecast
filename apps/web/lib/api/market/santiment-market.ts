@@ -142,8 +142,10 @@ export class SantimentMarket<T> implements Market {
   }
 
   async symbols(
-    params?: { query?: string | undefined } | undefined
+    params?: { query?: string | undefined; segments?: string[] } | undefined
   ): Promise<Symbol[]> {
+    console.log({ params });
+
     const {
       data: { allProjects },
     } = await this.client.query<{ allProjects: Symbol[] }>({
@@ -210,18 +212,29 @@ export class SantimentMarket<T> implements Market {
     const query = params?.query ? params.query.toLowerCase() : undefined;
 
     const allUniqueProjects = allProjects.filter(
-      ({ ticker, slug, name }, index, self) => {
+      ({ ticker, slug, name, market_segments }, index, self) => {
         const duplicate = self.findIndex((p) => p.ticker === ticker) === index;
+
+        const isSegmentLooklike =
+          (params?.segments?.length ?? 0) > 0
+            ? params?.segments?.some((seg) =>
+                market_segments?.some(
+                  (ms) => ms.toLowerCase() === seg.toLowerCase()
+                )
+              )
+            : true;
+
         if (query) {
           return (
             duplicate &&
+            isSegmentLooklike &&
             (slug.toLowerCase().includes(query) ||
               name.toLowerCase().includes(query) ||
               ticker?.toLowerCase().includes(query))
           );
         }
 
-        return duplicate;
+        return duplicate && isSegmentLooklike;
       }
     );
 

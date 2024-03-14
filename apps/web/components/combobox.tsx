@@ -45,7 +45,7 @@ export function Combobox<T extends string>({
           variant='outline'
           role='combobox'
           aria-expanded={open}
-          className='w-[220px] justify-between'
+          className='min-w-[220px] justify-between'
           disabled={disabled}
         >
           {values.length > 0

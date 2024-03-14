@@ -1,11 +1,11 @@
-import { Combobox } from '@/components/combobox';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import api from '@/lib/api';
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import { redirect } from 'next/navigation';
 import { SEARCH_PARAMS, SYMBOL_VIEWS } from '../lib/constants/navigation';
+import { formatArrayInSearchParam } from '../lib/helpers/string';
 import { GridSymbols } from './components/grid-symbols';
-import { SwitchView } from './components/switch-view';
+import { MarketNav } from './components/market-nav';
 import { TableSymbols } from './components/table-symbols';
 
 export default async function Page({
@@ -16,13 +16,23 @@ export default async function Page({
   if (searchParams[SEARCH_PARAMS.VIEWS] === undefined) {
     return redirect(`?${SEARCH_PARAMS.VIEWS}=${SYMBOL_VIEWS.TABLE}`);
   }
-
   const symbols = await api.market.symbols({
     query: searchParams[SEARCH_PARAMS.QUERY],
+    segments: formatArrayInSearchParam(
+      searchParams[SEARCH_PARAMS.SEGMENTS] || ''
+    ),
   });
 
   const isEmpty = symbols.length === 0;
   const isGrid = searchParams[SEARCH_PARAMS.VIEWS] === SYMBOL_VIEWS.GRID;
+  const segments = Array.from(
+    symbols.reduce((acc, symbol) => {
+      symbol.market_segments?.forEach((segment) => {
+        acc.add(segment);
+      });
+      return acc;
+    }, new Set<string>())
+  );
 
   return (
     <div className='flex flex-col gap-4'>
@@ -32,26 +42,7 @@ export default async function Page({
       <p className='leading-7 text-gray-500'>
         Here's a list of all the symbols available on the exchange.
       </p>
-      <div className='flex flex-1 justify-between'>
-        <Combobox
-          placeholder='Select market segment...'
-          search='Search market segment...'
-          noOptions='No market segment found.'
-          options={Array.from(
-            symbols.reduce((acc, symbol) => {
-              symbol.market_segments?.forEach((segment) => {
-                acc.add(segment);
-              });
-              return acc;
-            }, new Set<string>())
-          ).map((segment) => ({
-            value: segment,
-            label: segment,
-          }))}
-          values={[]}
-        />
-        <SwitchView />
-      </div>
+      <MarketNav segments={segments} />
       {isEmpty ? (
         <Alert>
           <ExclamationTriangleIcon className='h-4 w-4' />

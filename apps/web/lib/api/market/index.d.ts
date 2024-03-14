@@ -8,7 +8,7 @@ interface Market {
     endTime?: number;
   }): Promise<{ symbol: Symbol; klines: Kline[] }>;
 
-  symbols(params?: { query?: string }): Promise<Symbol[]>;
+  symbols(params?: { query?: string; segments?: string[] }): Promise<Symbol[]>;
 
   lastKline(params: { slug: string; interval: string }): Promise<Kline>;
 }

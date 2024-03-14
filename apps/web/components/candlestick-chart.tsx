@@ -14,6 +14,7 @@ import {
   MarkerKeys,
   useChartDetector as useChartDetector,
 } from '../lib/hooks/useMarkerDetector';
+import { formatNumber } from '../lib/helpers/string';
 
 export function CandleStickChart({
   interval,
@@ -35,6 +36,25 @@ export function CandleStickChart({
   const onInit = useCallback(
     (chart: IChartApi) => {
       const series = chart.addCandlestickSeries();
+
+      // const areaSeries = chart.addAreaSeries({
+      //   lineColor: '#2962FF',
+      //   topColor: '#2962FF',
+      //   bottomColor: 'rgba(41, 98, 255, 0.28)',
+      // });
+      // areaSeries.setData([
+      //   { value: 24000, time: 1642425322 },
+      //   { value: 8, time: 1642511722 },
+      //   { value: 10, time: 1642598122 },
+      //   { value: 20, time: 1642684522 },
+      //   { value: 3, time: 1642770922 },
+      //   { value: 43, time: 1642857322 },
+      //   { value: 41, time: 1642943722 },
+      //   { value: 43, time: 1643030122 },
+      //   { value: 25000, time: 1643116522 },
+      //   { value: 73000, time: 1643202922 * 100 },
+      // ]);
+
       if (!isLight) {
         series.applyOptions({
           wickUpColor: 'rgb(54, 116, 217)',
@@ -79,11 +99,7 @@ export function CandleStickChart({
       options={{
         ...(isLight ? OPTIONS_LIGHT : OPTIONS_DARK),
         localization: {
-          priceFormatter: Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            currencyDisplay: 'symbol',
-          }).format,
+          priceFormatter: formatNumber,
         },
       }}
     />
