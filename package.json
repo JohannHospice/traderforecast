@@ -1,5 +1,5 @@
 {
-  "name": "trading",
+  "name": "traderforecast",
   "private": true,
   "scripts": {
     "build": "turbo build",

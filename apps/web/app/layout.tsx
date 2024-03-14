@@ -4,7 +4,7 @@ import { Navigation } from '@/components/navigation';
 import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
-  title: 'Trading patterns',
+  title: 'Traderforecast',
   description: 'An application to analyze trading patterns',
 };
 
