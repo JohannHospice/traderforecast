@@ -1,8 +1,8 @@
 import { SeriesMarker, Time } from 'lightweight-charts';
-import { MarkerDetector } from '.';
-import { millisecondsToTime } from '../../helpers/unit';
+import { ChartDetector } from '..';
+import { millisecondsToTime } from '@/lib/helpers/unit';
 
-export class TopMarkers implements MarkerDetector {
+export class TopMarkers implements ChartDetector<SeriesMarker<Time>[]> {
   constructor() {}
 
   execute(klines: Kline[]): SeriesMarker<Time>[] {
@@ -16,7 +16,7 @@ export class TopMarkers implements MarkerDetector {
           time: millisecondsToTime(kline.closeTime),
           position: 'aboveBar',
           color: 'green',
-          shape: 'arrowUp',
+          shape: 'arrowDown',
         });
       }
     }

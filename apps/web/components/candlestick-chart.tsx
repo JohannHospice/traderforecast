@@ -10,13 +10,16 @@ import {
 import { IChartApi } from 'lightweight-charts';
 import { useTheme } from 'next-themes';
 import { useCallback } from 'react';
-import { MarkerKeys, useMarkerDetector } from '../lib/hooks/useMarkerDetector';
+import {
+  MarkerKeys,
+  useChartDetector as useChartDetector,
+} from '../lib/hooks/useMarkerDetector';
 
 export function CandleStickChart({
   interval,
   klines,
   slug,
-  valuesMarker = [],
+  valuesMarker: selectedDetectors = [],
 }: {
   interval?: string;
   klines: Kline[];
@@ -27,22 +30,28 @@ export function CandleStickChart({
   const { theme } = useTheme();
   const isLight = theme === 'light';
 
-  const markerDetectorSet = useMarkerDetector(isLight);
+  const detectorSet = useChartDetector(isLight);
 
   const onInit = useCallback(
     (chart: IChartApi) => {
       const series = chart.addCandlestickSeries();
+      if (!isLight) {
+        series.applyOptions({
+          wickUpColor: 'rgb(54, 116, 217)',
+          upColor: 'rgb(54, 116, 217)',
+          wickDownColor: 'rgb(225, 50, 85)',
+          downColor: 'rgb(225, 50, 85)',
+          borderVisible: false,
+        });
+      }
 
       // creating candlestick series
       series.setData(klines.map(klineToCandlestick));
 
       // applying strategy markers
-      series.setMarkers(
-        valuesMarker
-          .map((option) => markerDetectorSet[option].execute(klines))
-          .flat()
-          .sort((a, b) => +a.time - +b.time)
-      );
+      selectedDetectors.map((option) => {
+        detectorSet.get(option).apply(series, klines);
+      });
 
       // hot reload
       const realtimeApi = new Realtime(1000);
@@ -60,14 +69,23 @@ export function CandleStickChart({
         realtimeApi.clear();
       };
     },
-    [klines, slug, interval, valuesMarker]
+    [klines, slug, interval, selectedDetectors]
   );
 
   return (
     <LightWeightChart
       className='flex flex-1 min-h-[480px]'
       onInit={onInit}
-      options={isLight ? OPTIONS_LIGHT : OPTIONS_DARK}
+      options={{
+        ...(isLight ? OPTIONS_LIGHT : OPTIONS_DARK),
+        localization: {
+          priceFormatter: Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            currencyDisplay: 'symbol',
+          }).format,
+        },
+      }}
     />
   );
 }

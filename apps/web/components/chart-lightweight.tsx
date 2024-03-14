@@ -10,7 +10,7 @@ import { useEffect, useRef } from 'react';
 
 export function LightWeightChart({
   className,
-  options,
+  options = {},
   onInit,
 }: {
   className?: string;
@@ -34,7 +34,7 @@ export function LightWeightChart({
       return;
     }
 
-    chart.current = createChart(current, { ...options });
+    chart.current = createChart(current);
     chart.current.timeScale().fitContent();
 
     const onDestroy = onInit(chart.current);
@@ -64,9 +64,7 @@ export function LightWeightChart({
   }, [onInit]);
 
   useEffect(() => {
-    if (options) {
-      chart.current?.applyOptions(options);
-    }
+    chart.current?.applyOptions(options);
   }, [options]);
 
   return <div ref={chartContainerRef} className={className} />;

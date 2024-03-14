@@ -27,7 +27,7 @@ export function CardChartHeader({
           label: interval.toUpperCase(),
           onClick: () => {
             redirectWithSearchParams({
-              [SEARCH_PARAMS.START_TIME]: `utc_now-${Number(interval[0]) * EXPECTED_KLINES}${interval[1]}`,
+              [SEARCH_PARAMS.START_TIME]: formatInterval(interval, 365),
               [SEARCH_PARAMS.INTERVAL]: interval,
             });
           },
@@ -45,4 +45,7 @@ export function CardChartHeader({
     </div>
   );
 }
-const EXPECTED_KLINES = 365;
+
+function formatInterval(interval: string, expectedKlines: number): string {
+  return `utc_now-${Number(interval[0]) * expectedKlines}${interval[1]}`;
+}
