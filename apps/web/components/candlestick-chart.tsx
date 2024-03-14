@@ -1,6 +1,7 @@
 'use client';
 import { LightWeightChart } from '@/components/chart-lightweight';
 import api from '@/lib/api';
+import { Indicator } from '@/lib/chart/indicator';
 import { Realtime } from '@/lib/helpers/realtime';
 import {
   OPTIONS_DARK,
@@ -9,46 +10,58 @@ import {
 import { IChartApi } from 'lightweight-charts';
 import { useTheme } from 'next-themes';
 import { useCallback } from 'react';
-import { CandlestickChartApplier } from '../lib/chart/chart-applier/candlestick-chart-applier';
-import { SerieApplier } from '../lib/chart/serie-applier';
-import { formatNumber } from '../lib/helpers/string';
-import { SerieApplierKeys } from '../lib/constants/serie-applier';
+import { LightweightCandlestick } from '@/lib/chart/candlestick/lightweight-candlestick';
+import { BottomIndicator } from '@/lib/chart/indicator/bottom-indicator';
+import { ResistanceIndicator } from '@/lib/chart/indicator/resistance-indicator';
+import { TopAndBottomIndicator } from '@/lib/chart/indicator/top-and-bottom-indicator';
+import { TopMarkersIndicator } from '@/lib/chart/indicator/top-indicator';
+import { SerieApplierKeys as IndiceKey } from '@/lib/constants/serie-applier';
+import { formatNumber } from '@/lib/helpers/string';
 
 const ENABLE_REALTIME = process.env.NEXT_PUBLIC_ENABLE_REALTIME === 'true';
+
+const INDICES = {
+  topbottom: TopAndBottomIndicator,
+  top: TopMarkersIndicator,
+  bottom: BottomIndicator,
+  resistance: ResistanceIndicator,
+} as Record<IndiceKey, new () => Indicator>;
 
 export function CandleStickChart({
   interval,
   klines,
   slug,
-  selectedDetectors: serieAppliers = [],
-  serieApplierSet,
+  selectedIndices = [],
 }: {
   interval?: string;
   klines: Kline[];
   slug?: string;
-  selectedDetectors?: SerieApplierKeys[];
-  serieApplierSet: {
-    [key in SerieApplierKeys]: SerieApplier;
-  };
+  selectedIndices?: IndiceKey[];
 }) {
   const { theme } = useTheme();
   const isLight = theme === 'light';
 
   const onInit = useCallback(
     (chart: IChartApi) => {
-      const chartApplier = new CandlestickChartApplier(chart, isLight);
-      chartApplier.add(klines);
+      const candlestick = new LightweightCandlestick(
+        chart.addCandlestickSeries(),
+        isLight
+      );
 
-      // applying strategy markers
-      chartApplier.apply(
-        serieAppliers.map((option) => serieApplierSet[option])
+      candlestick.setData(klines);
+
+      candlestick.applyIndices(
+        selectedIndices.map((key) => {
+          const Indice = INDICES[key];
+          return new Indice();
+        })
       );
 
       // hot reload
       const realtimeApi = new Realtime(1000);
       if (ENABLE_REALTIME && slug && interval) {
         realtimeApi.watch(async () => {
-          chartApplier.update([
+          candlestick.update([
             await api.realtimeMarket.hotKline(slug, interval),
           ]);
         });
@@ -56,12 +69,13 @@ export function CandleStickChart({
 
       // cleanup
       return () => {
-        chartApplier.clear();
         realtimeApi.clear();
       };
     },
-    [klines, slug, interval, serieAppliers, isLight]
+    [klines, slug, interval, isLight, selectedIndices]
   );
+
+  // TODO Create an onUpdate to add islight and selectedindices update init
 
   return (
     <LightWeightChart

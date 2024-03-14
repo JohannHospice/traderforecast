@@ -1,14 +1,8 @@
-import { SeriesMarker, Time } from 'lightweight-charts';
-import { millisecondsToTime } from '../../../../helpers/unit';
-import { ChartDetector } from '..';
+import { Indicator, IndicatorResult, Marker } from '.';
 
-export class TopAndBottomMarkers
-  implements ChartDetector<SeriesMarker<Time>[]>
-{
-  constructor() {}
-
-  execute(klines: Kline[]): SeriesMarker<Time>[] {
-    const markers: SeriesMarker<Time>[] = [];
+export class TopAndBottomIndicator implements Indicator {
+  execute(klines: Kline[]): IndicatorResult {
+    const markers: Marker[] = [];
 
     const significatKlines = [klines[0]];
 
@@ -22,9 +16,9 @@ export class TopAndBottomMarkers
       if (isHigh) {
         significatKlines.push(current);
         markers.push({
-          time: millisecondsToTime(current.openTime),
-          position: 'aboveBar',
+          time: current.closeTime,
           color: 'green',
+          position: 'aboveBar',
           shape: 'arrowDown',
         });
       }
@@ -32,14 +26,14 @@ export class TopAndBottomMarkers
       if (isLow) {
         significatKlines.push(current);
         markers.push({
-          time: millisecondsToTime(current.openTime),
-          position: 'belowBar',
+          time: current.closeTime,
           color: 'red',
+          position: 'belowBar',
           shape: 'arrowUp',
         });
       }
     }
 
-    return markers;
+    return { markers };
   }
 }

@@ -8,7 +8,7 @@ import {
 import { PriceTitle } from './price-title';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Badge } from './ui/badge';
-import { formatNumber, formatPercent } from '../lib/helpers/string';
+import { formatNumber, formatPercent } from '@/lib/helpers/string';
 
 export default function CardSymbol({
   symbol,

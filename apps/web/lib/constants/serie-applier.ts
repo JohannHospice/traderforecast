@@ -3,7 +3,7 @@
 export type SerieApplierKeys = keyof typeof SerieApplierKeysSet;
 
 export const SerieApplierKeysSet = {
-  'top-bottom': 'Top and Bottom',
+  topbottom: 'Top and Bottom',
   top: 'Top',
   bottom: 'Bottom',
   resistance: 'Resistance',

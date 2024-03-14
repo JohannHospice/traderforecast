@@ -1,4 +1,4 @@
-import { queryBuilder } from '../../helpers/url';
+import { queryBuilder } from '@/lib/helpers/url';
 
 /**
  * @deprecated
