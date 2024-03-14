@@ -1,7 +1,6 @@
 'use client';
 import { LightWeightChart } from '@/components/chart-lightweight';
 import api from '@/lib/api';
-import { klineToCandlestick } from '@/lib/helpers/lightweight-charts';
 import { Realtime } from '@/lib/helpers/realtime';
 import {
   OPTIONS_DARK,
@@ -10,90 +9,58 @@ import {
 import { IChartApi } from 'lightweight-charts';
 import { useTheme } from 'next-themes';
 import { useCallback } from 'react';
-import {
-  MarkerKeys,
-  useChartDetector as useChartDetector,
-} from '../lib/hooks/useMarkerDetector';
+import { CandlestickChartApplier } from '../lib/chart/chart-applier/candlestick-chart-applier';
+import { SerieApplier } from '../lib/chart/serie-applier';
 import { formatNumber } from '../lib/helpers/string';
+import { SerieApplierKeys } from '../lib/constants/serie-applier';
+
+const ENABLE_REALTIME = process.env.NEXT_PUBLIC_ENABLE_REALTIME === 'true';
 
 export function CandleStickChart({
   interval,
   klines,
   slug,
-  valuesMarker: selectedDetectors = [],
+  selectedDetectors: serieAppliers = [],
+  serieApplierSet,
 }: {
   interval?: string;
   klines: Kline[];
   slug?: string;
-  onSelectMarker?: (value: string) => void;
-  valuesMarker?: MarkerKeys[];
+  selectedDetectors?: SerieApplierKeys[];
+  serieApplierSet: {
+    [key in SerieApplierKeys]: SerieApplier;
+  };
 }) {
   const { theme } = useTheme();
   const isLight = theme === 'light';
 
-  const detectorSet = useChartDetector(isLight);
-
   const onInit = useCallback(
     (chart: IChartApi) => {
-      const series = chart.addCandlestickSeries();
-
-      // const areaSeries = chart.addAreaSeries({
-      //   lineColor: '#2962FF',
-      //   topColor: '#2962FF',
-      //   bottomColor: 'rgba(41, 98, 255, 0.28)',
-      // });
-      // areaSeries.setData([
-      //   { value: 24000, time: 1642425322 },
-      //   { value: 8, time: 1642511722 },
-      //   { value: 10, time: 1642598122 },
-      //   { value: 20, time: 1642684522 },
-      //   { value: 3, time: 1642770922 },
-      //   { value: 43, time: 1642857322 },
-      //   { value: 41, time: 1642943722 },
-      //   { value: 43, time: 1643030122 },
-      //   { value: 25000, time: 1643116522 },
-      //   { value: 73000, time: 1643202922 * 100 },
-      // ]);
-
-      if (!isLight) {
-        series.applyOptions({
-          wickUpColor: 'rgb(54, 116, 217)',
-          upColor: 'rgb(54, 116, 217)',
-          wickDownColor: 'rgb(225, 50, 85)',
-          downColor: 'rgb(225, 50, 85)',
-          borderVisible: false,
-        });
-      }
-
-      // creating candlestick series
-      series.setData(klines.map(klineToCandlestick));
+      const chartApplier = new CandlestickChartApplier(chart, isLight);
+      chartApplier.add(klines);
 
       // applying strategy markers
-      selectedDetectors.map((option) => {
-        detectorSet.get(option).apply(series, klines);
-      });
+      chartApplier.apply(
+        serieAppliers.map((option) => serieApplierSet[option])
+      );
 
       // hot reload
       const realtimeApi = new Realtime(1000);
-      if (
-        process.env.NEXT_PUBLIC_ENABLE_REALTIME === 'true' &&
-        slug &&
-        interval
-      ) {
+      if (ENABLE_REALTIME && slug && interval) {
         realtimeApi.watch(async () => {
-          const kline = await api.realtimeMarket.hotKline(slug, interval);
-
-          series.update(klineToCandlestick(kline));
+          chartApplier.update([
+            await api.realtimeMarket.hotKline(slug, interval),
+          ]);
         });
       }
 
       // cleanup
       return () => {
-        chart.removeSeries(series);
+        chartApplier.clear();
         realtimeApi.clear();
       };
     },
-    [klines, slug, interval, selectedDetectors]
+    [klines, slug, interval, serieAppliers, isLight]
   );
 
   return (

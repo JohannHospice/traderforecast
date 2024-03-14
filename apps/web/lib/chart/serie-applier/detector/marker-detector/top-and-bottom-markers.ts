@@ -1,5 +1,5 @@
 import { SeriesMarker, Time } from 'lightweight-charts';
-import { millisecondsToTime } from '../../../helpers/unit';
+import { millisecondsToTime } from '../../../../helpers/unit';
 import { ChartDetector } from '..';
 
 export class TopAndBottomMarkers

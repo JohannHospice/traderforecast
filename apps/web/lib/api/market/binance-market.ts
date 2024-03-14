@@ -1,4 +1,4 @@
-import { queryBuilder } from '@/helpers/url';
+import { queryBuilder } from '../../helpers/url';
 
 /**
  * @deprecated
@@ -51,6 +51,7 @@ export class BinanceMarket implements Market {
     if (data.code) throw new Error(data.msg);
 
     return {
+      // @ts-ignore
       symbol: {
         slug: options.slug,
         name: options.slug,

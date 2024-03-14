@@ -1,6 +1,6 @@
 import { SeriesMarker, Time } from 'lightweight-charts';
 import { ChartDetector } from '..';
-import { millisecondsToTime } from '../../../helpers/unit';
+import { millisecondsToTime } from '../../../../helpers/unit';
 
 export class BottomMarkers implements ChartDetector<SeriesMarker<Time>[]> {
   execute(klines: Kline[]): SeriesMarker<Time>[] {

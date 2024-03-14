@@ -1,10 +1,10 @@
 'use client';
 import { ISeriesApi, SeriesMarker, SeriesType, Time } from 'lightweight-charts';
-import { ChartDetector } from '../detector';
-import { ChartApplier } from '.';
+import { ChartDetector } from './detector';
+import { SerieApplier } from '.';
 
-export class MarkerDetectorApplier<T extends SeriesMarker<Time>[]>
-  implements ChartApplier
+export class MarkerSerieApplier<T extends SeriesMarker<Time>[]>
+  implements SerieApplier
 {
   private detector: ChartDetector<T>;
 

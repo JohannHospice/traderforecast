@@ -1,6 +1,9 @@
 'use client';
 import { Combobox } from '@/components/combobox';
-import { MARKER_OPTIONS, MarkerKeys } from '@/lib/hooks/useMarkerDetector';
+import {
+  SerieApplierOptions,
+  SerieApplierKeys,
+} from '@/lib/constants/serie-applier';
 
 import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import { useRedirectWithSearchParams } from '@/lib/hooks/useRedirectWithSearchParams';
@@ -12,8 +15,8 @@ export function CardChartHeader({
   valuesMarker = [],
 }: {
   intervals?: string[];
-  onSelectMarker?: (value: MarkerKeys) => void;
-  valuesMarker?: MarkerKeys[];
+  onSelectMarker?: (value: SerieApplierKeys) => void;
+  valuesMarker?: SerieApplierKeys[];
 }) {
   const { redirectWithSearchParams, searchParams } =
     useRedirectWithSearchParams();
@@ -39,7 +42,7 @@ export function CardChartHeader({
         search={'Search markers...'}
         noOptions={'No markers found.'}
         values={valuesMarker}
-        options={MARKER_OPTIONS}
+        options={SerieApplierOptions}
         onSelect={onSelectMarker}
       />
     </div>
