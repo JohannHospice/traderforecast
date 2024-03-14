@@ -75,7 +75,11 @@ export function CandleStickChart({
 
       // hot reload
       const realtimeApi = new Realtime(1000);
-      if (process.env.DISABLE_REALTIME && slug && interval) {
+      if (
+        process.env.NEXT_PUBLIC_ENABLE_REALTIME === 'true' &&
+        slug &&
+        interval
+      ) {
         realtimeApi.watch(async () => {
           const kline = await api.realtimeMarket.hotKline(slug, interval);
 
