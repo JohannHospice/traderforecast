@@ -3,6 +3,7 @@ import CardSymbol from '@/components/card-symbol';
 import api from '@/lib/api/';
 import { redirect } from 'next/navigation';
 import CardChart from './components/card-chart';
+import { Container } from '../../../components/container';
 
 export default async function Page({
   params,
@@ -25,30 +26,34 @@ export default async function Page({
 
   return (
     <>
-      <h1 className='scroll-m-20 text-lg font-extrabold tracking-tight lg:text-4xl'>
-        {symbol.name} Chart
-      </h1>
-      <p className='leading-7 text-gray-500'>
-        {symbol.name} is a trading pair available on the exchange.
-      </p>
-
-      <div className='grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] gap-y-4 flex-1 '>
-        <div className='col-span-2'>
-          <CardSymbol className='my-8' symbol={symbol} horizontal />
+      <Container>
+        <h1 className='scroll-m-20 text-lg font-extrabold tracking-tight lg:text-4xl'>
+          {symbol.name} Chart
+        </h1>
+        <p className='leading-7 text-gray-500'>
+          {symbol.name} is a trading pair available on the exchange.
+        </p>
+      </Container>
+      <Container fluid className='flex-1'>
+        <div className='grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] gap-y-0 sm:gap-y-4 flex-1'>
+          <div className='col-span-2 sm:flex'>
+            <CardSymbol symbol={symbol} noBorder />
+          </div>
+          <div className='row-start-2 gap-4 flex flex-col'>
+            {/* todo sidemenu */}
+          </div>
+          <div className='row-start-2 flex sm:border-t-0 border-t-[1px]'>
+            <CardChart
+              noBorder
+              klines={klines}
+              intervals={api.market.intervals}
+              interval={searchParams[SEARCH_PARAMS.INTERVAL]}
+              slug={params.slug}
+              className='flex-1'
+            />
+          </div>
         </div>
-        <div className='row-start-2 gap-4 flex flex-col'>
-          {/* todo sidemenu */}
-        </div>
-        <div className='row-start-2 flex'>
-          <CardChart
-            klines={klines}
-            intervals={api.market.intervals}
-            interval={searchParams[SEARCH_PARAMS.INTERVAL]}
-            slug={params.slug}
-            className='flex-1'
-          />
-        </div>
-      </div>
+      </Container>
     </>
   );
 }

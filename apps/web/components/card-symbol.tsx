@@ -12,29 +12,20 @@ import { formatNumber, formatPercent } from '@/lib/helpers/string';
 
 export default function CardSymbol({
   symbol,
-  horizontal,
   className,
+  noBorder,
 }: {
   symbol: Symbol;
-  horizontal?: boolean;
   className?: string;
+  noBorder?: boolean;
 }) {
   return (
     <Card
       className={
-        'relative ' + (horizontal ? ' flex m-0 pr-24 ' : '') + className
+        (noBorder ? ' border-0 sm:border-[1px]' : '') + ' ' + className
       }
     >
-      <Badge variant='outline' className='absolute top-0 right-0 mt-2 mr-2'>
-        Rank #{symbol.rank}
-      </Badge>
-
-      <CardHeader
-        className={
-          'flex flex-row items-center' +
-          (horizontal ? ' gap-8 mt-0' : ' gap-4 mt-2')
-        }
-      >
+      <CardHeader className={'flex flex-row items-center gap-4 relative'}>
         <Avatar className='w-8 h-8'>
           <AvatarImage src={symbol.logoUrl} />
           <AvatarFallback>{symbol.slug}</AvatarFallback>
@@ -45,20 +36,13 @@ export default function CardSymbol({
           </CardTitle>
           <CardDescription>{symbol.name}</CardDescription>
         </div>
+        <Badge variant='outline' className='absolute top-8 sm:top-4 right-4'>
+          Rank #{symbol.rank}
+        </Badge>
       </CardHeader>
-      <CardContent
-        className={
-          'flex gap-4 ' +
-          (horizontal ? 'flex-row items-center gap-8 p-0' : 'flex-col')
-        }
-      >
-        <div
-          className={
-            horizontal
-              ? 'flex flex-row items-center gap-8 p-0'
-              : 'flex flex-col gap-2'
-          }
-        >
+      {/* flex flex-col gap-8 p-4 sm:p-8 */}
+      <CardContent className={''}>
+        <div className={'flex flex-col gap-2'}>
           <PriceTitle
             title='Price'
             value={formatNumber(symbol.price_usd, 'standard')}

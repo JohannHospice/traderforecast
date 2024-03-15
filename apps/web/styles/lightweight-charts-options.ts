@@ -41,12 +41,13 @@ export const OPTIONS_LIGHT = createTimeChartOptions({
   bgColor: 'transparent',
   textColor: 'hsl(224 71.4% 4.1%)',
   lineColor: 'hsl(220 13% 91%)',
-  scaleColor: 'hsl(220 13% 91%)',
+  scaleColor: 'transparent',
 });
 
 export const OPTIONS_DARK = createTimeChartOptions({
   bgColor: 'transparent',
   textColor: 'hsl(210 20% 98%)',
   lineColor: 'hsl(180 2.86% 6.86%)',
-  scaleColor: 'hsl(215 27.9% 16.9%)',
+  scaleColor: 'transparent',
 });
+// 'hsl(215 27.9% 16.9%)'

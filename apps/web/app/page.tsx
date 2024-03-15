@@ -7,6 +7,7 @@ import { formatArrayInSearchParam } from '@/lib/helpers/string';
 import { GridSymbols } from './components/grid-symbols';
 import { MarketNav } from './components/market-nav';
 import { TableSymbols } from './components/table-symbols';
+import { Container } from '../components/container';
 
 export default async function Page({
   searchParams,
@@ -35,7 +36,7 @@ export default async function Page({
   );
 
   return (
-    <div className='flex flex-col gap-4'>
+    <Container>
       <h1 className='scroll-m-20 text-lg font-extrabold tracking-tight lg:text-4xl'>
         The Market is open!
       </h1>
@@ -54,6 +55,6 @@ export default async function Page({
       ) : (
         <TableSymbols symbols={symbols} />
       )}
-    </div>
+    </Container>
   );
 }
