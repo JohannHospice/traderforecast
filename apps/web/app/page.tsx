@@ -22,6 +22,8 @@ export default async function Page({
     segments: formatArrayInSearchParam(
       searchParams[SEARCH_PARAMS.SEGMENTS] || ''
     ),
+    page: 1,
+    size: 100,
   });
 
   const isEmpty = symbols.length === 0;

@@ -141,17 +141,20 @@ export class SantimentMarket<T> implements Market {
     };
   }
 
-  async symbols(
-    params?: { query?: string | undefined; segments?: string[] } | undefined
-  ): Promise<Symbol[]> {
+  async symbols(params?: {
+    query?: string | undefined;
+    segments?: string[];
+    page?: number;
+    size?: number;
+  }): Promise<Symbol[]> {
     console.log({ params });
 
     const {
       data: { allProjects },
     } = await this.client.query<{ allProjects: Symbol[] }>({
       query: gql`
-        query ($minVolume: Int) {
-          allProjects(minVolume: $minVolume) {
+        query ($minVolume: Int, $page: Int, $size: Int) {
+          allProjects(minVolume: $minVolume, page: $page, pageSize: $size) {
             slug
             name
             ticker
@@ -206,6 +209,8 @@ export class SantimentMarket<T> implements Market {
       variables: {
         slug: params?.query,
         minVolume: 0,
+        page: params?.page,
+        size: params?.size,
       },
     });
 
