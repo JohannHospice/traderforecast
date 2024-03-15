@@ -1,7 +1,8 @@
-import type { Metadata } from 'next';
-import '@/styles/globals.css';
 import { Navigation } from '@/components/navigation';
 import { ThemeProvider } from '@/components/theme-provider';
+import '@/styles/globals.css';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Traderforecast',
@@ -28,6 +29,7 @@ export default function RootLayout({
             <div className='py-8 px-8 flex flex-col flex-1'>{children}</div>
           </div>
         </ThemeProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
