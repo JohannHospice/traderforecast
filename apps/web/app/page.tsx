@@ -40,7 +40,7 @@ export default async function Page({
         The Market is open!
       </h1>
       <p className='leading-7 text-gray-500'>
-        Here's a list of all the symbols available on the exchange.
+        Here&apos;s a list of all the symbols available on the exchange.
       </p>
       <MarketNav segments={segments} />
       {isEmpty ? (

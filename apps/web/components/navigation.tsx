@@ -2,9 +2,6 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { SEARCH_PARAMS } from '@/lib/constants/navigation';
-import { useRedirectWithSearchParams } from '@/lib/hooks/useRedirectWithSearchParams';
-import { Input } from './ui/input';
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -15,11 +12,11 @@ import {
 import { MagnifyingGlassIcon, MoonIcon, SunIcon } from '@radix-ui/react-icons';
 import { Button } from './ui/button';
 import { useTheme } from 'next-themes';
+import { Suspense } from 'react';
+import { InputQuery } from './input-query';
 
 export function Navigation() {
   const pathname = usePathname();
-  const { redirectWithSearchParams, searchParams } =
-    useRedirectWithSearchParams();
   const { setTheme, theme } = useTheme();
 
   return (
@@ -42,20 +39,9 @@ export function Navigation() {
           </NavigationMenu>
           <div className='relative'>
             <MagnifyingGlassIcon className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
-            <Input
-              className='w-full max-w-[400px] pl-8'
-              type='symbol'
-              placeholder='Search'
-              defaultValue={searchParams.get(SEARCH_PARAMS.QUERY) || ''}
-              onChange={(e) => {
-                redirectWithSearchParams(
-                  {
-                    [SEARCH_PARAMS.QUERY]: e.target.value,
-                  },
-                  '/'
-                );
-              }}
-            />
+            <Suspense>
+              <InputQuery />
+            </Suspense>
           </div>
         </div>
 
