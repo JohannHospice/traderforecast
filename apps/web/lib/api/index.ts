@@ -23,26 +23,26 @@ export default {
       cache: new InMemoryCache(),
       link: from([
         // forward cache if last query where less than 5 minutes ago
-        new ApolloLink((operation, forward) => {
-          const { cache } = operation.getContext();
-          const cached = cache.extract();
-          if (cached) {
-            const query = operation.query.loc?.source.body;
-            if (query) {
-              const key = JSON.stringify({
-                query,
-                variables: operation.variables,
-              });
-              if (cached[key]) {
-                const diff = Date.now() - cached[key].timestamp;
-                if (diff < 5 * 1000) {
-                  return cached[key].result;
-                }
-              }
-            }
-          }
-          return forward(operation);
-        }),
+        // new ApolloLink((operation, forward) => {
+        //   const { cache } = operation.getContext();
+        //   const cached = cache.extract();
+        //   if (cached) {
+        //     const query = operation.query.loc?.source.body;
+        //     if (query) {
+        //       const key = JSON.stringify({
+        //         query,
+        //         variables: operation.variables,
+        //       });
+        //       if (cached[key]) {
+        //         const diff = Date.now() - cached[key].timestamp;
+        //         if (diff < 5 * 1000) {
+        //           return cached[key].result;
+        //         }
+        //       }
+        //     }
+        //   }
+        //   return forward(operation);
+        // }),
         // Log queries
         new ApolloLink((operation, forward) => {
           console.log('QUERY[santiment]:', operation.variables);
