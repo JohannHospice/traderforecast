@@ -25,10 +25,10 @@ export function GridSymbols({
   }, [items.length, page, redirectWithSearchParams, symbols.length]);
 
   return (
-    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
+    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 divide-y-[1px] sm:divide-y-0'>
       {items.map((symbol) => (
         <Link key={symbol.slug} href={`/symbols/${symbol.slug}`}>
-          <CardSymbol symbol={symbol} />
+          <CardSymbol symbol={symbol} noBorder />
         </Link>
       ))}
     </div>

@@ -20,7 +20,7 @@ export function MarketNav({ segments }: { segments: string[] }) {
   );
 
   return (
-    <div className='flex flex-1 justify-between'>
+    <div className='flex flex-1 justify-between flex-wrap gap-4'>
       <Combobox
         placeholder='Select market segment...'
         search='Search market segment...'

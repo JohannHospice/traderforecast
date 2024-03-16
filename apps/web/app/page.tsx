@@ -41,25 +41,29 @@ export default async function Page({
   );
 
   return (
-    <Container>
-      <h1 className='scroll-m-20 text-lg font-extrabold tracking-tight lg:text-4xl'>
-        The Market is open!
-      </h1>
-      <p className='leading-7 text-gray-500'>
-        Here&apos;s a list of all the symbols available on the exchange.
-      </p>
-      <MarketNav segments={segments} />
-      {isEmpty ? (
-        <Alert>
-          <ExclamationTriangleIcon className='h-4 w-4' />
-          <AlertTitle>No symbols found</AlertTitle>
-          <AlertDescription>Try a different search query.</AlertDescription>
-        </Alert>
-      ) : isGrid ? (
-        <GridSymbols symbols={symbols} page={page} />
-      ) : (
-        <TableSymbols symbols={symbols} page={page} pages={pages} />
-      )}
-    </Container>
+    <>
+      <Container>
+        <h1 className='scroll-m-20 text-lg font-extrabold tracking-tight lg:text-4xl'>
+          The Market is open!
+        </h1>
+        <p className='leading-7 text-gray-500'>
+          Here&apos;s a list of all the symbols available on the exchange.
+        </p>
+        <MarketNav segments={segments} />
+      </Container>
+      <Container fluid className='flex-1'>
+        {isEmpty ? (
+          <Alert>
+            <ExclamationTriangleIcon className='h-4 w-4' />
+            <AlertTitle>No symbols found</AlertTitle>
+            <AlertDescription>Try a different search query.</AlertDescription>
+          </Alert>
+        ) : isGrid ? (
+          <GridSymbols symbols={symbols} page={page} />
+        ) : (
+          <TableSymbols symbols={symbols} page={page} pages={pages} />
+        )}
+      </Container>
+    </>
   );
 }
