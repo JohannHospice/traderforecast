@@ -3,25 +3,25 @@ import { Indicator, IndicatorResult, Marker } from '.';
 export class TopMarkersIndicator implements Indicator {
   execute(klines: Kline[]): IndicatorResult {
     const markers: Marker[] = [];
-    const klineRegionSize = 1;
+    const klineRegionSize = 5;
 
     for (let i = klineRegionSize; i < klines.length; i++) {
-      // const next = klines[i];
       let isTop = true;
 
-      // a value of Math.ceil(klineRegionSize / 2)
       const part = Math.ceil(klineRegionSize / 2);
 
-      const current = klines[i - part];
+      const currentIndex = i - part;
+
+      const current = klines[currentIndex];
       for (let j = -part; j < part; j++) {
-        if (j === 0) {
-          continue;
-        }
+        const nextIndex = i + j;
         if (isTop === false) {
           break;
         }
-        const next = klines[i + j];
-        console.log(next);
+        if (nextIndex === currentIndex) {
+          continue;
+        }
+        const next = klines[nextIndex];
 
         isTop = current.close > next.close;
       }
