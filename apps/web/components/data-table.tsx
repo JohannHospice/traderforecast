@@ -31,6 +31,7 @@ export function DataTable<TData, TValue>({
   onRowClick,
   pagination,
   setPagination,
+  className,
 }: {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -46,6 +47,7 @@ export function DataTable<TData, TValue>({
     pageSize: number;
     pages: number;
   }) => void;
+  className?: string;
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -72,7 +74,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div>
+    <div className={className}>
       <div className='rounded-md border'>
         <Table>
           <TableHeader>
