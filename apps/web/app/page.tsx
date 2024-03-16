@@ -17,12 +17,15 @@ export default async function Page({
   if (searchParams[SEARCH_PARAMS.VIEWS] === undefined) {
     return redirect(`?${SEARCH_PARAMS.VIEWS}=${SYMBOL_VIEWS.TABLE}`);
   }
-  const symbols = await api.market.symbols({
+
+  const page = Number(searchParams[SEARCH_PARAMS.PAGE]) || 1;
+
+  const { symbols, pages } = await api.market.symbols({
     query: searchParams[SEARCH_PARAMS.QUERY],
     segments: formatArrayInSearchParam(
       searchParams[SEARCH_PARAMS.SEGMENTS] || ''
     ),
-    page: 1,
+    page: page,
     size: 100,
   });
 
@@ -53,9 +56,9 @@ export default async function Page({
           <AlertDescription>Try a different search query.</AlertDescription>
         </Alert>
       ) : isGrid ? (
-        <GridSymbols symbols={symbols} />
+        <GridSymbols symbols={symbols} page={page} />
       ) : (
-        <TableSymbols symbols={symbols} />
+        <TableSymbols symbols={symbols} page={page} pages={pages} />
       )}
     </Container>
   );

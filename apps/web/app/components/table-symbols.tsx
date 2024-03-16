@@ -8,12 +8,43 @@ import { formatNumber, formatPercent } from '@/lib/helpers/string';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { ColumnDef } from '@tanstack/react-table';
 import { useRouter } from 'next/navigation';
+import { useRedirectWithSearchParams } from '../../lib/hooks/useRedirectWithSearchParams';
+import { SEARCH_PARAMS } from '../../lib/constants/navigation';
+import { useEffect, useState } from 'react';
 
-export function TableSymbols({ symbols }: { symbols: Symbol[] }) {
+export function TableSymbols({
+  symbols,
+  page = 1,
+  pages,
+}: {
+  symbols: Symbol[];
+  page?: number;
+  pages: number;
+}) {
   const router = useRouter();
+
+  const { redirectWithSearchParams } = useRedirectWithSearchParams();
+
+  const pageSize = 10;
+  const [pagination, setPagination] = useState({
+    pageSize,
+    pageIndex: 0,
+    pages: pages * pageSize,
+  });
 
   return (
     <DataTable
+      pageSize={pageSize}
+      pagination={pagination}
+      setPagination={(pagination) => {
+        if (pagination.pageIndex <= pagination.pages) {
+          redirectWithSearchParams({
+            [SEARCH_PARAMS.PAGE]: pagination.pageIndex + 1,
+          });
+        }
+
+        setPagination(pagination);
+      }}
       data={symbols}
       columns={
         [

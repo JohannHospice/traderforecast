@@ -58,7 +58,7 @@ export function Combobox<T extends string>({
       </PopoverTrigger>
       <PopoverContent className='w-[220px] p-0 max-h-[300px] overflow-y-auto'>
         <Command>
-          <CommandInput placeholder={search} className='h-9' />
+          {/* <CommandInput placeholder={search} className='h-9' /> */}
           <CommandEmpty>{noOptions}</CommandEmpty>
           <CommandGroup>
             {options.map((option) => (

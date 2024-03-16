@@ -13,7 +13,7 @@ interface Market {
     segments?: string[];
     page?: number;
     size?: number;
-  }): Promise<Symbol[]>;
+  }): Promise<{ symbols: Symbol[]; pages: number }>;
 
   lastKline(params: { slug: string; interval: string }): Promise<Kline>;
 }

@@ -146,7 +146,7 @@ export class SantimentMarket<T> implements Market {
     segments?: string[];
     page?: number;
     size?: number;
-  }): Promise<Symbol[]> {
+  }): Promise<{ symbols: Symbol[]; pages: number }> {
     console.log({ params });
 
     const {
@@ -243,6 +243,6 @@ export class SantimentMarket<T> implements Market {
       }
     );
 
-    return allUniqueProjects;
+    return { symbols: allUniqueProjects, pages: 1 };
   }
 }

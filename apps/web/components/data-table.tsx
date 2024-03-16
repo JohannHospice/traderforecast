@@ -29,18 +29,28 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   onRowClick,
-  pageSize = 10,
+  pagination,
+  setPagination,
 }: {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   onRowClick?: (row: Row<TData>) => void;
   pageSize?: number;
+  pagination: {
+    pageIndex: number;
+    pageSize: number;
+    pages: number;
+  };
+  setPagination: (pagination: {
+    pageIndex: number;
+    pageSize: number;
+    pages: number;
+  }) => void;
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const [pagination, setPagination] = useState({ pageSize, pageIndex: 0 });
   const table = useReactTable({
     data,
     columns,
@@ -119,9 +129,9 @@ export function DataTable<TData, TValue>({
         <div className='flex-1 text-sm text-muted-foreground'>
           {table.getFilteredSelectedRowModel().rows.length > 0
             ? `${table.getFilteredSelectedRowModel().rows.length} of ${table.getFilteredRowModel().rows.length} row(s) selected.`
-            : `Page ${pagination.pageIndex + 1} of ${Math.ceil(
-                data.length / pagination.pageSize
-              )}`}
+            : `Page ${pagination.pageIndex + 1} of ${
+                pagination.pages || Math.ceil(data.length / pagination.pageSize)
+              }`}
         </div>
         <div className='space-x-2'>
           <Button

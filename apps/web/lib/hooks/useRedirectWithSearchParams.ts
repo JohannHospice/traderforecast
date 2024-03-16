@@ -5,10 +5,13 @@ export function useRedirectWithSearchParams() {
   const searchParams = useSearchParams();
 
   return {
-    redirectWithSearchParams(object: Record<string, string>, href?: string) {
+    redirectWithSearchParams(
+      object: Record<string, string | number>,
+      href?: string
+    ) {
       const params = new URLSearchParams(searchParams.toString());
       Object.entries(object).forEach(([key, value]) => {
-        params.set(key, value);
+        params.set(key, String(value));
       });
       router.push(`${href || ''}?${params.toString()}`);
     },
