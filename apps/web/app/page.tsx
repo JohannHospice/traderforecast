@@ -16,25 +16,20 @@ export default async function Page({
 }) {
   const page = Number(searchParams[SEARCH_PARAMS.PAGE]) || 1;
 
-  const { symbols, pages } = await api.market.symbols({
-    query: searchParams[SEARCH_PARAMS.QUERY],
-    segments: formatArrayInSearchParam(
-      searchParams[SEARCH_PARAMS.SEGMENTS] || ''
-    ),
-    page: page,
-    size: 100,
-  });
+  const [{ symbols, pages }, segments] = await Promise.all([
+    api.market.symbols({
+      query: searchParams[SEARCH_PARAMS.QUERY],
+      segments: formatArrayInSearchParam(
+        searchParams[SEARCH_PARAMS.SEGMENTS] || ''
+      ),
+      page: page,
+      size: 100,
+    }),
+    api.market.marketSegments(),
+  ]);
 
   const isEmpty = symbols.length === 0;
   const isGrid = searchParams[SEARCH_PARAMS.VIEWS] === SYMBOL_VIEWS.GRID;
-  const segments = Array.from(
-    symbols.reduce((acc, symbol) => {
-      symbol.market_segments?.forEach((segment) => {
-        acc.add(segment);
-      });
-      return acc;
-    }, new Set<string>())
-  );
 
   return (
     <>

@@ -93,29 +93,11 @@ export class SantimentMarket<T> implements Market {
               to: "utc_now"
               aggregation: LAST
             )
-            volume_usd_change_1d: aggregatedTimeseriesData(
-              metric: "volume_usd_change_1d"
-              from: "utc_now-1d"
-              to: "utc_now"
-              aggregation: LAST
-            )
             marketcap_usd: aggregatedTimeseriesData(
               metric: "marketcap_usd"
               from: "utc_now-1d"
               to: "utc_now"
               aggregation: LAST
-            )
-            dev_activity_1d: aggregatedTimeseriesData(
-              metric: "dev_activity_1d"
-              from: "utc_now-30d"
-              to: "utc_now"
-              aggregation: AVG
-            )
-            daily_active_addresses: aggregatedTimeseriesData(
-              metric: "daily_active_addresses"
-              from: "utc_now-30d"
-              to: "utc_now"
-              aggregation: AVG
             )
           }
         }
@@ -159,6 +141,8 @@ export class SantimentMarket<T> implements Market {
             name
             ticker
             logoUrl
+            market_segments
+            rank
             price_usd: aggregatedTimeseriesData(
               metric: "price_usd"
               from: "utc_now-1d"
@@ -177,32 +161,12 @@ export class SantimentMarket<T> implements Market {
               to: "utc_now"
               aggregation: LAST
             )
-            volume_usd_change_1d: aggregatedTimeseriesData(
-              metric: "volume_usd_change_1d"
-              from: "utc_now-1d"
-              to: "utc_now"
-              aggregation: LAST
-            )
             marketcap_usd: aggregatedTimeseriesData(
               metric: "marketcap_usd"
               from: "utc_now-1d"
               to: "utc_now"
               aggregation: LAST
             )
-            rank
-            dev_activity_1d: aggregatedTimeseriesData(
-              metric: "dev_activity_1d"
-              from: "utc_now-30d"
-              to: "utc_now"
-              aggregation: AVG
-            )
-            daily_active_addresses: aggregatedTimeseriesData(
-              metric: "daily_active_addresses"
-              from: "utc_now-30d"
-              to: "utc_now"
-              aggregation: AVG
-            )
-            market_segments
           }
         }
       `,
@@ -244,5 +208,23 @@ export class SantimentMarket<T> implements Market {
     );
 
     return { symbols: allUniqueProjects, pages: 1 };
+  }
+
+  async marketSegments(): Promise<string[]> {
+    const {
+      data: { currenciesMarketSegments },
+    } = await this.client.query<{
+      currenciesMarketSegments: { name: string }[];
+    }>({
+      query: gql`
+        {
+          currenciesMarketSegments {
+            name
+          }
+        }
+      `,
+    });
+
+    return currenciesMarketSegments.map((segment) => segment.name);
   }
 }

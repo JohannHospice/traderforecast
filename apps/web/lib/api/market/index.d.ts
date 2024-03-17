@@ -15,6 +15,8 @@ interface Market {
     size?: number;
   }): Promise<{ symbols: Symbol[]; pages: number }>;
 
+  marketSegments(): Promise<string[]>;
+
   lastKline(params: { slug: string; interval: string }): Promise<Kline>;
 }
 

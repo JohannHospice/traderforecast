@@ -51,6 +51,18 @@ export function MarketNav({ segments }: { segments: string[] }) {
     [redirectWithSearchParams]
   );
 
+  const onSelectSegment = useCallback(
+    (value: string) => {
+      redirectWithSearchParams({
+        [SEARCH_PARAMS.SEGMENTS]: (segmentValues.includes(value)
+          ? segmentValues.filter((detector) => detector !== value)
+          : [...segmentValues, value]
+        ).join(SEARCH_PARAM_ARRAY_SEPARATOR),
+      });
+    },
+    [redirectWithSearchParams, segmentValues]
+  );
+
   return (
     <div className='flex flex-1 justify-between flex-wrap gap-4'>
       <Combobox
@@ -63,14 +75,7 @@ export function MarketNav({ segments }: { segments: string[] }) {
           label: segment,
         }))}
         values={segmentValues}
-        onSelect={(value) => {
-          redirectWithSearchParams({
-            [SEARCH_PARAMS.SEGMENTS]: (segmentValues.includes(value)
-              ? segmentValues.filter((detector) => detector !== value)
-              : [...segmentValues, value]
-            ).join(SEARCH_PARAM_ARRAY_SEPARATOR),
-          });
-        }}
+        onSelect={onSelectSegment}
       />
       <GroupButton
         defaultValue={searchParamViewMode}
