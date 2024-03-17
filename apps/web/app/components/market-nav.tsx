@@ -10,13 +10,45 @@ import {
 import { GroupButton } from '@/components/group-button';
 import { Combobox } from '@/components/combobox';
 import { formatArrayInSearchParam } from '@/lib/helpers/string';
+import { useCallback, useEffect } from 'react';
+
+// TODO: refactor view mode implementation potentially bugs here
+const DEFAULT_VIEW_MODE = SYMBOL_VIEWS.GRID;
 
 export function MarketNav({ segments }: { segments: string[] }) {
   const { searchParams, redirectWithSearchParams } =
     useRedirectWithSearchParams();
 
-  const values = formatArrayInSearchParam(
+  const segmentValues = formatArrayInSearchParam(
     searchParams.get(SEARCH_PARAMS.SEGMENTS) || ''
+  );
+  const searchParamViewMode =
+    searchParams.get(SEARCH_PARAMS.VIEWS) || DEFAULT_VIEW_MODE;
+
+  useEffect(() => {
+    if (searchParamViewMode === '' || searchParamViewMode === null) {
+      // default view mode
+      redirectWithSearchParams({
+        [SEARCH_PARAMS.VIEWS]: DEFAULT_VIEW_MODE,
+      });
+      return;
+    }
+    if (searchParamViewMode !== localStorage.getItem(SEARCH_PARAMS.VIEWS)) {
+      // sync local storage with url
+      redirectWithSearchParams({
+        [SEARCH_PARAMS.VIEWS]: searchParamViewMode,
+      });
+    }
+  }, [redirectWithSearchParams, searchParamViewMode]);
+
+  const changeViewMode = useCallback(
+    (mode: string) => {
+      localStorage.setItem(SEARCH_PARAMS.VIEWS, mode);
+      redirectWithSearchParams({
+        [SEARCH_PARAMS.VIEWS]: mode,
+      });
+    },
+    [redirectWithSearchParams]
   );
 
   return (
@@ -30,36 +62,28 @@ export function MarketNav({ segments }: { segments: string[] }) {
           value: encodeURI(segment.toLowerCase()),
           label: segment,
         }))}
-        values={values}
+        values={segmentValues}
         onSelect={(value) => {
           redirectWithSearchParams({
-            [SEARCH_PARAMS.SEGMENTS]: (values.includes(value)
-              ? values.filter((detector) => detector !== value)
-              : [...values, value]
+            [SEARCH_PARAMS.SEGMENTS]: (segmentValues.includes(value)
+              ? segmentValues.filter((detector) => detector !== value)
+              : [...segmentValues, value]
             ).join(SEARCH_PARAM_ARRAY_SEPARATOR),
           });
         }}
       />
       <GroupButton
-        defaultValue={searchParams.get(SEARCH_PARAMS.VIEWS)}
+        defaultValue={searchParamViewMode}
         tabs={[
           {
             value: SYMBOL_VIEWS.TABLE,
             label: <TableIcon className='h-4 w-4' />,
-            onClick: () => {
-              redirectWithSearchParams({
-                [SEARCH_PARAMS.VIEWS]: SYMBOL_VIEWS.TABLE,
-              });
-            },
+            onClick: () => changeViewMode(SYMBOL_VIEWS.TABLE),
           },
           {
             value: SYMBOL_VIEWS.GRID,
             label: <GridIcon className='h-4 w-4' />,
-            onClick: () => {
-              redirectWithSearchParams({
-                [SEARCH_PARAMS.VIEWS]: SYMBOL_VIEWS.GRID,
-              });
-            },
+            onClick: () => changeViewMode(SYMBOL_VIEWS.GRID),
           },
         ]}
       />

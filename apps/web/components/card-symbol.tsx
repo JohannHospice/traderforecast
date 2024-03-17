@@ -22,7 +22,10 @@ export default function CardSymbol({
   return (
     <Card
       className={
-        (noBorder ? ' border-0 sm:border-[1px]' : '') + ' ' + className
+        'flex flex-col min-w-[270px] ' +
+        (noBorder ? ' border-0 sm:border-[1px]' : '') +
+        ' ' +
+        className
       }
     >
       <CardHeader className={'flex flex-row items-center gap-4 relative'}>
@@ -41,7 +44,7 @@ export default function CardSymbol({
         </Badge>
       </CardHeader>
       {/* flex flex-col gap-8 p-4 sm:p-8 */}
-      <CardContent className={''}>
+      <CardContent className={'flex-1 justify-between'}>
         <div className={'flex flex-col gap-2'}>
           <PriceTitle
             title='Price'

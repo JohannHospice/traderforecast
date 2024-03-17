@@ -14,10 +14,6 @@ export default async function Page({
 }: {
   searchParams: Record<SEARCH_PARAMS, string>;
 }) {
-  if (searchParams[SEARCH_PARAMS.VIEWS] === undefined) {
-    return redirect(`?${SEARCH_PARAMS.VIEWS}=${SYMBOL_VIEWS.TABLE}`);
-  }
-
   const page = Number(searchParams[SEARCH_PARAMS.PAGE]) || 1;
 
   const { symbols, pages } = await api.market.symbols({
