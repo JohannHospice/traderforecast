@@ -129,8 +129,6 @@ export class SantimentMarket<T> implements Market {
     page?: number;
     size?: number;
   }): Promise<{ symbols: Symbol[]; pages: number }> {
-    console.log({ params });
-
     const {
       data: { allProjects },
     } = await this.client.query<{ allProjects: Symbol[] }>({

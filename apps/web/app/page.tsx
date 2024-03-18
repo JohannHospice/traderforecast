@@ -23,7 +23,7 @@ export default async function Page({
         searchParams[SEARCH_PARAMS.SEGMENTS] || ''
       ),
       page: page,
-      size: 100,
+      size: 20,
     }),
     api.market.marketSegments(),
   ]);
@@ -50,7 +50,12 @@ export default async function Page({
             <AlertDescription>Try a different search query.</AlertDescription>
           </Alert>
         ) : isGrid ? (
-          <GridSymbols symbols={symbols} page={page} />
+          <GridSymbols
+            symbols={symbols}
+            page={page}
+            segments={searchParams[SEARCH_PARAMS.SEGMENTS]}
+            query={searchParams[SEARCH_PARAMS.QUERY]}
+          />
         ) : (
           <TableSymbols symbols={symbols} page={page} pages={pages} />
         )}

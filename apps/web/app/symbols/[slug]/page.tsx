@@ -37,7 +37,7 @@ export default async function Page({
       <Container fluid className='flex-1'>
         <div className='grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] gap-y-0 sm:gap-y-4 flex-1'>
           <div className='col-span-2 sm:flex'>
-            <CardSymbol symbol={symbol} noBorder />
+            <CardSymbol symbol={symbol} noBorder className='min-w-[270px]' />
           </div>
           <div className='row-start-2 gap-4 flex flex-col'>
             {/* todo sidemenu */}

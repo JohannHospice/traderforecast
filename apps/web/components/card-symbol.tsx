@@ -22,7 +22,7 @@ export default function CardSymbol({
   return (
     <Card
       className={
-        'flex flex-col min-w-[270px] ' +
+        'flex flex-col ' +
         (noBorder ? ' border-0 sm:border-[1px]' : '') +
         ' ' +
         className

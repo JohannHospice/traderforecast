@@ -30,7 +30,10 @@ export function CardChartHeader({
           label: interval.toUpperCase(),
           onClick: () => {
             redirectWithSearchParams({
-              [SEARCH_PARAMS.START_TIME]: formatInterval(interval, 365),
+              [SEARCH_PARAMS.START_TIME]: formatInterval(
+                interval,
+                getNumberOfKlinesResponsive()
+              ),
               [SEARCH_PARAMS.INTERVAL]: interval,
             });
           },
@@ -51,4 +54,17 @@ export function CardChartHeader({
 
 function formatInterval(interval: string, expectedKlines: number): string {
   return `utc_now-${Number(interval[0]) * expectedKlines}${interval[1]}`;
+}
+
+function getNumberOfKlinesResponsive(): number {
+  if (window.innerWidth < 768) {
+    return 50;
+  }
+  if (window.innerWidth < 1024) {
+    return 100;
+  }
+  if (window.innerWidth < 1440) {
+    return 150;
+  }
+  return 365;
 }

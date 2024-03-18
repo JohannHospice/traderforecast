@@ -18,7 +18,9 @@ export function InputQuery() {
           {
             [SEARCH_PARAMS.QUERY]: e.target.value,
           },
-          '/'
+          {
+            href: '/',
+          }
         );
       }}
     />
