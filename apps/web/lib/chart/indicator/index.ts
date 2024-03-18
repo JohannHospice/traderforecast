@@ -11,10 +11,11 @@ export type IndicatorResult = {
 
 export type Marker = {
   time: number;
-  price?: number;
   color?: string;
   position?: 'aboveBar' | 'belowBar' | 'inBar';
   shape?: 'circle' | 'square' | 'arrowUp' | 'arrowDown';
+  text?: string;
+  size?: number;
 };
 
 export type PriceLine = {

@@ -1,8 +1,10 @@
 'use client';
 import { LightWeightChart } from '@/components/chart-lightweight';
 import api from '@/lib/api';
-import { Indicator } from '@/lib/chart/indicator';
+import { LightweightCandlestick } from '@/lib/chart/candlestick/lightweight-candlestick';
+import { Indicators, SerieApplierKeys } from '@/lib/constants/serie-applier';
 import { Realtime } from '@/lib/helpers/realtime';
+import { formatNumber } from '@/lib/helpers/string';
 import {
   OPTIONS_DARK,
   OPTIONS_LIGHT,
@@ -10,22 +12,8 @@ import {
 import { IChartApi } from 'lightweight-charts';
 import { useTheme } from 'next-themes';
 import { useCallback } from 'react';
-import { LightweightCandlestick } from '@/lib/chart/candlestick/lightweight-candlestick';
-import { BottomIndicator } from '@/lib/chart/indicator/bottom-indicator';
-import { ResistanceIndicator } from '@/lib/chart/indicator/resistance-indicator';
-import { TopAndBottomIndicator } from '@/lib/chart/indicator/top-and-bottom-indicator';
-import { TopMarkersIndicator } from '@/lib/chart/indicator/top-indicator';
-import { SerieApplierKeys as IndiceKey } from '@/lib/constants/serie-applier';
-import { formatNumber } from '@/lib/helpers/string';
 
 const ENABLE_REALTIME = process.env.NEXT_PUBLIC_ENABLE_REALTIME === 'true';
-
-const INDICES = {
-  topbottom: TopAndBottomIndicator,
-  top: TopMarkersIndicator,
-  bottom: BottomIndicator,
-  resistance: ResistanceIndicator,
-} as Record<IndiceKey, new () => Indicator>;
 
 export function CandleStickChart({
   interval,
@@ -36,7 +24,7 @@ export function CandleStickChart({
   interval?: string;
   klines: Kline[];
   slug?: string;
-  selectedIndices?: IndiceKey[];
+  selectedIndices?: SerieApplierKeys[];
 }) {
   const { theme } = useTheme();
   const isLight = theme === 'light';
@@ -52,7 +40,7 @@ export function CandleStickChart({
 
       candlestick.applyIndices(
         selectedIndices.map((key) => {
-          const Indice = INDICES[key];
+          const Indice = Indicators[key];
           return new Indice();
         })
       );

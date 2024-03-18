@@ -11,12 +11,16 @@ export class LightWeightMarkerFactory
     color = 'black',
     position = 'inBar',
     shape = 'circle',
+    text,
+    size,
   }: Marker): SeriesMarker<Time> {
     return {
       time: millisecondsToTime(time),
       position,
       color,
       shape,
+      text,
+      size,
     };
   }
 }
