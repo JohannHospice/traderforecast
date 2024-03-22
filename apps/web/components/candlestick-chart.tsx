@@ -1,66 +1,76 @@
 'use client';
-import { LightWeightChart } from '@/components/chart-lightweight';
-import api from '@/lib/api';
 import { LightweightCandlestick } from '@/lib/chart/candlestick/lightweight-candlestick';
-import { Indicators, SerieApplierKeys } from '@/lib/constants/serie-applier';
-import { Realtime } from '@/lib/helpers/realtime';
+import { IndicatorKeys } from '@/lib/constants/indicator';
 import { formatNumber } from '@/lib/helpers/string';
 import {
   OPTIONS_DARK,
   OPTIONS_LIGHT,
 } from '@/styles/lightweight-charts-options';
-import { IChartApi } from 'lightweight-charts';
+import { IChartApi, createChart } from 'lightweight-charts';
 import { useTheme } from 'next-themes';
-import { useCallback } from 'react';
+import { useEffect, useRef } from 'react';
+import { LightWeightChart } from './chart-lightweight';
 
 const ENABLE_REALTIME = process.env.NEXT_PUBLIC_ENABLE_REALTIME === 'true';
 
 export function CandleStickChart({
-  interval,
-  klines,
-  slug,
-  selectedIndices = [],
+  klines = [],
+  selectedIndicators = [],
+  onLoadMore,
 }: {
-  interval?: string;
   klines: Kline[];
-  slug?: string;
-  selectedIndices?: SerieApplierKeys[];
+  selectedIndicators?: IndicatorKeys[];
+  onLoadMore?: () => void;
 }) {
   const { theme } = useTheme();
   const isLight = theme === 'light';
 
-  const onInit = useCallback(
-    (chart: IChartApi) => {
-      const candlestick = new LightweightCandlestick(
-        chart.addCandlestickSeries(),
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const divRef = useRef<HTMLDivElement | null>(null);
+  const chart = useRef<IChartApi | null>(null);
+  const candlestick = useRef<LightweightCandlestick | null>(null);
+
+  // onInit
+  useEffect(
+    () => {
+      if (
+        divRef.current === null ||
+        containerRef.current === null ||
+        chart.current !== null
+      ) {
+        return;
+      }
+      console.log('init');
+
+      chart.current = createChart(divRef.current);
+      chart.current.timeScale().fitContent();
+      candlestick.current = new LightweightCandlestick(
+        chart.current.addCandlestickSeries(),
         isLight
       );
 
-      candlestick.setData(klines);
-
-      candlestick.applyIndices(
-        selectedIndices.map((key) => {
-          const Indice = Indicators[key];
-          return new Indice();
-        })
-      );
-
-      // hot reload
-      const realtimeApi = new Realtime(1000);
-      if (ENABLE_REALTIME && slug && interval) {
-        realtimeApi.watch(async () => {
-          candlestick.update([
-            await api.realtimeMarket.hotKline(slug, interval),
-          ]);
+      const handleResize = () => {
+        console.log(chart.current?.timeScale().getVisibleRange());
+        chart.current?.applyOptions({
+          width: containerRef.current?.clientWidth,
+          height: containerRef.current?.clientHeight,
         });
-      }
+      };
 
-      // cleanup
+      window.addEventListener('resize', handleResize);
+
       return () => {
-        realtimeApi.clear();
+        console.log('cleanup');
+
+        if (chart.current) {
+          chart.current.remove();
+          chart.current = null;
+        }
+        window.removeEventListener('resize', handleResize);
       };
     },
-    [klines, slug, interval, isLight, selectedIndices]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [divRef.current, containerRef.current]
   );
 
   // TODO Create an onUpdate to add islight and selectedindices update init

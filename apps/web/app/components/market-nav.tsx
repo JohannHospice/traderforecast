@@ -13,7 +13,7 @@ import { formatArrayInSearchParam } from '@/lib/helpers/string';
 import { useCallback, useEffect } from 'react';
 
 // TODO: refactor view mode implementation potentially bugs here
-const DEFAULT_VIEW_MODE = SYMBOL_VIEWS.GRID;
+const DEFAULT_VIEW_MODE = SYMBOL_VIEWS.TABLE;
 
 export function MarketNav({ segments }: { segments: string[] }) {
   const { searchParams, redirectWithSearchParams } =

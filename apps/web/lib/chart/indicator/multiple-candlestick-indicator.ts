@@ -9,6 +9,7 @@ export class MultipleCandlestickMarkersIndicator implements Indicator {
       const current = klines[i - 1];
       const previous = klines[i - 2];
     }
+    // TODO
 
     return {
       markers,

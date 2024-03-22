@@ -1,14 +1,14 @@
 'use client';
 
-import { CandleStickChart } from '@/components/candlestick-chart';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { SerieApplierKeys } from '@/lib/constants/serie-applier';
-import { useState } from 'react';
+import { IndicatorKeys } from '@/lib/constants/indicator';
+import { useEffect, useState } from 'react';
 import { CardChartHeader } from './card-chart-header';
+import { ChartComponent } from './chart-component';
 
 export default function CardChart({
   slug,
-  interval,
+  interval = '1d',
   klines,
   intervals = [],
   className,
@@ -21,8 +21,29 @@ export default function CardChart({
   interval?: string;
   noBorder?: boolean;
 }) {
-  const [indices, setIndices] = useState<SerieApplierKeys[]>([]);
+  const [indices, setIndices] = useState<IndicatorKeys[]>([]);
+  const [klinesByInterval, setKlinesByInterval] = useState<
+    Record<string, Kline[]>
+  >({});
 
+  useEffect(() => {
+    setKlinesByInterval((prev) => {
+      const klinesSelected = prev[interval] || [];
+
+      const newKlines = klines.filter(
+        (kline) => !klinesSelected?.some((k) => k.openTime === kline.openTime)
+      );
+
+      if (newKlines.length === 0) {
+        return prev;
+      }
+      prev[interval] = [...klinesSelected, ...newKlines];
+
+      return prev;
+    });
+  }, [klines, interval]);
+
+  console.log(klinesByInterval[interval]);
   return (
     <Card
       className={
@@ -45,13 +66,12 @@ export default function CardChart({
           }}
         />
       </CardHeader>
-      <CardContent className='flex flex-1 '>
-        <CandleStickChart
-          interval={interval}
-          klines={klines}
-          slug={slug}
-          selectedIndices={indices}
-        />
+      <CardContent className='flex flex-1'>
+        {/* <MyCandleStickChart
+          selectedIndicators={indices}
+          klines={klinesByInterval[interval]}
+        /> */}
+        <ChartComponent />
       </CardContent>
     </Card>
   );

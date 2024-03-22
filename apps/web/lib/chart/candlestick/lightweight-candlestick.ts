@@ -16,6 +16,11 @@ export class LightweightCandlestick implements Candlestick {
     this.candlestick = candlestick;
     this.isLight = isLight;
 
+    this.setTheme(this.isLight);
+  }
+
+  setTheme(isLight: boolean) {
+    this.isLight = isLight;
     this.candlestick.applyOptions(
       this.isLight ? CANDLESTICK_LIGHT_OPTIONS : CANDLESTICK_DARK_OPTIONS
     );
@@ -55,11 +60,11 @@ export class LightweightCandlestick implements Candlestick {
   }
 }
 
-const CANDLESTICK_DARK_OPTIONS = {
+export const CANDLESTICK_DARK_OPTIONS = {
   wickUpColor: 'rgb(54, 116, 217)',
   upColor: 'rgb(54, 116, 217)',
   wickDownColor: 'rgb(225, 50, 85)',
   downColor: 'rgb(225, 50, 85)',
   borderVisible: false,
 };
-const CANDLESTICK_LIGHT_OPTIONS = {};
+export const CANDLESTICK_LIGHT_OPTIONS = {};

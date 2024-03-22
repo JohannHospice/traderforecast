@@ -9,9 +9,9 @@ import { ResistanceIndicator } from '@/lib/chart/indicator/resistance-indicator'
 import { TopAndBottomIndicator } from '@/lib/chart/indicator/top-and-bottom-indicator';
 import { TopMarkersIndicator } from '@/lib/chart/indicator/top-indicator';
 
-export type SerieApplierKeys = keyof typeof SerieApplierKeysSet;
+export type IndicatorKeys = keyof typeof IndicatorLabels;
 
-export const SerieApplierKeysSet = {
+export const IndicatorLabels = {
   topbottom: 'Top and Bottom',
   top: 'Top',
   bottom: 'Bottom',
@@ -20,7 +20,7 @@ export const SerieApplierKeysSet = {
   momentum: 'Momentum Candlestick Pattern',
   multiple: 'Multiple Candlestick Pattern',
 };
-export const Indicators = {
+export const IndicatorValues = {
   topbottom: TopAndBottomIndicator,
   top: TopMarkersIndicator,
   bottom: BottomIndicator,
@@ -28,11 +28,9 @@ export const Indicators = {
   engulfing: EngulfingCandlestickMarkersIndicator,
   momentum: MomemtumCandlestickMarkersIndicator,
   multiple: MultipleCandlestickMarkersIndicator,
-} as Record<SerieApplierKeys, new () => Indicator>;
+} as Record<IndicatorKeys, new () => Indicator>;
 
-export const SerieApplierOptions = Object.keys(SerieApplierKeysSet).map(
-  (key) => ({
-    value: key as SerieApplierKeys,
-    label: SerieApplierKeysSet[key as SerieApplierKeys],
-  })
-);
+export const IndicatorOptions = Object.keys(IndicatorLabels).map((key) => ({
+  value: key as IndicatorKeys,
+  label: IndicatorLabels[key as IndicatorKeys],
+}));

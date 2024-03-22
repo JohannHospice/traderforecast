@@ -1,13 +1,14 @@
 'use client';
 import { Combobox } from '@/components/combobox';
-import {
-  SerieApplierOptions,
-  SerieApplierKeys,
-} from '@/lib/constants/serie-applier';
+import { IndicatorOptions, IndicatorKeys } from '@/lib/constants/indicator';
 
 import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import { useRedirectWithSearchParams } from '@/lib/hooks/useRedirectWithSearchParams';
 import { GroupButton } from '@/components/group-button';
+import {
+  formatInterval,
+  getNumberOfKlinesResponsive,
+} from '../helper/formatInterval';
 
 export function CardChartHeader({
   onSelectMarker,
@@ -15,8 +16,8 @@ export function CardChartHeader({
   valuesMarker = [],
 }: {
   intervals?: string[];
-  onSelectMarker?: (value: SerieApplierKeys) => void;
-  valuesMarker?: SerieApplierKeys[];
+  onSelectMarker?: (value: IndicatorKeys) => void;
+  valuesMarker?: IndicatorKeys[];
 }) {
   const { redirectWithSearchParams, searchParams } =
     useRedirectWithSearchParams();
@@ -45,26 +46,9 @@ export function CardChartHeader({
         search={'Search markers...'}
         noOptions={'No markers found.'}
         values={valuesMarker}
-        options={SerieApplierOptions}
+        options={IndicatorOptions}
         onSelect={onSelectMarker}
       />
     </div>
   );
-}
-
-function formatInterval(interval: string, expectedKlines: number): string {
-  return `utc_now-${Number(interval[0]) * expectedKlines}${interval[1]}`;
-}
-
-function getNumberOfKlinesResponsive(): number {
-  if (window.innerWidth < 768) {
-    return 50;
-  }
-  if (window.innerWidth < 1024) {
-    return 100;
-  }
-  if (window.innerWidth < 1440) {
-    return 150;
-  }
-  return 365;
 }
