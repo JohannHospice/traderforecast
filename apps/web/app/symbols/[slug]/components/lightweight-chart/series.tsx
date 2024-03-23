@@ -1,4 +1,10 @@
-import { ISeriesApi, SeriesType } from 'lightweight-charts';
+import {
+  ISeriesApi,
+  SeriesDataItemTypeMap,
+  SeriesPartialOptionsMap,
+  SeriesType,
+  Time,
+} from 'lightweight-charts';
 import {
   createContext,
   forwardRef,
@@ -7,24 +13,21 @@ import {
   useLayoutEffect,
   useRef,
 } from 'react';
-import { ChartApi, ChartContext } from './chart-container';
-import { LineOptions, SerieType } from './api';
+import { ChartApi, ChartContext } from './chart';
 
 export const SerieContext = createContext({} as SerieApi);
 
-export const Series = forwardRef(function <
-  T extends { time: string; value: number },
->(
+export const Series = forwardRef(function (
   {
     children,
-    data,
+    data = [],
     type,
-    options,
+    options = {},
   }: {
+    data?: SeriesDataItemTypeMap<Time>[SeriesType][];
+    type: SeriesType;
+    options?: SeriesPartialOptionsMap[SeriesType];
     children?: React.ReactNode;
-    data: T[];
-    type: SerieType;
-    options: LineOptions;
   },
   ref: React.Ref<ISeriesApi<SeriesType>>
 ) {
@@ -34,13 +37,16 @@ export const Series = forwardRef(function <
 
   useLayoutEffect(() => {
     const { current: serieApi } = serieApiRef;
-    serieApi.api();
     return () => serieApi.free();
   }, []);
 
   useLayoutEffect(() => {
     serieApiRef.current.api().applyOptions(options);
   }, [options]);
+
+  useLayoutEffect(() => {
+    serieApiRef.current.api().setData(data);
+  }, [data]);
 
   useImperativeHandle(ref, () => serieApiRef.current.api(), []);
 
@@ -52,14 +58,14 @@ export const Series = forwardRef(function <
 });
 Series.displayName = 'Series';
 
-export class SerieApi<T extends { time: string; value: number }[] = any> {
-  serieApi: ISeriesApi<SeriesType> | null = null;
+export class SerieApi {
+  private serieApi: ISeriesApi<SeriesType, Time> | null = null;
 
   constructor(
     private chartApi: ChartApi,
-    private lineOptions: LineOptions,
-    private data: T,
-    private type: SerieType
+    private lineOptions: SeriesPartialOptionsMap[SeriesType],
+    private data: SeriesDataItemTypeMap<Time>[SeriesType][],
+    private type: SeriesType
   ) {}
 
   api() {
@@ -74,20 +80,23 @@ export class SerieApi<T extends { time: string; value: number }[] = any> {
     if (!this.serieApi || this.chartApi.isRemoved) {
       return;
     }
-    this.chartApi.freeSerie(this.serieApi);
+    this.chartApi.freeSerie(this.serieApi as any);
     this.serieApi = null;
   }
 
   private get addSeries() {
     const api = this.chartApi.api();
     const actions = {
-      line: () => api.addLineSeries(this.lineOptions),
-      area: () => api.addAreaSeries(this.lineOptions),
-      candlestick: () => api.addCandlestickSeries(this.lineOptions),
-      bar: () => api.addBarSeries(this.lineOptions),
-      histogram: () => api.addHistogramSeries(this.lineOptions),
-    };
-
+      Line: () => api.addLineSeries(this.lineOptions),
+      Area: () => api.addAreaSeries(this.lineOptions),
+      Candlestick: () => api.addCandlestickSeries(this.lineOptions),
+      Bar: () => api.addBarSeries(this.lineOptions),
+      Histogram: () => api.addHistogramSeries(this.lineOptions),
+      Baseline: () => api.addBaselineSeries(this.lineOptions),
+      Custom: () => {
+        throw new Error('Custom series is not supported');
+      },
+    } as unknown as Record<SeriesType, () => ISeriesApi<SeriesType, Time>>;
     return actions[this.type];
   }
 }

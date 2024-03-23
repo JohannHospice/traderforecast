@@ -1,12 +1,12 @@
 import { ISeriesApi, SeriesType } from 'lightweight-charts';
-import { use, useEffect, useRef, useState } from 'react';
-import { Chart } from './chart/chart';
-import { Series } from './chart/series';
+import { use, useEffect, useMemo, useRef, useState } from 'react';
+import { Series } from './lightweight-chart/series';
 import { useTheme } from 'next-themes';
 import {
   OPTIONS_DARK,
   OPTIONS_LIGHT,
-} from '../../../../styles/lightweight-charts-options';
+} from '@/styles/lightweight-charts-options';
+import { Chart } from './lightweight-chart/chart';
 
 const initialData = [
   { time: '2018-10-11', value: 52.89 },
@@ -27,17 +27,17 @@ const initialData2 = [
 ];
 const currentDate = new Date(initialData[initialData.length - 1].time);
 
-export const ChartComponent = ({
-  colors: {
-    backgroundColor = 'white',
-    lineColor = '#2962FF',
-    textColor = 'black',
-  } = {},
-}) => {
-  const [chartLayoutOptions, setChartLayoutOptions] = useState({});
-  // The following variables illustrate how a series could be updated.
-  const series1 = useRef<ISeriesApi<SeriesType> | null>(null);
-  const series2 = useRef<ISeriesApi<SeriesType> | null>(null);
+export const ChartComponent = () => {
+  const { theme } = useTheme();
+
+  const series1 = useRef<ISeriesApi<'Line'> | null>(null);
+  const series2 = useRef<ISeriesApi<'Line'> | null>(null);
+
+  const chartLayoutOptions = useMemo(
+    () => (theme === 'light' ? OPTIONS_LIGHT : OPTIONS_DARK),
+    [theme]
+  );
+
   const [started, setStarted] = useState(false);
   const [isSecondSeriesActive, setIsSecondSeriesActive] = useState(false);
 
@@ -48,9 +48,11 @@ export const ChartComponent = ({
     }
 
     let intervalId: NodeJS.Timeout = setInterval(() => {
+      // load
       currentDate.setDate(currentDate.getDate() + 1);
       const time = currentDate.toISOString().slice(0, 10);
-
+      // console.log(current.dataByIndex());
+      // update
       current.update({
         time,
         value: 53 - 2 * Math.random(),
@@ -67,15 +69,6 @@ export const ChartComponent = ({
     return () => clearInterval(intervalId);
   }, [started]);
 
-  useEffect(() => {
-    setChartLayoutOptions({
-      background: {
-        color: backgroundColor,
-      },
-      textColor,
-    });
-  }, [backgroundColor, textColor]);
-  const { theme } = useTheme();
   return (
     <>
       <div className='flex gap-4'>
@@ -89,10 +82,10 @@ export const ChartComponent = ({
           {isSecondSeriesActive ? 'Remove second series' : 'Add second series'}
         </button>
       </div>
-      <Chart options={theme === 'light' ? OPTIONS_LIGHT : OPTIONS_DARK}>
+      <Chart options={chartLayoutOptions}>
         <Series
           ref={series1}
-          type={'line'}
+          type='Line'
           data={initialData}
           options={{
             color: 'red',
@@ -101,10 +94,10 @@ export const ChartComponent = ({
         {isSecondSeriesActive && (
           <Series
             ref={series2}
-            type={'area'}
+            type='Area'
             data={initialData2}
             options={{
-              color: lineColor,
+              color: '#2962FF',
             }}
           />
         )}

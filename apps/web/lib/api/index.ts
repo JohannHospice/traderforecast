@@ -5,10 +5,11 @@ import {
   InMemoryCache,
   from,
 } from '@apollo/client';
-import { SantimentMarket } from './market/santiment-market';
-import { RealtimeMarket } from './realtime-market';
-import { ApiRealtimeMarket } from './realtime-market/api-realtime-market';
+import { SantimentMarket } from './repositories/market/santiment-market';
+import { RealtimeMarket } from './repositories/realtime-market';
+import { ApiRealtimeMarket } from './repositories/realtime-market/api-realtime-market';
 import { loadErrorMessages, loadDevMessages } from '@apollo/client/dev';
+import { Market } from './repositories/market';
 
 if (process.env.NODE_ENV !== 'production') {
   // Adds messages only in a dev environment

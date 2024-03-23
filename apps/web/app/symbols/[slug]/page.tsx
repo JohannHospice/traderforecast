@@ -1,9 +1,10 @@
-import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import CardSymbol from '@/components/card-symbol';
+import { Container } from '@/components/container';
 import api from '@/lib/api/';
+import { IntervalKeys } from '@/lib/api/repositories/market/santiment-market';
+import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import { redirect } from 'next/navigation';
 import CardChart from './components/card-chart';
-import { Container } from '../../../components/container';
 
 export default async function Page({
   params,
@@ -47,7 +48,7 @@ export default async function Page({
               noBorder
               klines={klines}
               intervals={api.market.intervals}
-              interval={searchParams[SEARCH_PARAMS.INTERVAL]}
+              interval={searchParams[SEARCH_PARAMS.INTERVAL] as IntervalKeys}
               slug={params.slug}
               className='flex-1'
             />

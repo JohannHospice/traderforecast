@@ -16,7 +16,10 @@ export async function GET(
     return new Response('Interval is required', { status: 400 });
   }
 
-  const kline = await api.market.lastKline({ slug: params.slug, interval });
+  const kline = await api.market.lastKline({
+    slug: params.slug,
+    interval: interval as IntervalKeys,
+  });
 
   return new Response(JSON.stringify(kline), {
     headers: {

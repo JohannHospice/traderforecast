@@ -4,19 +4,38 @@ import {
   IChartApi,
   ISeriesApi,
   SeriesType,
+  Time,
   createChart,
 } from 'lightweight-charts';
 import {
   createContext,
   forwardRef,
+  useCallback,
   useEffect,
   useImperativeHandle,
   useLayoutEffect,
   useRef,
+  useState,
 } from 'react';
 
-export const ChartContext = createContext<ChartApi>({} as ChartApi);
-export const ChartContainer = forwardRef(
+export function Chart(props: any) {
+  const [container, setContainer] = useState<HTMLDivElement | null>(null);
+  const handleRef = useCallback((ref: HTMLDivElement | null) => {
+    setContainer(ref);
+  }, []);
+
+  return (
+    <div className={'relative flex flex-1 min-h-[480px]'}>
+      <div ref={handleRef} className='absolute top-0 left-0 right-0 bottom-0'>
+        {container && <ChartContainer {...props} container={container} />}
+      </div>
+    </div>
+  );
+}
+
+export const ChartContext = createContext({} as ChartApi);
+
+const ChartContainer = forwardRef(
   (
     {
       children,
@@ -48,6 +67,7 @@ export const ChartContainer = forwardRef(
         window.removeEventListener('resize', handleResize);
         chartApi.free();
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -70,7 +90,7 @@ export class ChartApi {
     return this.chartApi === null;
   }
 
-  chartApi: null | IChartApi = null;
+  private chartApi: null | IChartApi = null;
 
   constructor(
     private container: HTMLElement,
@@ -90,7 +110,7 @@ export class ChartApi {
     return this.chartApi;
   }
 
-  freeSerie(series?: ISeriesApi<SeriesType>) {
+  freeSerie(series?: ISeriesApi<SeriesType, Time>) {
     if (!this.chartApi || !series) {
       return;
     }

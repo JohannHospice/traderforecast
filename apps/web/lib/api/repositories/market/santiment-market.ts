@@ -1,5 +1,6 @@
 import { ApolloClient, gql } from '@apollo/client';
-import dayjs from 'dayjs';
+import { mapOhlcToKline } from '../../mappers/ohlc';
+import { Market } from '.';
 
 export class SantimentMarket<T> implements Market {
   client: ApolloClient<T>;
@@ -8,7 +9,7 @@ export class SantimentMarket<T> implements Market {
     this.client = client;
   }
 
-  intervals: string[] = ['1h', '4h', '1d', '1w', '2w'];
+  intervals: IntervalKeys[] = ['1h', '4h', '1d', '1w', '2w'];
 
   async lastKline(params: { slug: string; interval: string }): Promise<Kline> {
     const {
@@ -36,7 +37,7 @@ export class SantimentMarket<T> implements Market {
         from: 'utc_now-' + 1 + params.interval.slice(-1),
       },
     });
-    return klines[0];
+    return mapOhlcToKline(klines[0]);
   }
 
   async klines({
@@ -46,7 +47,7 @@ export class SantimentMarket<T> implements Market {
     endTime = 'utc_now',
   }: {
     slug: string;
-    interval?: string;
+    interval?: IntervalKeys;
     startTime?: number | string;
     endTime?: number | string;
   }): Promise<{ symbol: Symbol; klines: Kline[] }> {
@@ -112,14 +113,7 @@ export class SantimentMarket<T> implements Market {
 
     return {
       symbol,
-      klines: klines.map((kline: any) => ({
-        open: parseFloat(kline.openPriceUsd),
-        high: parseFloat(kline.highPriceUsd),
-        low: parseFloat(kline.lowPriceUsd),
-        close: parseFloat(kline.closePriceUsd),
-        openTime: dayjs(kline.datetime).valueOf(),
-        closeTime: dayjs(kline.datetime).valueOf(),
-      })),
+      klines: klines.map(mapOhlcToKline),
     };
   }
 
