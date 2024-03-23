@@ -18,7 +18,7 @@ import {
   useState,
 } from 'react';
 
-export function Chart(
+export function ChartBase(
   props: Omit<React.ComponentProps<typeof ChartContainer>, 'container'>
 ) {
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
@@ -27,7 +27,7 @@ export function Chart(
   }, []);
 
   return (
-    <div className={'relative flex flex-1 min-h-[480px]'}>
+    <div className={'relative flex flex-1'}>
       <div ref={handleRef} className='absolute top-0 left-0 right-0 bottom-0'>
         {container && <ChartContainer {...props} container={container} />}
       </div>

@@ -35,11 +35,6 @@ export default async function Page({
 
   const intervals = api.market.intervals;
 
-  console.log({
-    interval,
-    startTime,
-  });
-
   const { symbol, klines } = await api.market
     .klines({
       slug: slug,
