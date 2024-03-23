@@ -43,7 +43,6 @@ export default function CardChart({
     });
   }, [klines, interval]);
 
-  console.log(klinesByInterval[interval]);
   return (
     <Card
       className={

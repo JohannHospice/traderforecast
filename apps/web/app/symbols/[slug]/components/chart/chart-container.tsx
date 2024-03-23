@@ -1,4 +1,11 @@
-import { ChartOptions, DeepPartial, LayoutOptions, TimeChartOptions } from 'lightweight-charts';
+import {
+  ChartOptions,
+  DeepPartial,
+  IChartApi,
+  ISeriesApi,
+  SeriesType,
+  createChart,
+} from 'lightweight-charts';
 import {
   createContext,
   forwardRef,
@@ -7,7 +14,6 @@ import {
   useLayoutEffect,
   useRef,
 } from 'react';
-import { ChartApi } from './api/ChartApi';
 
 export const ChartContext = createContext<ChartApi>({} as ChartApi);
 export const ChartContainer = forwardRef(
@@ -15,11 +21,11 @@ export const ChartContainer = forwardRef(
     {
       children,
       container,
-      options
+      options,
     }: {
       children: React.ReactNode;
       container: HTMLElement;
-        options: DeepPartial<ChartOptions>
+      options: DeepPartial<ChartOptions>;
     },
     ref
   ) => {
@@ -33,7 +39,7 @@ export const ChartContainer = forwardRef(
         api.applyOptions({
           ...options,
           width: container.clientWidth,
-          height: 300,
+          height: container.clientHeight,
         });
       };
 
@@ -44,14 +50,9 @@ export const ChartContainer = forwardRef(
       };
     }, []);
 
-    useLayoutEffect(() => {
-      chartApiRef.current.api().applyOptions(options);
-    }, []);
-
     useEffect(() => {
-      const currentRef = chartApiRef.current;
-      currentRef.api().applyOptions({ layout: options.layout });
-    }, [options.layout]);
+      chartApiRef.current.api().applyOptions(options);
+    }, [options]);
 
     useImperativeHandle(ref, () => chartApiRef.current.api(), []);
 
@@ -63,3 +64,44 @@ export const ChartContainer = forwardRef(
   }
 );
 ChartContainer.displayName = 'ChartContainer';
+
+export class ChartApi {
+  get isRemoved() {
+    return this.chartApi === null;
+  }
+
+  chartApi: null | IChartApi = null;
+
+  constructor(
+    private container: HTMLElement,
+    private options: DeepPartial<ChartOptions>
+  ) {}
+
+  api() {
+    if (!this.chartApi) {
+      this.chartApi = createChart(this.container, {
+        ...this.options,
+        width: this.container.clientWidth,
+        height: this.container.clientHeight,
+      });
+      this.chartApi.timeScale().fitContent();
+    }
+
+    return this.chartApi;
+  }
+
+  freeSerie(series?: ISeriesApi<SeriesType>) {
+    if (!this.chartApi || !series) {
+      return;
+    }
+    this.chartApi.removeSeries(series);
+  }
+
+  free() {
+    if (!this.chartApi) {
+      return;
+    }
+    this.chartApi.remove();
+    this.chartApi = null;
+  }
+}

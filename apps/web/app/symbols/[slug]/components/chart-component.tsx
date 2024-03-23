@@ -1,7 +1,12 @@
 import { ISeriesApi, SeriesType } from 'lightweight-charts';
-import { useEffect, useRef, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 import { Chart } from './chart/chart';
 import { Series } from './chart/series';
+import { useTheme } from 'next-themes';
+import {
+  OPTIONS_DARK,
+  OPTIONS_LIGHT,
+} from '../../../../styles/lightweight-charts-options';
 
 const initialData = [
   { time: '2018-10-11', value: 52.89 },
@@ -36,67 +41,64 @@ export const ChartComponent = ({
   const [started, setStarted] = useState(false);
   const [isSecondSeriesActive, setIsSecondSeriesActive] = useState(false);
 
-  // The purpose of this effect is purely to show how a series could
-  // be updated using the `reference` passed to the `Series` component.
-  // useEffect(() => {
-  //   const { current } = series1;
-  //   if (current === null || !started) {
-  //     return;
-  //   }
+  useEffect(() => {
+    const { current } = series1;
+    if (current === null || !started) {
+      return;
+    }
 
-  //   let intervalId: NodeJS.Timeout = setInterval(() => {
-  //     currentDate.setDate(currentDate.getDate() + 1);
-  //     const next = {
-  //       time: currentDate.toISOString().slice(0, 10),
-  //       value: 53 - 2 * Math.random(),
-  //     };
+    let intervalId: NodeJS.Timeout = setInterval(() => {
+      currentDate.setDate(currentDate.getDate() + 1);
+      const time = currentDate.toISOString().slice(0, 10);
 
-  //     current.update(next);
+      current.update({
+        time,
+        value: 53 - 2 * Math.random(),
+      });
 
-  //     if (series2.current) {
-  //       series2.current.update({
-  //         ...next,
-  //         value: 43 - 2 * Math.random(),
-  //       });
-  //     }
-  //   }, 1000);
+      if (series2.current) {
+        series2.current.update({
+          time,
+          value: 43 - 2 * Math.random(),
+        });
+      }
+    }, 1000);
 
-  //   return () => clearInterval(intervalId);
-  // }, [started]);
+    return () => clearInterval(intervalId);
+  }, [started]);
 
-  // useEffect(() => {
-  //   setChartLayoutOptions({
-  //     background: {
-  //       color: backgroundColor,
-  //     },
-  //     textColor,
-  //   });
-  // }, [backgroundColor, textColor]);
-
+  useEffect(() => {
+    setChartLayoutOptions({
+      background: {
+        color: backgroundColor,
+      },
+      textColor,
+    });
+  }, [backgroundColor, textColor]);
+  const { theme } = useTheme();
   return (
     <>
-      <button type='button' onClick={() => setStarted((current) => !current)}>
-        {started ? 'Stop updating' : 'Start updating series'}
-      </button>
-      <button
-        type='button'
-        onClick={() => setIsSecondSeriesActive((current) => !current)}
-      >
-        {isSecondSeriesActive ? 'Remove second series' : 'Add second series'}
-      </button>
-      <Chart
-          options={{
-            layout: chartLayoutOptions,
-          }} >
+      <div className='flex gap-4'>
+        <button type='button' onClick={() => setStarted((current) => !current)}>
+          {started ? 'Stop updating' : 'Start updating series'}
+        </button>
+        <button
+          type='button'
+          onClick={() => setIsSecondSeriesActive((current) => !current)}
+        >
+          {isSecondSeriesActive ? 'Remove second series' : 'Add second series'}
+        </button>
+      </div>
+      <Chart options={theme === 'light' ? OPTIONS_LIGHT : OPTIONS_DARK}>
         <Series
           ref={series1}
           type={'line'}
           data={initialData}
           options={{
-            color: lineColor,
+            color: 'red',
           }}
         />
-        {/* {isSecondSeriesActive && (
+        {isSecondSeriesActive && (
           <Series
             ref={series2}
             type={'area'}
@@ -105,7 +107,7 @@ export const ChartComponent = ({
               color: lineColor,
             }}
           />
-        )} */}
+        )}
       </Chart>
     </>
   );

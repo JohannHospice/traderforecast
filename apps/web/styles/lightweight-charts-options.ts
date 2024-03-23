@@ -1,5 +1,6 @@
 'use client';
 import { ColorType, DeepPartial, TimeChartOptions } from 'lightweight-charts';
+import { formatNumber } from '../lib/helpers/string';
 
 function createTimeChartOptions({
   bgColor,
@@ -33,6 +34,9 @@ function createTimeChartOptions({
     },
     rightPriceScale: {
       borderColor: scaleColor,
+    },
+    localization: {
+      priceFormatter: formatNumber,
     },
   };
 }
