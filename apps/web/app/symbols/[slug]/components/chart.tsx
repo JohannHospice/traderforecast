@@ -161,9 +161,10 @@ export function Chart({
 
         if (markers) {
           series.current?.setMarkers(
-            markers
-              .sort((a, b) => a.time - b.time)
-              .map((marker) => markerFactory.createMarker(marker))
+            [
+              ...series.current.markers(),
+              ...markers.map((marker) => markerFactory.createMarker(marker)),
+            ].sort((a, b) => +a.time - +b.time)
           );
         }
         if (priceLines) {
