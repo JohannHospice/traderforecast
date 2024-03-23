@@ -5,10 +5,8 @@ import { IndicatorOptions, IndicatorKeys } from '@/lib/constants/indicator';
 import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import { useRedirectWithSearchParams } from '@/lib/hooks/useRedirectWithSearchParams';
 import { GroupButton } from '@/components/group-button';
-import {
-  formatInterval,
-  getNumberOfKlinesResponsive,
-} from '../helper/formatInterval';
+import { formatInterval } from '../../../../lib/helpers/utc';
+import { getNumberOfKlinesResponsive } from '../../../../lib/helpers/klines';
 
 export function CardChartHeader({
   onSelectMarker,

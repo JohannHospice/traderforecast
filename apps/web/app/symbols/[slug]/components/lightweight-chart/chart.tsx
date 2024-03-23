@@ -3,6 +3,7 @@ import {
   DeepPartial,
   IChartApi,
   ISeriesApi,
+  Range,
   SeriesType,
   Time,
   createChart,
@@ -11,14 +12,15 @@ import {
   createContext,
   forwardRef,
   useCallback,
-  useEffect,
   useImperativeHandle,
   useLayoutEffect,
   useRef,
   useState,
 } from 'react';
 
-export function Chart(props: any) {
+export function Chart(
+  props: Omit<React.ComponentProps<typeof ChartContainer>, 'container'>
+) {
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
   const handleRef = useCallback((ref: HTMLDivElement | null) => {
     setContainer(ref);
@@ -41,10 +43,12 @@ const ChartContainer = forwardRef(
       children,
       container,
       options,
+      onTimeRangeChange,
     }: {
       children: React.ReactNode;
       container: HTMLElement;
       options: DeepPartial<ChartOptions>;
+      onTimeRangeChange?: (time: Range<Time>) => void;
     },
     ref
   ) => {
@@ -70,9 +74,29 @@ const ChartContainer = forwardRef(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       chartApiRef.current.api().applyOptions(options);
     }, [options]);
+
+    useLayoutEffect(() => {
+      const { current: chartApi } = chartApiRef;
+      const api = chartApi.api();
+      const handleVisibileTimeRangeChange = (time: Range<Time> | null) => {
+        if (time === null) {
+          return;
+        }
+        onTimeRangeChange?.(time);
+      };
+
+      api
+        .timeScale()
+        .subscribeVisibleTimeRangeChange(handleVisibileTimeRangeChange);
+      return () => {
+        api
+          .timeScale()
+          .unsubscribeVisibleTimeRangeChange(handleVisibileTimeRangeChange);
+      };
+    }, [onTimeRangeChange]);
 
     useImperativeHandle(ref, () => chartApiRef.current.api(), []);
 

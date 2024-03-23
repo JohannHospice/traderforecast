@@ -11,6 +11,7 @@ import {
 import {
   CandlestickData,
   ISeriesApi,
+  Range,
   SeriesType,
   Time,
 } from 'lightweight-charts';
@@ -19,6 +20,9 @@ import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { CardChartHeader } from './card-chart-header';
 import { Chart } from './lightweight-chart/chart';
 import { Series } from './lightweight-chart/series';
+import { useRedirectWithSearchParams } from '../../../../lib/hooks/useRedirectWithSearchParams';
+import { SEARCH_PARAMS } from '../../../../lib/constants/navigation';
+import { getNumberOfKlinesResponsive } from '../../../../lib/helpers/klines';
 
 const REALTIME_INTERVAL_DELAY: Record<IntervalKeys, number> = {
   '1h': 1000 * 60 * 60,
@@ -44,6 +48,8 @@ export default function CardChart({
   noBorder?: boolean;
 }) {
   const { theme } = useTheme();
+  const { redirectWithSearchParams, searchParams } =
+    useRedirectWithSearchParams();
 
   const chartLayoutOptions = useMemo(
     () => (theme === 'light' ? OPTIONS_LIGHT : OPTIONS_DARK),
@@ -57,6 +63,7 @@ export default function CardChart({
   const candelstickChannels = useRef<
     Record<string, CandlestickData<Time>[] | null>
   >({});
+  const waitingTimeRangeUpdate = useRef<string | null>(null);
 
   // update klines on interval
   const realtime = useCallback(() => {
@@ -79,19 +86,53 @@ export default function CardChart({
 
   // update candlestick channels
   const updateCandlestickChannels = useCallback(() => {
-    const existingKlines = klineChannels.current[interval] || [];
+    const updatedCandlesticks = klines.map(klineToCandlestick);
 
-    const newKlines = klines.filter(
-      (kline) => !existingKlines.some((k) => k.openTime === kline.openTime)
-    );
-
-    const updatedKlines = [...existingKlines, ...newKlines];
-    const updatedCandlesticks = updatedKlines.map(klineToCandlestick);
-
-    klineChannels.current[interval] = updatedKlines;
+    klineChannels.current[interval] = klines;
     candelstickChannels.current[interval] = updatedCandlesticks;
     return updatedCandlesticks;
   }, [interval, klines]);
+
+  // on time range change
+  const onTimeRangeChange = useCallback(
+    ({ from }: Range<Time>) => {
+      if (
+        waitingTimeRangeUpdate.current === null ||
+        !candelstickChannels.current[interval] ||
+        !series.current
+      ) {
+        return;
+      }
+      const serieFrom = candelstickChannels.current[interval]?.[0]?.time;
+
+      if (!serieFrom || +from - +serieFrom > 0) {
+        return;
+      }
+
+      const startUtc = searchParams.get(SEARCH_PARAMS.START_TIME) || '';
+
+      const match = /utc_now-(\d+)(\w)/.exec(startUtc);
+
+      if (!match) {
+        return;
+      }
+
+      const [_, number, unit] = match;
+      const newStart = `utc_now-${parseInt(number) + getNumberOfKlinesResponsive()}${unit}`;
+
+      console.log({ newStart, startUtc });
+
+      waitingTimeRangeUpdate.current = null;
+      redirectWithSearchParams({
+        [SEARCH_PARAMS.START_TIME]: newStart,
+      });
+    },
+    [interval, redirectWithSearchParams, searchParams]
+  );
+
+  useLayoutEffect(() => {
+    waitingTimeRangeUpdate.current = searchParams.get(SEARCH_PARAMS.START_TIME);
+  }, [searchParams]);
 
   // on mount
   useLayoutEffect(() => {
@@ -124,7 +165,10 @@ export default function CardChart({
         />
       </CardHeader>
       <CardContent className='flex flex-1'>
-        <Chart options={chartLayoutOptions}>
+        <Chart
+          options={chartLayoutOptions}
+          onTimeRangeChange={onTimeRangeChange}
+        >
           <Series
             ref={series}
             data={candelstickChannels.current[interval] || []}

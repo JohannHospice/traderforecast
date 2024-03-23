@@ -1,6 +1,5 @@
 import { ApolloClient, gql } from '@apollo/client';
 import { mapOhlcToKline } from '../../mappers/ohlc';
-import { Market } from '.';
 
 export class SantimentMarket<T> implements Market {
   client: ApolloClient<T>;

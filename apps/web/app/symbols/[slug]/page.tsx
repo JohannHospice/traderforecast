@@ -1,29 +1,60 @@
 import CardSymbol from '@/components/card-symbol';
 import { Container } from '@/components/container';
 import api from '@/lib/api/';
-import { IntervalKeys } from '@/lib/api/repositories/market/santiment-market';
 import { SEARCH_PARAMS } from '@/lib/constants/navigation';
-import { redirect } from 'next/navigation';
 import CardChart from './components/card-chart';
+import { formatInterval } from '../../../lib/helpers/utc';
+import { getDefaultNumberOfKlines } from '../../../lib/helpers/klines';
+import { redirect } from 'next/navigation';
 
 export default async function Page({
-  params,
+  params: { slug },
   searchParams,
 }: {
   params: { slug: string };
   searchParams: Record<SEARCH_PARAMS, string>;
 }) {
-  if (searchParams[SEARCH_PARAMS.INTERVAL] === undefined) {
+  if (
+    !searchParams[SEARCH_PARAMS.INTERVAL] ||
+    !searchParams[SEARCH_PARAMS.START_TIME]
+  ) {
+    const interval = '1d';
     return redirect(
-      `?${SEARCH_PARAMS.INTERVAL}=1d&${SEARCH_PARAMS.START_TIME}=utc_now-365d`
+      `?${SEARCH_PARAMS.INTERVAL}=${interval}&${SEARCH_PARAMS.START_TIME}=${formatInterval(
+        interval,
+        getDefaultNumberOfKlines(interval)
+      )}`
     );
   }
 
-  const { symbol, klines } = await api.market.klines({
-    slug: params.slug,
-    interval: searchParams[SEARCH_PARAMS.INTERVAL],
-    startTime: searchParams[SEARCH_PARAMS.START_TIME],
+  const interval = searchParams[SEARCH_PARAMS.INTERVAL] as IntervalKeys;
+  console.log({
+    interval,
   });
+  const startTime = searchParams[SEARCH_PARAMS.START_TIME];
+
+  const intervals = api.market.intervals;
+
+  console.log({
+    interval,
+    startTime,
+  });
+
+  const { symbol, klines } = await api.market
+    .klines({
+      slug: slug,
+      interval: interval,
+      startTime: startTime,
+    })
+    .catch((err) => {
+      console.error(err);
+      redirect(
+        `?${SEARCH_PARAMS.INTERVAL}=${interval}&${SEARCH_PARAMS.START_TIME}=${formatInterval(
+          interval,
+          getDefaultNumberOfKlines(interval)
+        )}`
+      );
+    });
 
   return (
     <>
@@ -46,10 +77,10 @@ export default async function Page({
           <div className='row-start-2 flex sm:border-t-0 border-t-[1px]'>
             <CardChart
               noBorder
+              slug={slug}
               klines={klines}
-              intervals={api.market.intervals}
-              interval={searchParams[SEARCH_PARAMS.INTERVAL] as IntervalKeys}
-              slug={params.slug}
+              intervals={intervals}
+              interval={interval}
               className='flex-1'
             />
           </div>
