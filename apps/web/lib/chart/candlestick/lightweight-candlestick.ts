@@ -67,4 +67,14 @@ export const CANDLESTICK_DARK_OPTIONS = {
   downColor: 'rgb(225, 50, 85)',
   borderVisible: false,
 };
-export const CANDLESTICK_LIGHT_OPTIONS = {};
+export const CANDLESTICK_LIGHT_OPTIONS = {
+  baseLineColor: '#B2B5BE',
+  upColor: '#26a69a',
+  downColor: '#ef5350',
+  borderColor: '#378658',
+  borderUpColor: '#26a69a',
+  borderDownColor: '#ef5350',
+  wickColor: '#737375',
+  wickUpColor: '#26a69a',
+  wickDownColor: '#ef5350',
+};

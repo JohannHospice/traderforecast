@@ -23,6 +23,10 @@ import {
 } from 'lightweight-charts';
 import { useTheme } from 'next-themes';
 import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
+import {
+  CANDLESTICK_DARK_OPTIONS,
+  CANDLESTICK_LIGHT_OPTIONS,
+} from '@/lib/chart/candlestick/lightweight-candlestick';
 
 const REALTIME_INTERVAL_DELAY: Record<IntervalKeys, number> = {
   '1h': 1000 * 60 * 60,
@@ -47,8 +51,17 @@ export function Chart({
   const { redirectWithSearchParams, searchParams } =
     useRedirectWithSearchParams();
 
-  const chartLayoutOptions = useMemo(
-    () => (theme === 'light' ? OPTIONS_LIGHT : OPTIONS_DARK),
+  const { chartOptions, seriesOptions } = useMemo(
+    () =>
+      theme === 'light'
+        ? {
+            chartOptions: OPTIONS_LIGHT,
+            seriesOptions: CANDLESTICK_LIGHT_OPTIONS,
+          }
+        : {
+            chartOptions: OPTIONS_DARK,
+            seriesOptions: CANDLESTICK_DARK_OPTIONS,
+          },
     [theme]
   );
 
@@ -182,19 +195,17 @@ export function Chart({
   }, [indicators, interval, klines]);
 
   return (
-    <ChartBase
-      options={chartLayoutOptions}
-      onTimeRangeChange={onTimeRangeChange}
-    >
+    <ChartBase options={chartOptions} onTimeRangeChange={onTimeRangeChange}>
       <Series
+        type='Candlestick'
         ref={series}
+        options={seriesOptions}
         data={
           // todo: refactor default data value
           candelstickChannels.current[interval] ||
           klines.map(klineToCandlestick) ||
           []
         }
-        type='Candlestick'
       />
     </ChartBase>
   );
