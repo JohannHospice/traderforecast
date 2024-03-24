@@ -55,3 +55,19 @@ export const OPTIONS_DARK = createTimeChartOptions({
   scaleColor: 'transparent',
 });
 // 'hsl(215 27.9% 16.9%)'
+
+export const CANDLESTICK_DARK_OPTIONS = {
+  wickUpColor: 'rgb(54, 116, 217)',
+  upColor: 'rgb(54, 116, 217)',
+  wickDownColor: 'rgb(225, 50, 85)',
+  downColor: 'rgb(225, 50, 85)',
+  borderVisible: false,
+};
+
+export const CANDLESTICK_LIGHT_OPTIONS = {
+  wickUpColor: '#26a69a',
+  upColor: '#26a69a',
+  wickDownColor: '#ef5350',
+  downColor: '#ef5350',
+  borderVisible: false,
+};
