@@ -188,7 +188,12 @@ export function Chart({
     >
       <Series
         ref={series}
-        data={candelstickChannels.current[interval] || []}
+        data={
+          // todo: refactor default data value
+          candelstickChannels.current[interval] ||
+          klines.map(klineToCandlestick) ||
+          []
+        }
         type='Candlestick'
       />
     </ChartBase>
