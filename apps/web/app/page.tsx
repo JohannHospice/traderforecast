@@ -1,13 +1,12 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import api from '@/lib/api';
-import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
-import { redirect } from 'next/navigation';
 import { SEARCH_PARAMS, SYMBOL_VIEWS } from '@/lib/constants/navigation';
 import { formatArrayInSearchParam } from '@/lib/helpers/string';
+import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
+import { Container } from '../components/container';
 import { GridSymbols } from './components/grid-symbols';
 import { MarketNav } from './components/market-nav';
 import { TableSymbols } from './components/table-symbols';
-import { Container } from '../components/container';
 
 export default async function Page({
   searchParams,

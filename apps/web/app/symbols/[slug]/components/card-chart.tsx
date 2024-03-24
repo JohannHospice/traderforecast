@@ -47,7 +47,7 @@ export default function CardChart({
           }}
         />
       </CardHeader>
-      <CardContent className='flex flex-1 min-h-[800px]'>
+      <CardContent className='flex flex-1 min-h-[612px]'>
         <Chart
           slug={slug}
           klines={klines}

@@ -20,7 +20,7 @@ export function Navigation() {
   const { setTheme, theme } = useTheme();
 
   return (
-    <nav className='p-2 border-b-[1px] mb-8'>
+    <nav className='p-2 border-b-[1px] mb-8 sticky top-0 w-full bg-background z-50'>
       <div className='flex justify-between'>
         <div className='flex gap-4'>
           <NavigationMenu>

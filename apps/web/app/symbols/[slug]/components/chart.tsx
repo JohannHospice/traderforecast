@@ -10,6 +10,8 @@ import { getNumberOfKlinesResponsive } from '@/lib/helpers/klines';
 import { klineToCandlestick } from '@/lib/helpers/lightweight-charts';
 import { useRedirectWithSearchParams } from '@/lib/hooks/useRedirectWithSearchParams';
 import {
+  CANDLESTICK_DARK_OPTIONS,
+  CANDLESTICK_LIGHT_OPTIONS,
   OPTIONS_DARK,
   OPTIONS_LIGHT,
 } from '@/styles/lightweight-charts-options';
@@ -23,10 +25,6 @@ import {
 } from 'lightweight-charts';
 import { useTheme } from 'next-themes';
 import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
-import {
-  CANDLESTICK_DARK_OPTIONS,
-  CANDLESTICK_LIGHT_OPTIONS,
-} from '@/lib/chart/candlestick/lightweight-candlestick';
 
 const REALTIME_INTERVAL_DELAY: Record<IntervalKeys, number> = {
   '1h': 1000 * 60 * 60,
@@ -132,9 +130,14 @@ export function Chart({
       console.log({ newStart, startUtc });
 
       waitingTimeRangeUpdate.current = null;
-      redirectWithSearchParams({
-        [SEARCH_PARAMS.START_TIME]: newStart,
-      });
+      redirectWithSearchParams(
+        {
+          [SEARCH_PARAMS.START_TIME]: newStart,
+        },
+        {
+          scroll: false,
+        }
+      );
     },
     [interval, redirectWithSearchParams, searchParams]
   );

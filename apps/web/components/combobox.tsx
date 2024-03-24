@@ -26,6 +26,7 @@ export function Combobox<T extends string>({
   multiple,
   values,
   onSelect,
+  className = '',
 }: {
   placeholder: string;
   search: string;
@@ -35,6 +36,7 @@ export function Combobox<T extends string>({
   multiple?: boolean;
   values: T[];
   onSelect?: (value: T) => void;
+  className?: string;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -45,14 +47,18 @@ export function Combobox<T extends string>({
           variant='outline'
           role='combobox'
           aria-expanded={open}
-          className='min-w-[220px] justify-between'
+          className={className + ' justify-between'}
           disabled={disabled}
         >
-          {values.length > 0
-            ? values
-                .map((v) => options.find((option) => option.value === v)?.label)
-                .join(', ')
-            : placeholder}
+          <span className='text-ellipsis overflow-hidden'>
+            {values.length > 0
+              ? values
+                  .map(
+                    (v) => options.find((option) => option.value === v)?.label
+                  )
+                  .join(', ')
+              : placeholder}
+          </span>
           <CaretSortIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>

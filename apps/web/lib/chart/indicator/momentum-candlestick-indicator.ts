@@ -34,6 +34,7 @@ export class MomemtumCandlestickMarkersIndicator implements Indicator {
           color: 'green',
           position: 'belowBar',
           shape: 'arrowUp',
+          text: 'M',
         });
       }
       if (!isCurrentBullish && isDownTrend && isMomentum) {
@@ -42,6 +43,7 @@ export class MomemtumCandlestickMarkersIndicator implements Indicator {
           color: 'red',
           position: 'aboveBar',
           shape: 'arrowDown',
+          text: 'M',
         });
       }
     }

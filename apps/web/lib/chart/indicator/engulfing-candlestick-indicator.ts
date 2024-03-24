@@ -23,6 +23,7 @@ export class EngulfingCandlestickMarkersIndicator implements Indicator {
           color: 'green',
           position: 'belowBar',
           shape: 'arrowUp',
+          text: 'E',
         });
       }
 
@@ -39,6 +40,7 @@ export class EngulfingCandlestickMarkersIndicator implements Indicator {
           color: 'red',
           position: 'aboveBar',
           shape: 'arrowDown',
+          text: 'E',
         });
       }
     }

@@ -18,7 +18,7 @@ export function getDefaultNumberOfKlines(interval: IntervalKeys): number {
     case '1h':
       return 125;
     case '1d':
-      return 125;
+      return 50;
     case '1w':
       return 100;
     case '2w':

@@ -16,9 +16,9 @@ export const IndicatorLabels = {
   top: 'Top',
   bottom: 'Bottom',
   resistance: 'Resistance',
-  engulfing: 'Engulfing Candlestick Pattern',
-  momentum: 'Momentum Candlestick Pattern',
-  multiple: 'Multiple Candlestick Pattern',
+  engulfing: 'Engulfing Candlestick Pattern (E)',
+  momentum: 'Momentum Candlestick Pattern (M)',
+  multiple: 'Multiple Candlestick Pattern (Mu)',
 };
 export const IndicatorValues = {
   topbottom: TopAndBottomIndicator,

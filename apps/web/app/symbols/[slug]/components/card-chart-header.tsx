@@ -28,24 +28,30 @@ export function CardChartHeader({
           value: interval,
           label: interval.toUpperCase(),
           onClick: () => {
-            redirectWithSearchParams({
-              [SEARCH_PARAMS.START_TIME]: formatInterval(
-                interval,
-                getNumberOfKlinesResponsive()
-              ),
-              [SEARCH_PARAMS.INTERVAL]: interval,
-            });
+            redirectWithSearchParams(
+              {
+                [SEARCH_PARAMS.START_TIME]: formatInterval(
+                  interval,
+                  getNumberOfKlinesResponsive()
+                ),
+                [SEARCH_PARAMS.INTERVAL]: interval,
+              },
+              {
+                scroll: false,
+              }
+            );
           },
         }))}
       />
       <Combobox
-        multiple
-        placeholder={'Select markers...'}
-        search={'Search markers...'}
-        noOptions={'No markers found.'}
+        className='w-full sm:max-w-44 sm:min-w-60'
+        placeholder='Select markers...'
+        search='Search markers...'
+        noOptions='No markers found.'
         values={valuesMarker}
         options={IndicatorOptions}
         onSelect={onSelectMarker}
+        multiple
       />
     </div>
   );
