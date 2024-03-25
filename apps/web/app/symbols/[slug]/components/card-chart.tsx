@@ -24,7 +24,7 @@ export default function CardChart({
   noBorder?: boolean;
 }) {
   const [indicators, setIndicators] = useState<IndicatorKeys[]>([]);
-
+  const [fixed, setFixed] = useState(false);
   return (
     <Card
       className={
@@ -45,6 +45,10 @@ export default function CardChart({
                 : [...indicators, value]
             );
           }}
+          fixed={fixed}
+          onChangeFixed={(value) => {
+            setFixed(value);
+          }}
         />
       </CardHeader>
       <CardContent className='flex flex-1 min-h-[612px]'>
@@ -53,6 +57,7 @@ export default function CardChart({
           klines={klines}
           interval={interval}
           indicators={indicators}
+          fixed={fixed}
         />
       </CardContent>
     </Card>

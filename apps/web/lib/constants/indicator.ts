@@ -1,30 +1,27 @@
 'use client';
 
 import { Indicator } from '@/lib/chart/indicator';
-import { BottomIndicator } from '@/lib/chart/indicator/bottom-indicator';
+import { SwingLowIndicator } from '@/lib/chart/indicator/swing-low-indicator';
 import { EngulfingCandlestickMarkersIndicator } from '@/lib/chart/indicator/engulfing-candlestick-indicator';
 import { MomemtumCandlestickMarkersIndicator } from '@/lib/chart/indicator/momentum-candlestick-indicator';
 import { MultipleCandlestickMarkersIndicator } from '@/lib/chart/indicator/multiple-candlestick-indicator';
-import { ResistanceIndicator } from '@/lib/chart/indicator/resistance-indicator';
-import { TopAndBottomIndicator } from '@/lib/chart/indicator/top-and-bottom-indicator';
-import { TopMarkersIndicator } from '@/lib/chart/indicator/top-indicator';
+import { RangeIndicator } from '@/lib/chart/indicator/range-indicator';
+import { SwingHighIndicator } from '@/lib/chart/indicator/swing-high-indicator';
 
 export type IndicatorKeys = keyof typeof IndicatorLabels;
 
 export const IndicatorLabels = {
-  topbottom: 'Top and Bottom',
-  top: 'Top',
-  bottom: 'Bottom',
-  resistance: 'Resistance',
+  swinghigh: 'Swing High (SH)',
+  swinglow: 'Swing Low (SL)',
+  range: 'Range Indicator (R)',
   engulfing: 'Engulfing Candlestick Pattern (E)',
   momentum: 'Momentum Candlestick Pattern (M)',
   multiple: 'Multiple Candlestick Pattern (Mu)',
 };
 export const IndicatorValues = {
-  topbottom: TopAndBottomIndicator,
-  top: TopMarkersIndicator,
-  bottom: BottomIndicator,
-  resistance: ResistanceIndicator,
+  swinghigh: SwingHighIndicator,
+  swinglow: SwingLowIndicator,
+  range: RangeIndicator,
   engulfing: EngulfingCandlestickMarkersIndicator,
   momentum: MomemtumCandlestickMarkersIndicator,
   multiple: MultipleCandlestickMarkersIndicator,

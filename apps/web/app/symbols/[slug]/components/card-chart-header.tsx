@@ -1,21 +1,25 @@
 'use client';
 import { Combobox } from '@/components/combobox';
-import { IndicatorOptions, IndicatorKeys } from '@/lib/constants/indicator';
-
-import { SEARCH_PARAMS } from '@/lib/constants/navigation';
-import { useRedirectWithSearchParams } from '@/lib/hooks/useRedirectWithSearchParams';
 import { GroupButton } from '@/components/group-button';
-import { formatInterval } from '../../../../lib/helpers/utc';
-import { getNumberOfKlinesResponsive } from '../../../../lib/helpers/klines';
+import { Checkbox } from '@/components/ui/checkbox';
+import { IndicatorKeys, IndicatorOptions } from '@/lib/constants/indicator';
+import { SEARCH_PARAMS } from '@/lib/constants/navigation';
+import { getNumberOfKlinesResponsive } from '@/lib/helpers/klines';
+import { formatInterval } from '@/lib/helpers/utc';
+import { useRedirectWithSearchParams } from '@/lib/hooks/useRedirectWithSearchParams';
 
 export function CardChartHeader({
   onSelectMarker,
   intervals = [],
   valuesMarker = [],
+  fixed,
+  onChangeFixed,
 }: {
   intervals?: string[];
   onSelectMarker?: (value: IndicatorKeys) => void;
   valuesMarker?: IndicatorKeys[];
+  fixed?: boolean;
+  onChangeFixed?: (value: boolean) => void;
 }) {
   const { redirectWithSearchParams, searchParams } =
     useRedirectWithSearchParams();
@@ -53,6 +57,16 @@ export function CardChartHeader({
         onSelect={onSelectMarker}
         multiple
       />
+
+      <div className='items-center flex space-x-2'>
+        <Checkbox id='terms1' checked={fixed} onCheckedChange={onChangeFixed} />
+        <label
+          htmlFor='terms1'
+          className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
+        >
+          Desactivate auto-load
+        </label>
+      </div>
     </div>
   );
 }

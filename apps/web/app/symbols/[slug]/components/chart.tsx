@@ -39,11 +39,13 @@ export function Chart({
   klines,
   interval = '1d',
   indicators = [],
+  fixed,
 }: {
   slug?: string;
   klines: Kline[];
   interval?: IntervalKeys;
   indicators?: IndicatorKeys[];
+  fixed?: boolean;
 }) {
   const { theme } = useTheme();
   const { redirectWithSearchParams, searchParams } =
@@ -106,7 +108,8 @@ export function Chart({
       if (
         waitingTimeRangeUpdate.current === null ||
         !candelstickChannels.current[interval] ||
-        !series.current
+        !series.current ||
+        fixed
       ) {
         return;
       }

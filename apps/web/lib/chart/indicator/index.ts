@@ -16,6 +16,7 @@ export type Marker = {
   shape?: 'circle' | 'square' | 'arrowUp' | 'arrowDown';
   text?: string;
   size?: number;
+  kline?: Kline;
 };
 
 export type PriceLine = {
