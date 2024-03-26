@@ -1,0 +1,25 @@
+{
+  "name": "lightweight-charts-plugin",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./*": "./compiled/*.js"
+  },
+  "scripts": {
+    "prebuild": "tsc",
+    "build": "node compile.mjs",
+    "dev": "vite --config src/vite.config.js",
+    "build:examples:site": "vite build --config src/vite.config.js && node build-website.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.4",
+    "vite": "^4.3.1"
+  },
+  "dependencies": {
+    "dts-bundle-generator": "^8.0.1",
+    "fancy-canvas": "^2.1.0",
+    "globby": "^13.1.4",
+    "lightweight-charts": "^4.1.3"
+  }
+}
