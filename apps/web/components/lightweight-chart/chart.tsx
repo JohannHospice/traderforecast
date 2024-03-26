@@ -18,25 +18,30 @@ import {
   useState,
 } from 'react';
 
-export function ChartBase(
-  props: Omit<React.ComponentProps<typeof ChartContainer>, 'container'>
-) {
-  const [container, setContainer] = useState<HTMLDivElement | null>(null);
-  const handleRef = useCallback((ref: HTMLDivElement | null) => {
-    setContainer(ref);
-  }, []);
+export const ChartBase = forwardRef(
+  (
+    props: Omit<React.ComponentProps<typeof ChartContainer>, 'container'>,
+    ref: React.Ref<IChartApi>
+  ) => {
+    const [container, setContainer] = useState<HTMLDivElement | null>(null);
+    const handleRef = useCallback((ref: HTMLDivElement | null) => {
+      setContainer(ref);
+    }, []);
 
-  return (
-    <div className={'relative flex flex-1'}>
-      <div ref={handleRef} className='absolute top-0 left-0 right-0 bottom-0'>
-        {container && <ChartContainer {...props} container={container} />}
+    return (
+      <div className={'relative flex flex-1'}>
+        <div ref={handleRef} className='absolute top-0 left-0 right-0 bottom-0'>
+          {container && (
+            <ChartContainer {...props} ref={ref} container={container} />
+          )}
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
+);
+ChartBase.displayName = 'ChartBase';
 
 export const ChartContext = createContext({} as ChartApi);
-
 const ChartContainer = forwardRef(
   (
     {
@@ -50,7 +55,7 @@ const ChartContainer = forwardRef(
       options: DeepPartial<ChartOptions>;
       onTimeRangeChange?: (time: Range<Time>) => void;
     },
-    ref
+    ref: React.Ref<IChartApi>
   ) => {
     const chartApiRef = useRef(new ChartApi(container, options));
 

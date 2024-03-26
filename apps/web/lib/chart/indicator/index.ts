@@ -7,6 +7,7 @@ export interface Indicator {
 export type IndicatorResult = {
   markers?: Marker[];
   priceLines?: PriceLine[];
+  rectangles?: Rectangle[];
 };
 
 export type Marker = {
@@ -21,6 +22,15 @@ export type Marker = {
 
 export type PriceLine = {
   price: number;
+  color?: string;
+  title?: string;
+};
+
+export type Rectangle = {
+  openTime: number;
+  open: number;
+  closeTime: number;
+  close: number;
   color?: string;
   title?: string;
 };

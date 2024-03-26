@@ -2,8 +2,6 @@
 import { ChartBase } from '@/components/lightweight-chart/chart';
 import { Series } from '@/components/lightweight-chart/series';
 import api from '@/lib/api';
-import { LightWeightMarkerFactory } from '@/lib/chart/candlestick/marker-factory/lightweight-marker-factory';
-import { LightWeightPriceLineFactory } from '@/lib/chart/candlestick/price-line-factory/lightweight-price-line-factory';
 import { IndicatorKeys, IndicatorValues } from '@/lib/constants/indicator';
 import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import { getNumberOfKlinesResponsive } from '@/lib/helpers/klines';
@@ -17,7 +15,7 @@ import {
 } from '@/styles/lightweight-charts-options';
 import {
   CandlestickData,
-  IPriceLine,
+  IChartApi,
   ISeriesApi,
   Range,
   SeriesType,
@@ -25,6 +23,7 @@ import {
 } from 'lightweight-charts';
 import { useTheme } from 'next-themes';
 import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
+import { LightWeightIndiceApplier } from '../../../../lib/chart/LightWeightIndiceApplier';
 
 const REALTIME_INTERVAL_DELAY: Record<IntervalKeys, number> = {
   '1h': 1000 * 60 * 60,
@@ -32,6 +31,16 @@ const REALTIME_INTERVAL_DELAY: Record<IntervalKeys, number> = {
   '1d': 1000 * 60 * 60 * 24,
   '1w': 1000 * 60 * 60 * 24 * 7,
   '2w': 1000 * 60 * 60 * 24 * 14,
+};
+
+const LIGHT_OPTIONS = {
+  chartOptions: OPTIONS_LIGHT,
+  seriesOptions: CANDLESTICK_LIGHT_OPTIONS,
+};
+
+const DARK_OPTIONS = {
+  chartOptions: OPTIONS_DARK,
+  seriesOptions: CANDLESTICK_DARK_OPTIONS,
 };
 
 export function Chart({
@@ -52,26 +61,20 @@ export function Chart({
     useRedirectWithSearchParams();
 
   const { chartOptions, seriesOptions } = useMemo(
-    () =>
-      theme === 'light'
-        ? {
-            chartOptions: OPTIONS_LIGHT,
-            seriesOptions: CANDLESTICK_LIGHT_OPTIONS,
-          }
-        : {
-            chartOptions: OPTIONS_DARK,
-            seriesOptions: CANDLESTICK_DARK_OPTIONS,
-          },
+    () => (theme === 'light' ? LIGHT_OPTIONS : DARK_OPTIONS),
     [theme]
   );
 
+  const chart = useRef<IChartApi | null>(null);
   const series = useRef<ISeriesApi<SeriesType> | null>(null);
   const klineChannels = useRef<Record<string, Kline[] | null>>({});
   const candelstickChannels = useRef<
     Record<string, CandlestickData<Time>[] | null>
   >({});
   const waitingTimeRangeUpdate = useRef<string | null>(null);
-  const priceLinesRef = useRef<IPriceLine[]>([]);
+  const indiceApplier = useRef<LightWeightIndiceApplier>(
+    new LightWeightIndiceApplier()
+  );
 
   // update klines on interval
   const realtime = useCallback(() => {
@@ -154,54 +157,36 @@ export function Chart({
   useLayoutEffect(() => {
     updateCandlestickChannels();
 
-    return realtime();
+    const clearRealtime = realtime();
+    return () => {
+      clearRealtime();
+    };
   }, [updateCandlestickChannels, realtime]);
 
   // on indicators
   useLayoutEffect(() => {
     const klines = klineChannels.current[interval];
-    if (!series.current || !klines) return;
+    if (!chart.current || !series.current || !klines) return;
 
-    // TODO refactor to plugin and out this
-    const markerFactory = new LightWeightMarkerFactory();
-    const pricelineFactory = new LightWeightPriceLineFactory();
-
-    series.current.setMarkers([]);
-    priceLinesRef.current.forEach((priceLine) =>
-      series.current?.removePriceLine(priceLine)
+    const { current: instance } = indiceApplier;
+    instance.assign(series.current, chart.current);
+    instance.clear();
+    instance.apply(
+      klines,
+      indicators.map((indicator) => IndicatorValues[indicator])
     );
 
-    indicators.forEach((indicator) => {
-      try {
-        const Indicator = IndicatorValues[indicator];
-        const instance = new Indicator();
-
-        const { markers, priceLines } = instance.execute(klines);
-
-        if (markers) {
-          series.current?.setMarkers(
-            [
-              ...series.current.markers(),
-              ...markers.map((marker) => markerFactory.createMarker(marker)),
-            ].sort((a, b) => +a.time - +b.time)
-          );
-        }
-        if (priceLines) {
-          const newPricelines = priceLines.map((priceLine) =>
-            series.current?.createPriceLine(
-              pricelineFactory.createPriceline(priceLine)
-            )
-          ) as IPriceLine[];
-          priceLinesRef.current = newPricelines;
-        }
-      } catch (error) {
-        console.error('Error on indicator: ', error);
-      }
-    });
+    return () => {
+      instance.clear();
+    };
   }, [indicators, interval, klines]);
 
   return (
-    <ChartBase options={chartOptions} onTimeRangeChange={onTimeRangeChange}>
+    <ChartBase
+      ref={chart}
+      options={chartOptions}
+      onTimeRangeChange={onTimeRangeChange}
+    >
       <Series
         type='Candlestick'
         ref={series}

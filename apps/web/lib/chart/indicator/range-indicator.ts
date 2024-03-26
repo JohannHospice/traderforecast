@@ -39,14 +39,12 @@ export class RangeIndicator implements Indicator {
             .toUpperCase()}`;
 
           ranges.push({
-            price: current.kline.high,
+            openTime: current.kline.openTime,
+            open: current.kline.high,
+            closeTime: next.kline.closeTime,
+            close: next.kline.low,
             color: color,
             title: 'TR',
-          });
-          ranges.push({
-            price: next.kline.low,
-            color: color,
-            title: 'BR',
           });
           break;
         }
@@ -54,7 +52,7 @@ export class RangeIndicator implements Indicator {
     }
 
     return {
-      priceLines: ranges,
+      rectangles: ranges,
     };
   }
 }
