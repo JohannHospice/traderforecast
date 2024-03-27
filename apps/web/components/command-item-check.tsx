@@ -1,24 +1,27 @@
 'use client';
 import { CommandItem } from '@/components/ui/command';
 import { CheckIcon } from '@radix-ui/react-icons';
-import { cn } from '../lib/tailwind/utils';
+import { cn } from '@/lib/tailwind/utils';
 
 export function CommandItemCheck({
-  option,
+  label,
+  disabled,
   check,
   onSelect,
-  before,
 }: {
   check: boolean;
-  option: { value: string; label: React.ReactNode };
+  label: React.ReactNode;
+  disabled?: boolean;
   onSelect: () => void;
-  before?: React.ReactNode;
 }) {
   return (
-    <CommandItem className='flex cursor-pointer' onSelect={onSelect}>
-      {before}
+    <CommandItem
+      disabled={disabled}
+      className='flex cursor-pointer'
+      onSelect={onSelect}
+    >
       <span className='overflow-hidden text-nowrap text-ellipsis flex-1 inline-flex gap-2'>
-        {option.label}
+        {label}
       </span>
       <CheckIcon
         className={cn('ml-auto h-4 w-4', check ? 'opacity-100' : 'opacity-0')}

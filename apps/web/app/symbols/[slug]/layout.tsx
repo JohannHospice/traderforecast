@@ -1,4 +1,4 @@
-import { ChartSettingsProvider } from './components/chart-settings-context';
+import { ChartSettingsProvider } from './contexts/chart-settings-context';
 
 export default function RootLayout({
   children,

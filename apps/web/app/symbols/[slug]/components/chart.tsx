@@ -24,7 +24,7 @@ import {
 import { useTheme } from 'next-themes';
 import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
 import { LightWeightIndiceApplier } from '../../../../lib/chart/candlestick';
-import { useChartSettings } from './chart-settings-context';
+import { useChartSettings } from '../contexts/chart-settings-context';
 
 const REALTIME_INTERVAL_DELAY: Record<IntervalKeys, number> = {
   '1h': 1000 * 60 * 60,

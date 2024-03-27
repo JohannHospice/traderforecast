@@ -1,4 +1,6 @@
 'use client';
+import { CommandItemCheck } from '@/components/command-item-check';
+import { DotPulse } from '@/components/dot-pulse';
 import {
   CommandEmpty,
   CommandGroup,
@@ -6,24 +8,13 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command';
-import { IndicatorKeys } from '@/lib/constants/indicator';
-import { CommandItemCheck } from '../../../../components/command-item-check';
-import { useChartSettings } from './chart-settings-context';
-import { cn } from '../../../../lib/tailwind/utils';
-import { useMemo } from 'react';
+import { COMMAND_GROUP_INDICATORS } from '../constants/commands';
+import { useChartSettings } from '../contexts/chart-settings-context';
 
 export function CommandChartSettings() {
   const { indicators, live, setLive, toggleIndicator } = useChartSettings();
-  const indicatorOptions = useMemo(
-    () =>
-      Object.keys(IndicatorLabels).map((key) => ({
-        value: key as IndicatorKeys,
-        label: IndicatorLabels[key as IndicatorKeys],
-      })),
-    []
-  );
   return (
-    <CommandList>
+    <CommandList className='sm:max-h-full max-h-[300px]'>
       <CommandEmpty>No results found.</CommandEmpty>
       <CommandGroup heading='Settings' className='px-7'>
         <CommandItem
@@ -31,70 +22,24 @@ export function CommandChartSettings() {
           onSelect={() => setLive(!live)}
         >
           <span>LIVE</span>
-          <span className='relative flex h-2 w-2'>
-            <span
-              className={cn(
-                'animate-ping absolute hidden h-full w-full rounded-full bg-red-400 opacity-75',
-                live && 'inline-flex'
-              )}
-            ></span>
-            <span
-              className={cn(
-                'relative inline-flex rounded-full h-2 w-2 bg-slate-500',
-                live && 'bg-red-500'
-              )}
-            ></span>
-          </span>
+          <DotPulse pulse={live} />
         </CommandItem>
         <CommandItem></CommandItem>
       </CommandGroup>
       <CommandSeparator />
-      <CommandGroup heading='Indicateurs' className='px-7'>
-        {indicatorOptions.map((indicator) => (
-          <CommandItemCheck
-            key={indicator.value}
-            option={indicator}
-            check={indicators.includes(indicator.value)}
-            onSelect={() => toggleIndicator(indicator.value)}
-          />
-        ))}
-      </CommandGroup>
+      {COMMAND_GROUP_INDICATORS.map((group, i) => (
+        <CommandGroup key={i} heading={group.heading} className='px-7'>
+          {group.items.map((indicator) => (
+            <CommandItemCheck
+              key={indicator.value}
+              label={indicator.label}
+              disabled={indicator.disabled}
+              check={indicators.includes(indicator.value)}
+              onSelect={() => toggleIndicator(indicator.value)}
+            />
+          ))}
+        </CommandGroup>
+      ))}
     </CommandList>
-  );
-}
-
-export const IndicatorLabels: Record<IndicatorKeys, React.ReactNode> = {
-  swinghigh: (
-    <>
-      <BadgeIndice>SH</BadgeIndice> Swing High
-    </>
-  ),
-  swinglow: (
-    <>
-      <BadgeIndice>SL</BadgeIndice> Swing Low
-    </>
-  ),
-  engulfing: (
-    <>
-      <BadgeIndice>E</BadgeIndice> Engulfing Candle
-    </>
-  ),
-  momentum: (
-    <>
-      <BadgeIndice>M</BadgeIndice> Momentum Candle
-    </>
-  ),
-  range: (
-    <>
-      <BadgeIndice>R</BadgeIndice> Range Indicator
-    </>
-  ),
-};
-
-function BadgeIndice({ children }: { children: React.ReactNode }) {
-  return (
-    <span className='flex items-center justify-center border-2 text-xs w-8 rounded-sm'>
-      {children}
-    </span>
   );
 }

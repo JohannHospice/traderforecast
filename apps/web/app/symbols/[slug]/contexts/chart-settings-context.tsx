@@ -11,9 +11,13 @@ export const ChartSettingsContext = createContext<{
 }>({
   indicators: [],
   toggleIndicator: () => {},
-  live: false,
+  live: true,
   setLive: () => {},
 });
+
+export function useChartSettings() {
+  return useContext(ChartSettingsContext);
+}
 
 export function ChartSettingsProvider({
   children,
@@ -44,8 +48,4 @@ export function ChartSettingsProvider({
       {children}
     </ChartSettingsContext.Provider>
   );
-}
-
-export function useChartSettings() {
-  return useContext(ChartSettingsContext);
 }
