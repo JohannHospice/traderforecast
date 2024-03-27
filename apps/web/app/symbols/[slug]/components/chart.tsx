@@ -23,7 +23,7 @@ import {
 } from 'lightweight-charts';
 import { useTheme } from 'next-themes';
 import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
-import { LightWeightIndiceApplier } from '../../../../lib/chart/candlestick';
+import { IndicatorHandler } from '../../../../lib/chart/handlers/indicator-handler';
 import { useChartSettings } from '../contexts/chart-settings-context';
 
 const REALTIME_INTERVAL_DELAY: Record<IntervalKeys, number> = {
@@ -70,9 +70,7 @@ export function Chart({
     Record<string, CandlestickData<Time>[] | null>
   >({});
   const waitingTimeRangeUpdate = useRef<string | null>(null);
-  const indiceApplier = useRef<LightWeightIndiceApplier>(
-    new LightWeightIndiceApplier()
-  );
+  const indiceApplier = useRef<IndicatorHandler>(new IndicatorHandler());
 
   // update klines on interval
   const realtime = useCallback(() => {

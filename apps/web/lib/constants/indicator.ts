@@ -1,8 +1,8 @@
-import { EngulfingCandlestickMarkersIndicator } from '@/lib/chart/indicator/engulfing-candlestick-indicator';
-import { MomemtumCandlestickMarkersIndicator } from '@/lib/chart/indicator/momentum-candlestick-indicator';
-import { RangeIndicator } from '@/lib/chart/indicator/range-indicator';
-import { SwingHighIndicator } from '@/lib/chart/indicator/swing-high-indicator';
-import { SwingLowIndicator } from '@/lib/chart/indicator/swing-low-indicator';
+import { EngulfingCandlestickMarkersIndicator } from '@/lib/chart/indicators/engulfing-candlestick-indicator';
+import { MomemtumCandlestickMarkersIndicator } from '@/lib/chart/indicators/momentum-candlestick-indicator';
+import { RangeIndicator } from '@/lib/chart/indicators/range-indicator';
+import { SwingHighIndicator } from '@/lib/chart/indicators/swing-high-indicator';
+import { SwingLowIndicator } from '@/lib/chart/indicators/swing-low-indicator';
 
 export type IndicatorKeys = keyof typeof IndicatorValues;
 

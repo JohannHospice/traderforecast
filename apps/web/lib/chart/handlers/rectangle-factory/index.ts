@@ -1,5 +1,5 @@
 import { IChartApi, ISeriesApi, SeriesType } from 'lightweight-charts';
-import { Rectangle } from '../../indicator';
+import { Rectangle } from '../../indicators';
 
 export interface RectangleFactory<T> {
   createRectangle(

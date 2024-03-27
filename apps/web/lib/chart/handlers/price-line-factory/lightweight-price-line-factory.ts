@@ -1,6 +1,6 @@
 import { CreatePriceLineOptions } from 'lightweight-charts';
 import { PriceLineFactory } from '.';
-import { PriceLine } from '../../indicator';
+import { PriceLine } from '../../indicators';
 
 export class LightWeightPriceLineFactory
   implements PriceLineFactory<CreatePriceLineOptions>

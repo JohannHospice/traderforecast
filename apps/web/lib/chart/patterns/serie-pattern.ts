@@ -1,21 +1,25 @@
-export function isSMABullish(klines: Kline[], period: number): boolean {
-  if (klines.length < period) return false;
-  const _sma = sma(klines, period);
-  return klines[klines.length - 1].close > _sma;
-}
+export class SeriePattern {
+  constructor(private serie: Kline[]) {}
 
-export function isSMABearish(klines: Kline[], period: number): boolean {
-  if (klines.length < period) return false;
-  const _sma = sma(klines, period);
-  return klines[klines.length - 1].close < _sma;
-}
-
-export function sma(klines: Kline[], period: number): number {
-  let sum = 0;
-  for (let i = 0; i < period; i++) {
-    sum += klines[i].close;
+  sma(period: number): number {
+    let sum = 0;
+    for (let i = 0; i < period; i++) {
+      sum += this.serie[i].close;
+    }
+    return sum / period;
   }
-  return sum / period;
+
+  isSMABullish(period: number): boolean {
+    if (this.serie.length < period) return false;
+    const _sma = this.sma(period);
+    return this.serie[this.serie.length - 1].close > _sma;
+  }
+
+  isSMABearish(period: number): boolean {
+    if (this.serie.length < period) return false;
+    const _sma = this.sma(period);
+    return this.serie[this.serie.length - 1].close < _sma;
+  }
 }
 
 /*

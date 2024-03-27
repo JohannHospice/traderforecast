@@ -1,22 +1,23 @@
 import { Indicator, IndicatorResult, Marker } from '.';
-import { isSMABearish, isSMABullish, sma } from '../indicator-sheet';
-import { isBearish, isBullish, isMarubozu, isMomentum } from '../pattern-sheet';
+import { CandlestickPattern } from '../patterns/candlestick-pattern';
+import { SeriePattern } from '../patterns/serie-pattern';
 
 export class MomemtumCandlestickMarkersIndicator implements Indicator {
   execute(klines: Kline[]): IndicatorResult {
     const markers: Marker[] = [];
 
     for (let i = 1; i < klines.length; i++) {
-      const current = klines[i];
-      const previous = klines[i - 1];
-      const _isMomentum = isMomentum(current, previous);
-      const _isMarubozu = isMarubozu(current);
+      const current = new CandlestickPattern(klines[i]);
+      const _isMarubozu = current.isMarubozu();
 
-      if (!_isMomentum && !_isMarubozu) {
+      if (!current.isMomentum(klines[i - 1]) && !_isMarubozu) {
         continue;
       }
       const text = _isMarubozu ? 'Mb' : 'Mo';
-      if (isBullish(current) && isSMABullish(klines.slice(i - 50, i), 50)) {
+      if (
+        current.isBullish() &&
+        new SeriePattern(klines.slice(i - 50, i)).isSMABullish(50)
+      ) {
         markers.push({
           time: current.closeTime,
           color: 'green',
@@ -26,7 +27,10 @@ export class MomemtumCandlestickMarkersIndicator implements Indicator {
         });
       }
 
-      if (isBearish(current) && isSMABearish(klines.slice(i - 50, i), 50)) {
+      if (
+        current.isBearish() &&
+        new SeriePattern(klines.slice(i - 50, i)).isSMABearish(50)
+      ) {
         markers.push({
           time: current.closeTime,
           color: 'red',

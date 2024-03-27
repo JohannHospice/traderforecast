@@ -2,7 +2,7 @@ import { millisecondsToTime } from '@/lib/helpers/unit';
 import { IChartApi, ISeriesApi, SeriesType } from 'lightweight-charts';
 import { TrendLine } from 'lightweight-charts-plugin/trend-line/trend-line';
 import { RectangleFactory } from '.';
-import { Rectangle } from '../../indicator';
+import { Rectangle } from '../../indicators';
 
 export class LightWeightRectangleFactory
   implements RectangleFactory<TrendLine[]>

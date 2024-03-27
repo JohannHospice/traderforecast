@@ -1,8 +1,13 @@
 'use client';
-import { LightWeightMarkerFactory } from '@/lib/chart/candlestick/marker-factory/lightweight-marker-factory';
-import { LightWeightPriceLineFactory } from '@/lib/chart/candlestick/price-line-factory/lightweight-price-line-factory';
-import { LightWeightRectangleFactory } from '@/lib/chart/candlestick/rectangle-factory/lightweight-rectangle-factory';
-import { Indicator, Marker, PriceLine, Rectangle } from '@/lib/chart/indicator';
+import { LightWeightMarkerFactory } from '@/lib/chart/handlers/marker-factory/lightweight-marker-factory';
+import { LightWeightPriceLineFactory } from '@/lib/chart/handlers/price-line-factory/lightweight-price-line-factory';
+import { LightWeightRectangleFactory } from '@/lib/chart/handlers/rectangle-factory/lightweight-rectangle-factory';
+import {
+  Indicator,
+  Marker,
+  PriceLine,
+  Rectangle,
+} from '@/lib/chart/indicators';
 import {
   IChartApi,
   IPriceLine,
@@ -12,7 +17,7 @@ import {
 } from 'lightweight-charts';
 import { TrendLine } from 'lightweight-charts-plugin/trend-line/trend-line';
 
-export class LightWeightIndiceApplier {
+export class IndicatorHandler {
   series: ISeriesApi<SeriesType, Time> | null = null;
   chart: IChartApi | null = null;
 

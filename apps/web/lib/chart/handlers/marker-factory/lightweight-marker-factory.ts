@@ -1,6 +1,6 @@
 import { SeriesMarker, Time } from 'lightweight-charts';
 import { MarkerFactory } from '.';
-import { Marker } from '../../indicator';
+import { Marker } from '../../indicators';
 import { millisecondsToTime } from '@/lib/helpers/unit';
 
 export class LightWeightMarkerFactory

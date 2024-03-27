@@ -26,7 +26,7 @@ export default function CardChart({
       <CardHeader>
         <CardChartHeader intervals={intervals} />
       </CardHeader>
-      <CardContent className='flex flex-1 min-h-[calc(100vh-84px-53px)] sm:min-h-[calc(100vh-224px)]'>
+      <CardContent className='flex flex-1 min-h-[calc(100vh-84px-53px)] sm:min-h-[calc(100vh-224px)] md:min-h-[480px]'>
         <Chart slug={slug} klines={klines} interval={interval} />
       </CardContent>
     </Card>
