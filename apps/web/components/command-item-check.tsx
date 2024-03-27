@@ -10,14 +10,14 @@ export function CommandItemCheck({
   before,
 }: {
   check: boolean;
-  option: { value: string; label: string };
+  option: { value: string; label: React.ReactNode };
   onSelect: () => void;
   before?: React.ReactNode;
 }) {
   return (
     <CommandItem className='flex cursor-pointer' onSelect={onSelect}>
       {before}
-      <span className='overflow-hidden text-nowrap text-ellipsis flex-1'>
+      <span className='overflow-hidden text-nowrap text-ellipsis flex-1 inline-flex gap-2'>
         {option.label}
       </span>
       <CheckIcon

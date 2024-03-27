@@ -10,9 +10,18 @@ import { IndicatorKeys } from '@/lib/constants/indicator';
 import { CommandItemCheck } from '../../../../components/command-item-check';
 import { useChartSettings } from './chart-settings-context';
 import { cn } from '../../../../lib/tailwind/utils';
+import { useMemo } from 'react';
 
 export function CommandChartSettings() {
   const { indicators, live, setLive, toggleIndicator } = useChartSettings();
+  const indicatorOptions = useMemo(
+    () =>
+      Object.keys(IndicatorLabels).map((key) => ({
+        value: key as IndicatorKeys,
+        label: IndicatorLabels[key as IndicatorKeys],
+      })),
+    []
+  );
   return (
     <CommandList>
       <CommandEmpty>No results found.</CommandEmpty>
@@ -37,6 +46,7 @@ export function CommandChartSettings() {
             ></span>
           </span>
         </CommandItem>
+        <CommandItem></CommandItem>
       </CommandGroup>
       <CommandSeparator />
       <CommandGroup heading='Indicateurs' className='px-7'>
@@ -53,14 +63,38 @@ export function CommandChartSettings() {
   );
 }
 
-export const IndicatorLabels: Record<IndicatorKeys, string> = {
-  swinghigh: '(SH) Swing High',
-  swinglow: '(SL) Swing Low',
-  engulfing: '(E) Engulfing Candle',
-  momentum: '(M) Momentum Candle',
-  range: '(R) Range Indicator',
+export const IndicatorLabels: Record<IndicatorKeys, React.ReactNode> = {
+  swinghigh: (
+    <>
+      <BadgeIndice>SH</BadgeIndice> Swing High
+    </>
+  ),
+  swinglow: (
+    <>
+      <BadgeIndice>SL</BadgeIndice> Swing Low
+    </>
+  ),
+  engulfing: (
+    <>
+      <BadgeIndice>E</BadgeIndice> Engulfing Candle
+    </>
+  ),
+  momentum: (
+    <>
+      <BadgeIndice>M</BadgeIndice> Momentum Candle
+    </>
+  ),
+  range: (
+    <>
+      <BadgeIndice>R</BadgeIndice> Range Indicator
+    </>
+  ),
 };
-export const indicatorOptions = Object.keys(IndicatorLabels).map((key) => ({
-  value: key as IndicatorKeys,
-  label: IndicatorLabels[key as IndicatorKeys],
-}));
+
+function BadgeIndice({ children }: { children: React.ReactNode }) {
+  return (
+    <span className='flex items-center justify-center border-2 text-xs w-8 rounded-sm'>
+      {children}
+    </span>
+  );
+}
