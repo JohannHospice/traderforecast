@@ -92,6 +92,8 @@ const ChartContainer = forwardRef(
         }
         onTimeRangeChange?.(time);
       };
+      const range = api.timeScale().getVisibleRange();
+      if (range) onTimeRangeChange?.(range);
 
       api
         .timeScale()

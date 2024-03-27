@@ -5,29 +5,20 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { formatNumber, formatPercent } from '@/lib/helpers/string';
 import { PriceTitle } from './price-title';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Badge } from './ui/badge';
-import { formatNumber, formatPercent } from '@/lib/helpers/string';
 
 export default function CardSymbol({
   symbol,
   className,
-  noBorder,
 }: {
   symbol: Symbol;
   className?: string;
-  noBorder?: boolean;
 }) {
   return (
-    <Card
-      className={
-        'flex flex-col ' +
-        (noBorder ? ' border-0 sm:border-[1px]' : '') +
-        ' ' +
-        className
-      }
-    >
+    <Card noBorder className={'flex flex-col ' + className}>
       <CardHeader className={'flex flex-row items-center gap-4 relative'}>
         <Avatar className='w-8 h-8'>
           <AvatarImage src={symbol.logoUrl} />

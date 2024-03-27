@@ -1,6 +1,10 @@
 {
   "name": "traderforecast",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
@@ -19,9 +23,5 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "bun@1.0.6",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+  "packageManager": "bun@1.0.6"
 }

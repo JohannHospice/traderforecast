@@ -1,11 +1,15 @@
 import CardSymbol from '@/components/card-symbol';
 import { Container } from '@/components/container';
+import { Card } from '@/components/ui/card';
+import { Command } from '@/components/ui/command';
 import api from '@/lib/api/';
 import { SEARCH_PARAMS } from '@/lib/constants/navigation';
-import CardChart from './components/card-chart';
-import { formatInterval } from '../../../lib/helpers/utc';
-import { getDefaultNumberOfKlines } from '../../../lib/helpers/klines';
 import { redirect } from 'next/navigation';
+import { getDefaultNumberOfKlines } from '../../../lib/helpers/klines';
+import { formatInterval } from '../../../lib/helpers/utc';
+import CardChart from './components/card-chart';
+import { CommandChartSettings } from './components/command-chart-settings';
+import { ScrollArea } from '../../../components/ui/scroll-area';
 
 export default async function Page({
   params: { slug },
@@ -62,16 +66,19 @@ export default async function Page({
         </p>
       </Container>
       <Container fluid className='flex-1'>
-        <div className='grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] gap-y-0 sm:gap-y-4 flex-1'>
-          <div className='col-span-2 sm:flex'>
-            <CardSymbol symbol={symbol} noBorder className='min-w-[270px]' />
+        <div className='grid grid-cols-[270px_1fr] grid-rows-[auto_1fr] gap-4 gap-y-0 sm:gap-y-4 flex-1'>
+          <div className='col-span-1 sm:flex'>
+            <CardSymbol symbol={symbol} className='min-w-[270px]' />
           </div>
-          <div className='row-start-2 gap-4 flex flex-col'>
-            {/* todo sidemenu */}
+          <div className='row-start-2 row-end-3 flex-col hidden sm:flex'>
+            <Card noBorder className='flex-1 pt-4'>
+              <Command className='rounded-xl max-h-[400px] overflow-hidden'>
+                <CommandChartSettings />
+              </Command>
+            </Card>
           </div>
-          <div className='row-start-2 flex sm:border-t-0 border-t-[1px]'>
+          <div className='sm:row-start-1 row-start-2 sm:col-start-2 col-start-1 row-end-3 col-end-3 flex sm:border-t-0 border-t-[1px]'>
             <CardChart
-              noBorder
               slug={slug}
               klines={klines}
               intervals={intervals}

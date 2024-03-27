@@ -26,7 +26,7 @@ export default function RootLayout({
         >
           <div className='flex flex-col min-h-[100vh]'>
             <Navigation />
-            <div className='flex flex-col flex-1 pt-4'>{children}</div>
+            <div className='flex flex-col flex-1 py-4'>{children}</div>
           </div>
         </ThemeProvider>
         <Analytics />

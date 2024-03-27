@@ -2,7 +2,7 @@
 import { ChartBase } from '@/components/lightweight-chart/chart';
 import { Series } from '@/components/lightweight-chart/series';
 import api from '@/lib/api';
-import { IndicatorKeys, IndicatorValues } from '@/lib/constants/indicator';
+import { IndicatorValues } from '@/lib/constants/indicator';
 import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import { getNumberOfKlinesResponsive } from '@/lib/helpers/klines';
 import { klineToCandlestick } from '@/lib/helpers/lightweight-charts';
@@ -23,7 +23,8 @@ import {
 } from 'lightweight-charts';
 import { useTheme } from 'next-themes';
 import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
-import { LightWeightIndiceApplier } from '../../../../lib/chart/LightWeightIndiceApplier';
+import { LightWeightIndiceApplier } from '../../../../lib/chart/candlestick';
+import { useChartSettings } from './chart-settings-context';
 
 const REALTIME_INTERVAL_DELAY: Record<IntervalKeys, number> = {
   '1h': 1000 * 60 * 60,
@@ -47,15 +48,12 @@ export function Chart({
   slug,
   klines,
   interval = '1d',
-  indicators = [],
-  fixed,
 }: {
   slug?: string;
   klines: Kline[];
   interval?: IntervalKeys;
-  indicators?: IndicatorKeys[];
-  fixed?: boolean;
 }) {
+  const { indicators, live } = useChartSettings();
   const { theme } = useTheme();
   const { redirectWithSearchParams, searchParams } =
     useRedirectWithSearchParams();
@@ -78,7 +76,7 @@ export function Chart({
 
   // update klines on interval
   const realtime = useCallback(() => {
-    if (!slug) {
+    if (!slug || !live) {
       return () => {};
     }
 
@@ -93,7 +91,7 @@ export function Chart({
     }, REALTIME_INTERVAL_DELAY[interval] || REALTIME_INTERVAL_DELAY['1d']);
 
     return () => clearInterval(intervalId);
-  }, [slug, interval]);
+  }, [slug, live, interval]);
 
   // update candlestick channels
   const updateCandlestickChannels = useCallback(() => {
@@ -112,7 +110,7 @@ export function Chart({
         waitingTimeRangeUpdate.current === null ||
         !candelstickChannels.current[interval] ||
         !series.current ||
-        fixed
+        !live
       ) {
         return;
       }
@@ -145,7 +143,7 @@ export function Chart({
         }
       );
     },
-    [interval, redirectWithSearchParams, searchParams]
+    [interval, live, redirectWithSearchParams, searchParams]
   );
 
   // reset waiting time range update

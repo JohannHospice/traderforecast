@@ -1,4 +1,5 @@
 import { Indicator, IndicatorResult, Marker } from '.';
+import { isBullishEngulfing, isBearishEngulfing } from '../pattern-sheet';
 
 export class EngulfingCandlestickMarkersIndicator implements Indicator {
   execute(klines: Kline[]): IndicatorResult {
@@ -8,16 +9,7 @@ export class EngulfingCandlestickMarkersIndicator implements Indicator {
       const current = klines[i];
       const previous = klines[i - 1];
 
-      const isBullish = current.close > current.open;
-
-      const isBullishEngulfing =
-        isBullish &&
-        current.open < previous.close &&
-        current.close > previous.open &&
-        current.open < previous.open &&
-        current.close > previous.close;
-
-      if (isBullishEngulfing) {
+      if (isBullishEngulfing(current, previous)) {
         markers.push({
           time: current.closeTime,
           color: 'green',
@@ -27,14 +19,7 @@ export class EngulfingCandlestickMarkersIndicator implements Indicator {
         });
       }
 
-      const isBearishEngulfing =
-        !isBullish &&
-        current.open > previous.close &&
-        current.close < previous.open &&
-        current.open > previous.open &&
-        current.close < previous.close;
-
-      if (isBearishEngulfing) {
+      if (isBearishEngulfing(current, previous)) {
         markers.push({
           time: current.closeTime,
           color: 'red',

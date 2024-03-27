@@ -1,72 +1,56 @@
 'use client';
-import { Combobox } from '@/components/combobox';
 import { GroupButton } from '@/components/group-button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { IndicatorKeys, IndicatorOptions } from '@/lib/constants/indicator';
 import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import { getNumberOfKlinesResponsive } from '@/lib/helpers/klines';
 import { formatInterval } from '@/lib/helpers/utc';
 import { useRedirectWithSearchParams } from '@/lib/hooks/useRedirectWithSearchParams';
+import { GearIcon, HamburgerMenuIcon } from '@radix-ui/react-icons';
+import { useState } from 'react';
+import { Button } from '../../../../components/ui/button';
+import { CommandChartSettings } from './command-chart-settings';
+import { CommandDialog } from '../../../../components/ui/command';
 
-export function CardChartHeader({
-  onSelectMarker,
-  intervals = [],
-  valuesMarker = [],
-  fixed,
-  onChangeFixed,
-}: {
-  intervals?: string[];
-  onSelectMarker?: (value: IndicatorKeys) => void;
-  valuesMarker?: IndicatorKeys[];
-  fixed?: boolean;
-  onChangeFixed?: (value: boolean) => void;
-}) {
+export function CardChartHeader({ intervals = [] }: { intervals?: string[] }) {
   const { redirectWithSearchParams, searchParams } =
     useRedirectWithSearchParams();
 
+  const [open, setOpen] = useState(false);
   return (
-    <div className='flex gap-4 flex-wrap'>
-      <GroupButton
-        defaultValue={searchParams.get(SEARCH_PARAMS.INTERVAL)}
-        tabs={intervals.map((interval, i) => ({
-          value: interval,
-          label: interval.toUpperCase(),
-          onClick: () => {
-            redirectWithSearchParams(
-              {
-                [SEARCH_PARAMS.START_TIME]: formatInterval(
-                  interval,
-                  getNumberOfKlinesResponsive()
-                ),
-                [SEARCH_PARAMS.INTERVAL]: interval,
-              },
-              {
-                scroll: false,
-              }
-            );
-          },
-        }))}
-      />
-      <Combobox
-        className='w-full sm:max-w-44 sm:min-w-60'
-        placeholder='Select markers...'
-        search='Search markers...'
-        noOptions='No markers found.'
-        values={valuesMarker}
-        options={IndicatorOptions}
-        onSelect={onSelectMarker}
-        multiple
-      />
-
-      <div className='items-center flex space-x-2'>
-        <Checkbox id='terms1' checked={fixed} onCheckedChange={onChangeFixed} />
-        <label
-          htmlFor='terms1'
-          className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
+    <>
+      <div className='flex gap-4 flex-wrap justify-between'>
+        <GroupButton
+          defaultValue={searchParams.get(SEARCH_PARAMS.INTERVAL)}
+          tabs={intervals.map((interval, i) => ({
+            value: interval,
+            label: interval.toUpperCase(),
+            onClick: () => {
+              redirectWithSearchParams(
+                {
+                  [SEARCH_PARAMS.START_TIME]: formatInterval(
+                    interval,
+                    getNumberOfKlinesResponsive()
+                  ),
+                  [SEARCH_PARAMS.INTERVAL]: interval,
+                },
+                {
+                  scroll: false,
+                }
+              );
+            },
+          }))}
+        />
+        <Button
+          className='sm:hidden'
+          variant='outline'
+          size='icon'
+          onClick={() => setOpen(true)}
         >
-          Desactivate auto-load
-        </label>
+          <HamburgerMenuIcon className='h-[1.2rem] w-[1.2rem]' />
+        </Button>
       </div>
-    </div>
+      <CommandDialog open={open} onOpenChange={(open) => setOpen(open)}>
+        <CommandChartSettings />
+      </CommandDialog>
+    </>
   );
 }
