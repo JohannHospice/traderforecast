@@ -12,19 +12,21 @@ export default function CardChart({
   klines,
   intervals = [],
   className,
+  noBorder,
 }: {
   slug?: string;
   klines: Kline[];
   intervals?: IntervalKeys[];
   className?: string;
   interval?: IntervalKeys;
+  noBorder?: 'sm' | 'md' | 'lg';
 }) {
   return (
-    <Card noBorder className={'flex flex-col flex-1 ' + className}>
+    <Card noBorder={noBorder} className={'flex flex-col flex-1 ' + className}>
       <CardHeader>
         <CardChartHeader intervals={intervals} />
       </CardHeader>
-      <CardContent className='flex flex-1 min-h-[612px]'>
+      <CardContent className='flex flex-1 min-h-[calc(100vh-84px-53px)] sm:min-h-[calc(100vh-224px)]'>
         <Chart slug={slug} klines={klines} interval={interval} />
       </CardContent>
     </Card>

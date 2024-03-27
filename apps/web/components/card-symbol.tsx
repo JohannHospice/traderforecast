@@ -13,12 +13,14 @@ import { Badge } from './ui/badge';
 export default function CardSymbol({
   symbol,
   className,
+  noBorder = 'sm',
 }: {
   symbol: Symbol;
   className?: string;
+  noBorder?: 'sm' | 'md' | 'lg';
 }) {
   return (
-    <Card noBorder className={'flex flex-col ' + className}>
+    <Card noBorder={noBorder} className={'flex flex-col ' + className}>
       <CardHeader className={'flex flex-row items-center gap-4 relative'}>
         <Avatar className='w-8 h-8'>
           <AvatarImage src={symbol.logoUrl} />
