@@ -1,7 +1,8 @@
 import { ApolloClient, gql } from '@apollo/client';
 import { mapOhlcToKline } from '../../mappers/ohlc';
+import { MarketRepository } from '.';
 
-export class SantimentMarket<T> implements Market {
+export class SantimentMarketRepository<T> implements MarketRepository {
   client: ApolloClient<T>;
 
   constructor(client: ApolloClient<T>) {
@@ -10,18 +11,23 @@ export class SantimentMarket<T> implements Market {
 
   intervals: IntervalKeys[] = ['1h', '4h', '1d', '1w', '2w'];
 
-  async lastKline(params: { slug: string; interval: string }): Promise<Kline> {
+  async getLatestKline(params: {
+    slug: string;
+    interval: string;
+  }): Promise<Kline> {
     const {
-      data: { klines },
+      data: { ohlc },
     } = await this.client.query({
+      context: {
+        log: 'DATA',
+      },
       query: gql`
-        query ($slug: String!, $from: DateTime!, $interval: interval!) {
-          klines: ohlc(
-            slug: $slug
-            interval: $interval
-            from: $from
-            to: "utc_now"
-          ) {
+        query getLatestKline(
+          $slug: String!
+          $from: DateTime!
+          $interval: interval!
+        ) {
+          ohlc(slug: $slug, interval: $interval, from: $from, to: "utc_now") {
             lowPriceUsd
             highPriceUsd
             openPriceUsd
@@ -36,10 +42,10 @@ export class SantimentMarket<T> implements Market {
         from: 'utc_now-' + 1 + params.interval.slice(-1),
       },
     });
-    return mapOhlcToKline(klines[0]);
+    return mapOhlcToKline(ohlc[0]);
   }
 
-  async klines({
+  async getKlinesAndSymbol({
     slug,
     interval = '1d',
     startTime = 'utc_now-7d',
@@ -51,16 +57,16 @@ export class SantimentMarket<T> implements Market {
     endTime?: number | string;
   }): Promise<{ symbol: Symbol; klines: Kline[] }> {
     const {
-      data: { klines, symbol },
+      data: { ohlc, projectBySlug },
     } = await this.client.query({
       query: gql`
-        query (
+        query getKlinesAndSymbol(
           $slug: String!
           $from: DateTime!
           $to: DateTime!
           $interval: interval!
         ) {
-          klines: ohlc(slug: $slug, from: $from, to: $to, interval: $interval) {
+          ohlc(slug: $slug, from: $from, to: $to, interval: $interval) {
             lowPriceUsd
             highPriceUsd
             openPriceUsd
@@ -68,7 +74,7 @@ export class SantimentMarket<T> implements Market {
             datetime
           }
 
-          symbol: projectBySlug(slug: $slug) {
+          projectBySlug(slug: $slug) {
             slug
             name
             ticker
@@ -111,12 +117,60 @@ export class SantimentMarket<T> implements Market {
     });
 
     return {
-      symbol,
-      klines: klines.map(mapOhlcToKline),
+      symbol: projectBySlug,
+      klines: ohlc.map(mapOhlcToKline),
     };
   }
 
-  async symbols(params?: {
+  async getSymbol(slug: string): Promise<Symbol> {
+    const {
+      data: { projectBySlug },
+    } = await this.client.query({
+      query: gql`
+        query getSymbol($slug: String!) {
+          projectBySlug(slug: $slug) {
+            slug
+            name
+            ticker
+            logoUrl
+            rank
+            market_segments
+            price_usd: aggregatedTimeseriesData(
+              metric: "price_usd"
+              from: "utc_now-1d"
+              to: "utc_now"
+              aggregation: LAST
+            )
+            price_usd_change_1d: aggregatedTimeseriesData(
+              metric: "price_usd_change_1d"
+              from: "utc_now-1d"
+              to: "utc_now"
+              aggregation: LAST
+            )
+            volume_usd: aggregatedTimeseriesData(
+              metric: "volume_usd"
+              from: "utc_now-1d"
+              to: "utc_now"
+              aggregation: LAST
+            )
+            marketcap_usd: aggregatedTimeseriesData(
+              metric: "marketcap_usd"
+              from: "utc_now-1d"
+              to: "utc_now"
+              aggregation: LAST
+            )
+          }
+        }
+      `,
+      variables: {
+        slug: slug,
+      },
+    });
+
+    return projectBySlug;
+  }
+
+  async getSymbols(params?: {
     query?: string | undefined;
     segments?: string[];
     page?: number;
@@ -126,7 +180,7 @@ export class SantimentMarket<T> implements Market {
       data: { allProjects },
     } = await this.client.query<{ allProjects: Symbol[] }>({
       query: gql`
-        query ($minVolume: Int, $page: Int, $size: Int) {
+        query getSymbols($minVolume: Int, $page: Int, $size: Int) {
           allProjects(minVolume: $minVolume, page: $page, pageSize: $size) {
             slug
             name
@@ -201,7 +255,7 @@ export class SantimentMarket<T> implements Market {
     return { symbols: allUniqueProjects, pages: 1 };
   }
 
-  async marketSegments(): Promise<string[]> {
+  async getMarketSegments(): Promise<string[]> {
     const {
       data: { currenciesMarketSegments },
     } = await this.client.query<{

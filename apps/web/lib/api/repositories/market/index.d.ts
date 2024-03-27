@@ -1,21 +1,36 @@
-interface Market {
+export interface MarketRepository {
   intervals: IntervalKeys[];
 
-  klines(params: {
-    slug: string;
-    interval: IntervalKeys;
-    startTime?: number | string;
-    endTime?: number;
-  }): Promise<{ symbol: Symbol; klines: Kline[] }>;
+  getKlinesAndSymbol(
+    params: GetKlinesAndSymbolParams
+  ): Promise<{ symbol: Symbol; klines: Kline[] }>;
 
-  symbols(params?: {
-    query?: string;
-    segments?: string[];
-    page?: number;
-    size?: number;
-  }): Promise<{ symbols: Symbol[]; pages: number }>;
+  getSymbols(
+    params?: GetSymbolsParams
+  ): Promise<{ symbols: Symbol[]; pages: number }>;
 
-  marketSegments(): Promise<string[]>;
+  getSymbol(slug: string): Promise<Symbol>;
 
-  lastKline(params: { slug: string; interval: IntervalKeys }): Promise<Kline>;
+  getMarketSegments(): Promise<string[]>;
+
+  getLatestKline(params: GetLatestKlineParams): Promise<Kline>;
+}
+
+export interface GetKlinesAndSymbolParams {
+  slug: string;
+  interval: IntervalKeys;
+  startTime?: number | string;
+  endTime?: number;
+}
+
+export interface GetSymbolsParams {
+  query?: string;
+  segments?: string[];
+  page?: number;
+  size?: number;
+}
+
+export interface GetLatestKlineParams {
+  slug: string;
+  interval: IntervalKeys;
 }

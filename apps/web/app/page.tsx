@@ -15,7 +15,7 @@ export default async function Page({
   const page = Number(searchParams[SEARCH_PARAMS.PAGE]) || 1;
 
   const [{ symbols, pages }, segments] = await Promise.all([
-    api.market.symbols({
+    api.market.getSymbols({
       query: searchParams[SEARCH_PARAMS.QUERY],
       segments: formatArrayInSearchParam(
         searchParams[SEARCH_PARAMS.SEGMENTS] || ''
@@ -23,7 +23,7 @@ export default async function Page({
       page: page,
       size: 20,
     }),
-    api.market.marketSegments(),
+    api.market.getMarketSegments(),
   ]);
 
   const isEmpty = symbols.length === 0;

@@ -9,7 +9,7 @@ import { getDefaultNumberOfKlines } from '../../../lib/helpers/klines';
 import { formatInterval } from '../../../lib/helpers/utc';
 import CardChart from './components/card-chart';
 import { CommandChartSettings } from './components/command-chart-settings';
-import { ScrollArea } from '../../../components/ui/scroll-area';
+import { GetKlinesAndSymbolUsecase } from '../../../lib/api/usecases/get-klines-and-symbol-usecase';
 
 export default async function Page({
   params: { slug },
@@ -39,15 +39,16 @@ export default async function Page({
 
   const intervals = api.market.intervals;
 
-  const { symbol, klines } = await api.market
-    .klines({
+  const { symbol, klines } = await new GetKlinesAndSymbolUsecase(api.market)
+    .execute({
       slug: slug,
       interval: interval,
       startTime: startTime,
     })
-    .catch((err) => {
-      console.error(err);
-      redirect(
+    .catch((error) => {
+      console.error(error);
+
+      return redirect(
         `?${SEARCH_PARAMS.INTERVAL}=${interval}&${SEARCH_PARAMS.START_TIME}=${formatInterval(
           interval,
           getDefaultNumberOfKlines(interval)

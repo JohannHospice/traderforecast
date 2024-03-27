@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useState } from 'react';
 import { IndicatorKeys } from '@/lib/constants/indicator';
+const LIVE_BY_DEFAULT = process.env.NODE_ENV === 'production';
 
 export const ChartSettingsContext = createContext<{
   live: boolean;
@@ -11,7 +12,7 @@ export const ChartSettingsContext = createContext<{
 }>({
   indicators: [],
   toggleIndicator: () => {},
-  live: true,
+  live: LIVE_BY_DEFAULT,
   setLive: () => {},
 });
 
@@ -25,7 +26,7 @@ export function ChartSettingsProvider({
   children: React.ReactNode;
 }) {
   const [indicators, setIndicators] = useState<IndicatorKeys[]>([]);
-  const [live, setLive] = useState(false);
+  const [live, setLive] = useState(LIVE_BY_DEFAULT);
 
   const toggleIndicator = useCallback((value: IndicatorKeys) => {
     setIndicators((prev) => {

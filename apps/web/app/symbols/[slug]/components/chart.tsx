@@ -79,7 +79,7 @@ export function Chart({
     }
 
     const intervalId = setInterval(async () => {
-      const hotKline = await api.realtimeMarket.hotKline(slug, interval);
+      const hotKline = await api.realtimeMarket.getLatestKline(slug, interval);
 
       try {
         series.current?.update(klineToCandlestick(hotKline));
