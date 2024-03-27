@@ -68,7 +68,7 @@ export default async function Page({
       </Container>
       <Container fluid className='flex-1'>
         <div className='grid grid-cols-[270px_1fr] grid-rows-[auto_1fr] gap-4 gap-y-0 sm:gap-y-4 flex-1'>
-          <div className='col-span-1 md:flex'>
+          <div className='col-span-2 md:col-span-1 md:flex'>
             <CardSymbol
               noBorder='sm'
               symbol={symbol}
