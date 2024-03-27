@@ -1,12 +1,11 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import api from '@/lib/api';
-import { SEARCH_PARAMS, SYMBOL_VIEWS } from '@/lib/constants/navigation';
+import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import { formatArrayInSearchParam } from '@/lib/helpers/string';
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import { Container } from '../components/container';
 import { GridSymbols } from './components/grid-symbols';
 import { MarketNav } from './components/market-nav';
-import { TableSymbols } from './components/table-symbols';
 
 export default async function Page({
   searchParams,
@@ -28,7 +27,7 @@ export default async function Page({
   ]);
 
   const isEmpty = symbols.length === 0;
-  const isGrid = searchParams[SEARCH_PARAMS.VIEWS] === SYMBOL_VIEWS.GRID;
+  // const isGrid = searchParams[SEARCH_PARAMS.VIEWS] === SYMBOL_VIEWS.GRID;
 
   return (
     <>
@@ -42,22 +41,26 @@ export default async function Page({
         <MarketNav segments={segments} />
       </Container>
       <Container fluid className='flex-1'>
-        {isEmpty ? (
-          <Alert>
-            <ExclamationTriangleIcon className='h-4 w-4' />
-            <AlertTitle>No symbols found</AlertTitle>
-            <AlertDescription>Try a different search query.</AlertDescription>
-          </Alert>
-        ) : isGrid ? (
-          <GridSymbols
-            symbols={symbols}
-            page={page}
-            segments={searchParams[SEARCH_PARAMS.SEGMENTS]}
-            query={searchParams[SEARCH_PARAMS.QUERY]}
-          />
-        ) : (
-          <TableSymbols symbols={symbols} page={page} pages={pages} />
-        )}
+        {
+          isEmpty ? (
+            <Alert>
+              <ExclamationTriangleIcon className='h-4 w-4' />
+              <AlertTitle>No symbols found</AlertTitle>
+              <AlertDescription>Try a different search query.</AlertDescription>
+            </Alert>
+          ) : (
+            // isGrid ? (
+            <GridSymbols
+              symbols={symbols}
+              page={page}
+              segments={searchParams[SEARCH_PARAMS.SEGMENTS]}
+              query={searchParams[SEARCH_PARAMS.QUERY]}
+            />
+          )
+          // ) : (
+          //   <TableSymbols symbols={symbols} page={page} pages={pages} />
+          // )
+        }
       </Container>
     </>
   );

@@ -1,15 +1,13 @@
 'use client';
 
-import { useRedirectWithSearchParams } from '@/lib/hooks/useRedirectWithSearchParams';
-import { GridIcon, TableIcon } from '@radix-ui/react-icons';
+import { Combobox } from '@/components/combobox';
 import {
-  SEARCH_PARAM_ARRAY_SEPARATOR,
   SEARCH_PARAMS,
+  SEARCH_PARAM_ARRAY_SEPARATOR,
   SYMBOL_VIEWS,
 } from '@/lib/constants/navigation';
-import { GroupButton } from '@/components/group-button';
-import { Combobox } from '@/components/combobox';
 import { formatArrayInSearchParam } from '@/lib/helpers/string';
+import { useRedirectWithSearchParams } from '@/lib/hooks/useRedirectWithSearchParams';
 import { useCallback, useEffect } from 'react';
 
 // TODO: refactor view mode implementation potentially bugs here
@@ -41,15 +39,15 @@ export function MarketNav({ segments }: { segments: string[] }) {
     }
   }, [redirectWithSearchParams, searchParamViewMode]);
 
-  const changeViewMode = useCallback(
-    (mode: string) => {
-      localStorage.setItem(SEARCH_PARAMS.VIEWS, mode);
-      redirectWithSearchParams({
-        [SEARCH_PARAMS.VIEWS]: mode,
-      });
-    },
-    [redirectWithSearchParams]
-  );
+  // const changeViewMode = useCallback(
+  //   (mode: string) => {
+  //     localStorage.setItem(SEARCH_PARAMS.VIEWS, mode);
+  //     redirectWithSearchParams({
+  //       [SEARCH_PARAMS.VIEWS]: mode,
+  //     });
+  //   },
+  //   [redirectWithSearchParams]
+  // );
 
   const onSelectSegment = useCallback(
     (value: string) => {
@@ -77,7 +75,7 @@ export function MarketNav({ segments }: { segments: string[] }) {
         values={segmentValues}
         onSelect={onSelectSegment}
       />
-      <GroupButton
+      {/* <GroupButton
         defaultValue={searchParamViewMode}
         tabs={[
           {
@@ -91,7 +89,7 @@ export function MarketNav({ segments }: { segments: string[] }) {
             onClick: () => changeViewMode(SYMBOL_VIEWS.GRID),
           },
         ]}
-      />
+      /> */}
     </div>
   );
 }

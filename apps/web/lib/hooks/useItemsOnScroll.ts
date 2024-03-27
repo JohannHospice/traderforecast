@@ -28,6 +28,7 @@ export function useItemsOnScroll<T>(
 
     window.addEventListener('scroll', loadOnScroll);
     return () => window.removeEventListener('scroll', loadOnScroll);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items, size, offset]);
 
   useEffect(() => {
