@@ -47,7 +47,7 @@ export function Combobox<T extends string>({
           variant='outline'
           role='combobox'
           aria-expanded={open}
-          className={className + ' justify-between'}
+          className={className + ' justify-between w-[220px]'}
           disabled={disabled}
         >
           <span className='text-ellipsis overflow-hidden'>
@@ -64,7 +64,7 @@ export function Combobox<T extends string>({
       </PopoverTrigger>
       <PopoverContent className='w-[220px] p-0 max-h-[300px] overflow-y-auto'>
         <Command>
-          {/* <CommandInput placeholder={search} className='h-9' /> */}
+          <CommandInput placeholder={search} className='h-9' />
           <CommandEmpty>{noOptions}</CommandEmpty>
           <CommandGroup>
             {options.map((option) => (

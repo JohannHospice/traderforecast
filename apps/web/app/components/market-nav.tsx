@@ -2,63 +2,39 @@
 
 import { Combobox } from '@/components/combobox';
 import {
-  SEARCH_PARAMS,
-  SEARCH_PARAM_ARRAY_SEPARATOR,
-  SYMBOL_VIEWS,
-} from '@/lib/constants/navigation';
-import { formatArrayInSearchParam } from '@/lib/helpers/string';
+  decodeSearchParamList,
+  encodeSearchParamList,
+} from '@/lib/helpers/string';
 import { useRedirectWithSearchParams } from '@/lib/hooks/useRedirectWithSearchParams';
-import { useCallback, useEffect } from 'react';
-
-// TODO: refactor view mode implementation potentially bugs here
-const DEFAULT_VIEW_MODE = SYMBOL_VIEWS.TABLE;
+import { useCallback } from 'react';
 
 export function MarketNav({ segments }: { segments: string[] }) {
   const { searchParams, redirectWithSearchParams } =
     useRedirectWithSearchParams();
 
-  const segmentValues = formatArrayInSearchParam(
-    searchParams.get(SEARCH_PARAMS.SEGMENTS) || ''
+  const segmentParams = decodeSearchParamList(
+    searchParams.get('segments') || ''
   );
-  const searchParamViewMode =
-    searchParams.get(SEARCH_PARAMS.VIEWS) || DEFAULT_VIEW_MODE;
-
-  useEffect(() => {
-    if (searchParamViewMode === '' || searchParamViewMode === null) {
-      // default view mode
-      redirectWithSearchParams({
-        [SEARCH_PARAMS.VIEWS]: DEFAULT_VIEW_MODE,
-      });
-      return;
-    }
-    if (searchParamViewMode !== localStorage.getItem(SEARCH_PARAMS.VIEWS)) {
-      // sync local storage with url
-      redirectWithSearchParams({
-        [SEARCH_PARAMS.VIEWS]: searchParamViewMode,
-      });
-    }
-  }, [redirectWithSearchParams, searchParamViewMode]);
-
-  // const changeViewMode = useCallback(
-  //   (mode: string) => {
-  //     localStorage.setItem(SEARCH_PARAMS.VIEWS, mode);
-  //     redirectWithSearchParams({
-  //       [SEARCH_PARAMS.VIEWS]: mode,
-  //     });
-  //   },
-  //   [redirectWithSearchParams]
-  // );
 
   const onSelectSegment = useCallback(
-    (value: string) => {
+    (valueLowercase: string) => {
+      const value = segments.find(
+        (segment) => segment.toLowerCase() === valueLowercase
+      );
+      if (!value) return;
+
+      const segmentParamsUpdated = encodeSearchParamList(
+        segmentParams.includes(value)
+          ? segmentParams.filter((detector) => detector !== value)
+          : [...segmentParams, value]
+      );
+
       redirectWithSearchParams({
-        [SEARCH_PARAMS.SEGMENTS]: (segmentValues.includes(value)
-          ? segmentValues.filter((detector) => detector !== value)
-          : [...segmentValues, value]
-        ).join(SEARCH_PARAM_ARRAY_SEPARATOR),
+        segments: segmentParamsUpdated,
+        page: '1',
       });
     },
-    [redirectWithSearchParams, segmentValues]
+    [redirectWithSearchParams, segmentParams, segments]
   );
 
   return (
@@ -68,28 +44,23 @@ export function MarketNav({ segments }: { segments: string[] }) {
         search='Search market segment...'
         noOptions='No market segment found.'
         multiple
-        options={segments.map((segment) => ({
-          value: encodeURI(segment.toLowerCase()),
-          label: segment,
-        }))}
-        values={segmentValues}
+        options={segments
+          .sort((a, b) => {
+            if (segmentParams.includes(a) && !segmentParams.includes(b)) {
+              return -1;
+            }
+            if (!segmentParams.includes(a) && segmentParams.includes(b)) {
+              return 1;
+            }
+            return a.localeCompare(b);
+          })
+          .map((segment) => ({
+            value: segment.toLowerCase(),
+            label: segment,
+          }))}
+        values={segmentParams.map((segment) => segment.toLowerCase())}
         onSelect={onSelectSegment}
       />
-      {/* <GroupButton
-        defaultValue={searchParamViewMode}
-        tabs={[
-          {
-            value: SYMBOL_VIEWS.TABLE,
-            label: <TableIcon className='h-4 w-4' />,
-            onClick: () => changeViewMode(SYMBOL_VIEWS.TABLE),
-          },
-          {
-            value: SYMBOL_VIEWS.GRID,
-            label: <GridIcon className='h-4 w-4' />,
-            onClick: () => changeViewMode(SYMBOL_VIEWS.GRID),
-          },
-        ]}
-      /> */}
     </div>
   );
 }

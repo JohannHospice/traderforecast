@@ -1,6 +1,6 @@
 import { ApolloClient, gql } from '@apollo/client';
 import { mapOhlcToKline } from '../../mappers/ohlc';
-import { MarketRepository } from '.';
+import { GetAllSymbolResponse, MarketRepository } from '.';
 
 export class SantimentMarketRepository<T> implements MarketRepository {
   client: ApolloClient<T>;
@@ -170,6 +170,72 @@ export class SantimentMarketRepository<T> implements MarketRepository {
     return projectBySlug;
   }
 
+  async getAllSymbols(): Promise<GetAllSymbolResponse> {
+    const {
+      data: { allProjects },
+    } = await this.client.query({
+      query: gql`
+        query getAllSymbols {
+          allProjects {
+            slug
+            marketSegments
+            rank
+            ticker
+          }
+        }
+      `,
+    });
+    return allProjects;
+  }
+
+  async getSymbolsBySlugs(slugs: string[]): Promise<Symbol[]> {
+    const {
+      data: { allProjects },
+    } = await this.client.query({
+      query: gql`
+        query getSymbolsBySlugs($slugs: [String]!) {
+          allProjects(selector: { baseProjects: { slugs: $slugs } }) {
+            slug
+            name
+            ticker
+            logoUrl
+            rank
+            market_segments
+            price_usd: aggregatedTimeseriesData(
+              metric: "price_usd"
+              from: "utc_now-1d"
+              to: "utc_now"
+              aggregation: LAST
+            )
+            price_usd_change_1d: aggregatedTimeseriesData(
+              metric: "price_usd_change_1d"
+              from: "utc_now-1d"
+              to: "utc_now"
+              aggregation: LAST
+            )
+            volume_usd: aggregatedTimeseriesData(
+              metric: "volume_usd"
+              from: "utc_now-1d"
+              to: "utc_now"
+              aggregation: LAST
+            )
+            marketcap_usd: aggregatedTimeseriesData(
+              metric: "marketcap_usd"
+              from: "utc_now-1d"
+              to: "utc_now"
+              aggregation: LAST
+            )
+          }
+        }
+      `,
+      variables: {
+        slugs,
+      },
+    });
+
+    return allProjects;
+  }
+
   async getSymbols(params?: {
     query?: string | undefined;
     segments?: string[];
@@ -180,8 +246,18 @@ export class SantimentMarketRepository<T> implements MarketRepository {
       data: { allProjects },
     } = await this.client.query<{ allProjects: Symbol[] }>({
       query: gql`
-        query getSymbols($minVolume: Int, $page: Int, $size: Int) {
-          allProjects(minVolume: $minVolume, page: $page, pageSize: $size) {
+        query getSymbols(
+          $minVolume: Int
+          $page: Int
+          $pageSize: Int
+          $segments: [String]
+        ) {
+          allProjects(
+            minVolume: $minVolume
+            page: $page
+            pageSize: $pageSize
+            selector: { slugs: $segments }
+          ) {
             slug
             name
             ticker
@@ -217,9 +293,9 @@ export class SantimentMarketRepository<T> implements MarketRepository {
       `,
       variables: {
         slug: params?.query,
-        minVolume: 0,
         page: params?.page,
-        size: params?.size,
+        pageSize: params?.size,
+        segments: params?.segments,
       },
     });
 
@@ -252,7 +328,7 @@ export class SantimentMarketRepository<T> implements MarketRepository {
       }
     );
 
-    return { symbols: allUniqueProjects, pages: 1 };
+    return { symbols: allProjects, pages: 1 };
   }
 
   async getMarketSegments(): Promise<string[]> {
@@ -262,7 +338,7 @@ export class SantimentMarketRepository<T> implements MarketRepository {
       currenciesMarketSegments: { name: string }[];
     }>({
       query: gql`
-        {
+        query getMarketSegments {
           currenciesMarketSegments {
             name
           }

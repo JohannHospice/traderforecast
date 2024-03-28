@@ -1,42 +1,60 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-export function useItemsOnScroll<T>(
-  items: T[],
-  size: number,
-  offset: number,
-  onLoadMore: () => void
-) {
+export function useItemsOnScroll<T>({
+  items,
+  offset,
+  onLoadMore,
+  key = [],
+}: {
+  items: T[];
+  offset: number;
+  onLoadMore: () => void;
+  key: (string | undefined)[];
+}) {
   const [virtualItems, setVirtualItems] = useState<T[]>([]);
+  const currentKey = useRef<(string | undefined)[]>([Math.random().toString()]);
 
   useEffect(() => {
-    if (virtualItems.length === 0) {
-      setVirtualItems(items.slice(0, size));
+    if (!sameKey(currentKey.current, key)) {
+      setVirtualItems(items);
+      currentKey.current = key;
     }
 
     function loadOnScroll() {
       if (
         window.innerHeight + window.scrollY + offset <=
-        document.body.offsetHeight
+          document.body.offsetHeight ||
+        virtualItems.length === 0 ||
+        items.length === 0
       ) {
         return;
       }
-      setVirtualItems((prev) => [
-        ...prev,
-        ...items.slice(prev.length, prev.length + size),
-      ]);
+
+      setVirtualItems((prev) =>
+        Array.from(new Set([...prev, ...items]).values())
+      );
     }
 
     window.addEventListener('scroll', loadOnScroll);
-    return () => window.removeEventListener('scroll', loadOnScroll);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items, size, offset]);
 
+    return () => window.removeEventListener('scroll', loadOnScroll);
+  }, [items, offset, virtualItems, key]);
+
+  // request to load more
   useEffect(() => {
-    if (virtualItems.length < items.length || !onLoadMore) {
-      return;
+    if (items.length === 0 && sameKey(currentKey.current, key)) return;
+
+    if (items.every((item) => virtualItems.includes(item))) {
+      onLoadMore();
     }
-    onLoadMore();
-  }, [virtualItems, items, onLoadMore]);
+  }, [virtualItems, items, onLoadMore, key]);
 
   return virtualItems;
+}
+
+function sameKey(
+  prevKey: (string | undefined)[],
+  nextKey: (string | undefined)[]
+) {
+  return prevKey.join('@') === nextKey.join('@');
 }

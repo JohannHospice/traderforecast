@@ -8,6 +8,8 @@ export function formatNumber(
     style: 'currency',
     currency: 'USD',
     notation,
+    maximumSignificantDigits: 5,
+    currencyDisplay: 'narrowSymbol',
   }).format(Number(value));
 }
 
@@ -20,11 +22,18 @@ export function formatPercent(value: string | number | undefined) {
   }).format(Number(value));
 }
 
-export function formatArrayInSearchParam(
-  string: string,
+export function decodeSearchParamList(
+  param: string,
   separator: string = SEARCH_PARAM_ARRAY_SEPARATOR
 ): string[] {
-  const splitted = string.split(separator);
+  const splitted = decodeURI(param).split(separator);
 
   return splitted.filter((item) => item !== '');
+}
+
+export function encodeSearchParamList(
+  param: string[],
+  separator: string = SEARCH_PARAM_ARRAY_SEPARATOR
+): string {
+  return encodeURI(param.join(separator));
 }

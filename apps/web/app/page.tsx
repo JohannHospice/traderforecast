@@ -1,33 +1,30 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import api from '@/lib/api';
 import { SEARCH_PARAMS } from '@/lib/constants/navigation';
-import { formatArrayInSearchParam } from '@/lib/helpers/string';
+import { decodeSearchParamList } from '@/lib/helpers/string';
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import { Container } from '../components/container';
 import { GridSymbols } from './components/grid-symbols';
 import { MarketNav } from './components/market-nav';
+import { SymbolPagination } from './lib/symbol-pagination';
 
 export default async function Page({
   searchParams,
 }: {
   searchParams: Record<SEARCH_PARAMS, string>;
 }) {
-  const page = Number(searchParams[SEARCH_PARAMS.PAGE]) || 1;
+  const page = Number(searchParams.page) || 1;
+  const query = searchParams.slug;
+  const segments = decodeSearchParamList(searchParams.segments || '');
 
-  const [{ symbols, pages }, segments] = await Promise.all([
-    api.market.getSymbols({
-      query: searchParams[SEARCH_PARAMS.QUERY],
-      segments: formatArrayInSearchParam(
-        searchParams[SEARCH_PARAMS.SEGMENTS] || ''
-      ),
-      page: page,
-      size: 20,
-    }),
+  const pagination = new SymbolPagination(api.market);
+
+  const [symbols, allSegments] = await Promise.all([
+    pagination
+      .load()
+      .then(() => pagination.getSymbols({ query, segments, page })),
     api.market.getMarketSegments(),
   ]);
-
-  const isEmpty = symbols.length === 0;
-  // const isGrid = searchParams[SEARCH_PARAMS.VIEWS] === SYMBOL_VIEWS.GRID;
 
   return (
     <>
@@ -38,29 +35,15 @@ export default async function Page({
         <p className='leading-7 text-gray-500'>
           Here&apos;s a list of all the symbols available on the exchange.
         </p>
-        <MarketNav segments={segments} />
+        <MarketNav segments={allSegments} />
       </Container>
       <Container fluid className='flex-1'>
-        {
-          isEmpty ? (
-            <Alert>
-              <ExclamationTriangleIcon className='h-4 w-4' />
-              <AlertTitle>No symbols found</AlertTitle>
-              <AlertDescription>Try a different search query.</AlertDescription>
-            </Alert>
-          ) : (
-            // isGrid ? (
-            <GridSymbols
-              symbols={symbols}
-              page={page}
-              segments={searchParams[SEARCH_PARAMS.SEGMENTS]}
-              query={searchParams[SEARCH_PARAMS.QUERY]}
-            />
-          )
-          // ) : (
-          //   <TableSymbols symbols={symbols} page={page} pages={pages} />
-          // )
-        }
+        <GridSymbols
+          symbols={symbols}
+          page={page}
+          segments={searchParams[SEARCH_PARAMS.SEGMENTS]}
+          query={query}
+        />
       </Container>
     </>
   );

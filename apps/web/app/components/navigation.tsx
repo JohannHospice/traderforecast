@@ -8,13 +8,13 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   navigationMenuTriggerStyle,
-} from './ui/navigation-menu';
+} from '../../components/ui/navigation-menu';
 import { MagnifyingGlassIcon, MoonIcon, SunIcon } from '@radix-ui/react-icons';
-import { Button } from './ui/button';
+import { Button } from '../../components/ui/button';
 import { useTheme } from 'next-themes';
 import { Suspense } from 'react';
 import { InputQuery } from './input-query';
-import { Container } from './container';
+import { Container } from '../../components/container';
 
 export function Navigation() {
   const pathname = usePathname();

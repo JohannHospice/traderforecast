@@ -1,4 +1,4 @@
-import { Navigation } from '@/components/navigation';
+import { Navigation } from '@/app/components/navigation';
 import { ThemeProvider } from '@/components/theme-provider';
 import '@/styles/globals.css';
 import { Analytics } from '@vercel/analytics/react';
