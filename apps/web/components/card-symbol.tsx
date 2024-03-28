@@ -30,7 +30,10 @@ export default function CardSymbol({
           </CardTitle>
           <CardDescription>{symbol.name}</CardDescription>
         </div>
-        <Badge variant='outline' className='absolute top-8 sm:top-4 right-4'>
+        <Badge
+          variant='outline'
+          className='absolute top-8 sm:top-4 right-4 bg-background'
+        >
           Rank #{symbol.rank}
         </Badge>
       </CardHeader>

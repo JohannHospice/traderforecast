@@ -16,18 +16,23 @@ export default function RootLayout({
 }): JSX.Element {
   return (
     <html lang='en' suppressHydrationWarning className='scroll-smooth'>
-      <head />
-      <body>
+      <head>
+        <link rel='icon' href='/traderforecast.svg' />
+        <meta
+          name='description'
+          content='An application to analyze trading patterns'
+        />
+        <meta name='author' content='Traderforecast' />
+      </head>
+      <body className='flex flex-col min-h-[100vh]'>
         <ThemeProvider
           attribute='class'
           defaultTheme='system'
           enableSystem
           disableTransitionOnChange
         >
-          <div className='flex flex-col min-h-[100vh]'>
-            <Navigation />
-            <div className='flex flex-col flex-1 py-4'>{children}</div>
-          </div>
+          <Navigation />
+          <div className='flex flex-col flex-1 py-4'>{children}</div>
         </ThemeProvider>
         <Analytics />
         <SpeedInsights />
