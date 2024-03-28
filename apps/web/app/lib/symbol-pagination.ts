@@ -64,3 +64,10 @@ export class SymbolPagination {
     );
   }
 }
+
+Array.prototype.toSorted = function <T>(
+  this: T[],
+  compare: (a: T, b: T) => number
+) {
+  return this.slice().sort(compare);
+};
