@@ -91,6 +91,10 @@ const ChartContainer = forwardRef(
           return;
         }
         onTimeRangeChange?.(time);
+        api.applyOptions({
+          width: container.clientWidth,
+          height: container.clientHeight,
+        });
       };
       const range = api.timeScale().getVisibleRange();
       if (range) onTimeRangeChange?.(range);
@@ -103,7 +107,7 @@ const ChartContainer = forwardRef(
           .timeScale()
           .unsubscribeVisibleTimeRangeChange(handleVisibileTimeRangeChange);
       };
-    }, [onTimeRangeChange]);
+    }, [onTimeRangeChange, container]);
 
     useImperativeHandle(ref, () => chartApiRef.current.api(), []);
 

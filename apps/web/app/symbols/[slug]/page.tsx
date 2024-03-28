@@ -69,14 +69,10 @@ export default async function Page({
       <Container fluid className='flex-1'>
         <div className='grid grid-cols-[270px_1fr] grid-rows-[auto_1fr] gap-4 gap-y-0 sm:gap-y-4 flex-1'>
           <div className='col-span-2 md:col-span-1 md:flex'>
-            <CardSymbol
-              noBorder='sm'
-              symbol={symbol}
-              className='min-w-[270px]'
-            />
+            <CardSymbol symbol={symbol} className='min-w-[270px]' />
           </div>
           <div className='row-start-2 row-end-3 flex-col hidden md:flex'>
-            <Card noBorder='sm' className='flex-1 pt-4'>
+            <Card noBorder className='flex-1 pt-4'>
               <Command className='rounded-xl max-h-[400px] overflow-hidden'>
                 <CommandChartSettings />
               </Command>
@@ -84,7 +80,6 @@ export default async function Page({
           </div>
           <div className='md:row-start-1 row-start-2 md:col-start-2 col-start-1 row-end-3 col-end-3 flex sm:border-t-0 border-t-[1px]'>
             <CardChart
-              noBorder='sm'
               slug={slug}
               klines={klines}
               intervals={intervals}
