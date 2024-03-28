@@ -74,6 +74,7 @@ const config = {
       },
       boxShadow: {
         DEFAULT: 'var(--shadow)',
+        sm: 'var(--shadow-sm)',
       },
     },
   },

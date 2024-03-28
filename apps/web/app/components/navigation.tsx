@@ -1,7 +1,11 @@
 'use client';
 
+import { MoonIcon, SunIcon } from '@radix-ui/react-icons';
+import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Container } from '../../components/container';
+import { Button } from '../../components/ui/button';
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -9,19 +13,14 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from '../../components/ui/navigation-menu';
-import { MagnifyingGlassIcon, MoonIcon, SunIcon } from '@radix-ui/react-icons';
-import { Button } from '../../components/ui/button';
-import { useTheme } from 'next-themes';
-import { Suspense } from 'react';
 import { InputQuery } from './input-query';
-import { Container } from '../../components/container';
 
 export function Navigation() {
   const pathname = usePathname();
   const { setTheme, theme } = useTheme();
 
   return (
-    <nav className='py-2 border-b-[1px] mb-8 sticky top-0 w-full bg-background z-50'>
+    <nav className='py-2 border-b-[1px] mb-8 sticky top-0 w-full bg-card/60 z-50 backdrop-blur supports-[backdrop-filter]:bg-card/60'>
       <Container noMargin>
         <div className='flex justify-between'>
           <div className='flex gap-4'>
@@ -39,16 +38,10 @@ export function Navigation() {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
-            <div className='relative'>
-              <MagnifyingGlassIcon className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
-              <Suspense>
-                <InputQuery />
-              </Suspense>
-            </div>
           </div>
 
           <Button
-            variant='outline'
+            variant='ghost'
             size='icon'
             onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
           >

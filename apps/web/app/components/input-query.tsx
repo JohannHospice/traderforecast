@@ -3,10 +3,12 @@ import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
-import { Input } from '../../components/ui/input';
+import { Input, InputProps } from '../../components/ui/input';
 import { useEffect, useState } from 'react';
+import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
+import { cn } from '../../lib/tailwind/utils';
 
-export function InputQuery() {
+export function InputQuery({ className }: { className?: string }) {
   const searchParams = useSearchParams();
   const { replace } = useRouter();
 
@@ -32,12 +34,15 @@ export function InputQuery() {
   }, [value, handleSearch]);
 
   return (
-    <Input
-      className='w-full max-w-[400px] pl-8'
-      type='symbol'
-      placeholder='Search'
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-    />
+    <div className={cn('relative', className)}>
+      <MagnifyingGlassIcon className='absolute left-0 top-0 m-2.5 h-5 w-5 text-muted-foreground' />
+      <Input
+        className='w-full pl-10 bg-card min-w-52'
+        type='symbol'
+        placeholder='Search Currencies...'
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+    </div>
   );
 }

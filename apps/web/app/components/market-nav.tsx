@@ -7,6 +7,7 @@ import {
 } from '@/lib/helpers/string';
 import { useRedirectWithSearchParams } from '@/lib/hooks/useRedirectWithSearchParams';
 import { useCallback } from 'react';
+import { InputQuery } from './input-query';
 
 export function MarketNav({ segments }: { segments: string[] }) {
   const { searchParams, redirectWithSearchParams } =
@@ -38,29 +39,35 @@ export function MarketNav({ segments }: { segments: string[] }) {
   );
 
   return (
-    <div className='flex flex-1 justify-between flex-wrap gap-4'>
-      <Combobox
-        placeholder='Select market segment...'
-        search='Search market segment...'
-        noOptions='No market segment found.'
-        multiple
-        options={segments
-          .sort((a, b) => {
-            if (segmentParams.includes(a) && !segmentParams.includes(b)) {
-              return -1;
-            }
-            if (!segmentParams.includes(a) && segmentParams.includes(b)) {
-              return 1;
-            }
-            return a.localeCompare(b);
-          })
-          .map((segment) => ({
-            value: segment.toLowerCase(),
-            label: segment,
-          }))}
-        values={segmentParams.map((segment) => segment.toLowerCase())}
-        onSelect={onSelectSegment}
-      />
+    <div className='flex-1 flex flex-row flex-wrap gap-4 w-full md:w-[66.66%] lg:w-[50%] pr-2.5'>
+      <div className='flex-1 '>
+        <InputQuery />
+      </div>
+      <div className='flex-1'>
+        <Combobox
+          className='w-full'
+          placeholder='Select market segment...'
+          search='Search market segment...'
+          noOptions='No market segment found.'
+          multiple
+          options={segments
+            .sort((a, b) => {
+              if (segmentParams.includes(a) && !segmentParams.includes(b)) {
+                return -1;
+              }
+              if (!segmentParams.includes(a) && segmentParams.includes(b)) {
+                return 1;
+              }
+              return a.localeCompare(b);
+            })
+            .map((segment) => ({
+              value: segment.toLowerCase(),
+              label: segment,
+            }))}
+          values={segmentParams.map((segment) => segment.toLowerCase())}
+          onSelect={onSelectSegment}
+        />
+      </div>
     </div>
   );
 }

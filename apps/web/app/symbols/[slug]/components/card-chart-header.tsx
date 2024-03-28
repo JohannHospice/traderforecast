@@ -41,7 +41,7 @@ export function CardChartHeader({ intervals = [] }: { intervals?: string[] }) {
         />
         <Button
           className='md:hidden'
-          variant='outline'
+          variant='ghost'
           size='icon'
           onClick={() => setOpen(true)}
         >

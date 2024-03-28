@@ -59,30 +59,39 @@ const ChartContainer = forwardRef(
   ) => {
     const chartApiRef = useRef(new ChartApi(container, options));
 
+    // init chart api
+    useLayoutEffect(() => {
+      const { current: chartApi } = chartApiRef;
+      chartApi.api();
+      return () => {
+        chartApi.free();
+      };
+    }, []);
+
+    // setting options and resize event
     useLayoutEffect(() => {
       const { current: chartApi } = chartApiRef;
       const api = chartApi.api();
 
+      api.applyOptions(options);
+
       const handleResize = () => {
+        console.log('handleResize');
         api.applyOptions({
           ...options,
           width: container.clientWidth,
           height: container.clientHeight,
         });
+        console.log('applyOptions');
       };
 
       window.addEventListener('resize', handleResize);
       return () => {
         window.removeEventListener('resize', handleResize);
-        chartApi.free();
       };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [container, options]);
 
-    useLayoutEffect(() => {
-      chartApiRef.current.api().applyOptions(options);
-    }, [options]);
-
+    // setting move time range event
     useLayoutEffect(() => {
       const { current: chartApi } = chartApiRef;
       const api = chartApi.api();
@@ -109,6 +118,7 @@ const ChartContainer = forwardRef(
       };
     }, [onTimeRangeChange, container]);
 
+    // expose chart api
     useImperativeHandle(ref, () => chartApiRef.current.api(), []);
 
     return (
