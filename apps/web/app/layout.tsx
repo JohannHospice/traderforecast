@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   authors: [
     {
       name: 'Johann Hospice',
-      url: 'https://johannhospice.linkedin.com',
+      url: 'https://www.linkedin.com/in/johannhospice',
     },
   ],
   icons: {
@@ -20,20 +20,17 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    url: 'https://traderforecast.vercel.com',
+    url: 'https://traderforecast.vercel.app/',
     title: 'Traderforecast',
     siteName: 'Traderforecast',
     description: 'An application to analyze trading patterns',
-    images: 'opengraph.svg',
+    images: '/opengraph.svg',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Traderforecast',
     description: 'An application to analyze trading patterns',
-    images: {
-      url: 'https://traderforecast.com/opengraph.svg',
-      alt: 'Traderforecast Logo',
-    },
+    images: '/opengraph.svg',
   },
 };
 
