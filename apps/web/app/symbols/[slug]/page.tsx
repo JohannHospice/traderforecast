@@ -73,7 +73,7 @@ export default async function Page({
           </div>
           <div className='row-start-2 row-end-3 flex-col hidden md:flex'>
             <Card noBorder className='flex-1 pt-4'>
-              <Command className='rounded-xl max-h-[400px] overflow-hidden'>
+              <Command className='rounded-xl overflow-hidden'>
                 <CommandChartSettings />
               </Command>
             </Card>

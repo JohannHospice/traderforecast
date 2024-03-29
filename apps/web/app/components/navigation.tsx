@@ -14,7 +14,6 @@ import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { NavigationLogo } from './navigation-logo';
-import { Suspense } from 'react';
 
 export function Navigation() {
   const { setTheme, theme } = useTheme();
@@ -25,14 +24,12 @@ export function Navigation() {
       <Container noMargin>
         <div className='flex justify-between relative'>
           <Link href='/' passHref>
-            <Suspense>
-              <NavigationLogo />
-            </Suspense>
+            <NavigationLogo />
           </Link>
           <NavigationMenu className='absolute mx-auto top-0 left-0 right-0'>
             <NavigationMenuList className='gap-4'>
               <NavigationMenuItem>
-                <Link href='/' passHref>
+                <Link href='/' passHref legacyBehavior>
                   <NavigationMenuLink
                     className={navigationMenuTriggerStyle()}
                     active={pathname === '/'}

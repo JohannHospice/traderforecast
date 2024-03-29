@@ -3,6 +3,9 @@ import { MomemtumCandlestickMarkersIndicator } from '@/lib/chart/indicators/mome
 import { RangeIndicator } from '@/lib/chart/indicators/range-indicator';
 import { SwingHighIndicator } from '@/lib/chart/indicators/swing-high-indicator';
 import { SwingLowIndicator } from '@/lib/chart/indicators/swing-low-indicator';
+import { FairValueGapIndicator } from '../chart/indicators/fair-value-gap-indicator';
+import { GapIndicator } from '../chart/indicators/gap-indicator';
+import { VolumeInbalanceIndicator } from '../chart/indicators/volume-inbalance-indicator';
 
 export type IndicatorKeys = keyof typeof IndicatorValues;
 
@@ -12,4 +15,7 @@ export const IndicatorValues = {
   range: RangeIndicator,
   engulfing: EngulfingCandlestickMarkersIndicator,
   momentum: MomemtumCandlestickMarkersIndicator,
+  fairvaluegap: FairValueGapIndicator,
+  gap: GapIndicator,
+  volumeinbalance: VolumeInbalanceIndicator,
 };

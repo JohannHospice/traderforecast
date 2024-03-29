@@ -62,11 +62,27 @@ export const COMMAND_GROUP_INDICATORS: {
         ),
       },
       {
-        disabled: true,
-        value: 'fairvaluegap' as IndicatorKeys,
+        value: 'fairvaluegap',
         label: (
           <>
             <BadgeIndice>FV</BadgeIndice> Fair Value Gap
+          </>
+        ),
+      },
+      {
+        value: 'gap',
+        label: (
+          <>
+            <BadgeIndice>G</BadgeIndice> Gap
+          </>
+        ),
+      },
+      {
+        disabled: true,
+        value: 'volumeinbalance',
+        label: (
+          <>
+            <BadgeIndice>VI</BadgeIndice> Volume Inbalance
           </>
         ),
       },

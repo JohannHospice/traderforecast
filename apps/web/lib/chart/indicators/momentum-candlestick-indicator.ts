@@ -15,8 +15,8 @@ export class MomemtumCandlestickMarkersIndicator implements Indicator {
       }
       const text = _isMarubozu ? 'Mb' : 'Mo';
       if (
-        current.isBullish() &&
-        new SeriePattern(klines.slice(i - 50, i)).isSMABullish(50)
+        current.isBullish()
+        //&&  new SeriePattern(klines.slice(i - 50, i)).isSMABullish(50)
       ) {
         markers.push({
           time: current.closeTime,
@@ -28,8 +28,8 @@ export class MomemtumCandlestickMarkersIndicator implements Indicator {
       }
 
       if (
-        current.isBearish() &&
-        new SeriePattern(klines.slice(i - 50, i)).isSMABearish(50)
+        current.isBearish()
+        //&&  new SeriePattern(klines.slice(i - 50, i)).isSMABearish(50)
       ) {
         markers.push({
           time: current.closeTime,

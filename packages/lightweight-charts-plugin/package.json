@@ -9,7 +9,7 @@
   "scripts": {
     "prebuild": "tsc",
     "build": "node compile.mjs",
-    "dev": "vite --config src/vite.config.js",
+    "dev:examples:site": "vite --config src/vite.config.js",
     "build:examples:site": "vite build --config src/vite.config.js && node build-website.mjs"
   },
   "devDependencies": {

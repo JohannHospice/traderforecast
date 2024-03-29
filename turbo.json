@@ -14,6 +14,13 @@
     },
     "clean": {
       "cache": false
+    },
+    "@traderforecast/web#dev": {
+      "dependsOn": ["lightweight-charts-plugin#build"]
+    },
+    "lightweight-charts-plugin#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["compiled/**", ".next/**", "!.next/cache/**"]
     }
   }
 }
