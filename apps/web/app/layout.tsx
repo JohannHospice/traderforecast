@@ -9,6 +9,7 @@ import { BackgroundBlob } from '../components/background-blob';
 export const metadata: Metadata = {
   title: 'Traderforecast',
   description: 'An application to analyze trading patterns',
+  metadataBase: new URL('https://traderforecast.vercel.app/'),
   authors: [
     {
       name: 'Johann Hospice',
