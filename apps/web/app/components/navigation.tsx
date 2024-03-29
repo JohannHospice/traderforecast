@@ -11,9 +11,14 @@ import {
 } from '@/components/ui/navigation-menu';
 import { MoonIcon, SunIcon } from '@radix-ui/react-icons';
 import { useTheme } from 'next-themes';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { NavigationLogo } from './navigation-logo';
+
+// FIXME: This is a workaround to fix hydration and incoherence between client and server
+const NavigationLogo = dynamic(() => import('./navigation-logo'), {
+  ssr: false,
+});
 
 export function Navigation() {
   const { setTheme, theme } = useTheme();

@@ -39,7 +39,7 @@ export function MarketNav({ segments }: { segments: string[] }) {
   );
 
   return (
-    <div className='flex-1 flex flex-row flex-wrap gap-4 w-full md:w-[66.66%] lg:w-[50%] pr-2.5'>
+    <div className='flex-1 flex flex-row flex-wrap gap-4 w-full md:w-[66.66%] lg:w-[50%] xl:w-[40%] pr-2.5'>
       <div className='flex-1 '>
         <InputQuery />
       </div>
