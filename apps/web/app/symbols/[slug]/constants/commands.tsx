@@ -10,7 +10,7 @@ export const COMMAND_GROUP_INDICATORS: {
   }[];
 }[] = [
   {
-    heading: 'Indicators',
+    heading: 'Candle Indicators',
     items: [
       {
         value: 'swinghigh',
@@ -44,31 +44,11 @@ export const COMMAND_GROUP_INDICATORS: {
           </>
         ),
       },
-      {
-        value: 'range',
-        label: (
-          <>
-            <BadgeIndice>R</BadgeIndice> Range Indicator
-          </>
-        ),
-      },
-      {
-        disabled: true,
-        value: 'orderblock' as IndicatorKeys,
-        label: (
-          <>
-            <BadgeIndice>OR</BadgeIndice> Order Block
-          </>
-        ),
-      },
-      {
-        value: 'fairvaluegap',
-        label: (
-          <>
-            <BadgeIndice>FV</BadgeIndice> Fair Value Gap
-          </>
-        ),
-      },
+    ],
+  },
+  {
+    heading: 'Liquidity Indicators',
+    items: [
       {
         value: 'gap',
         label: (
@@ -83,6 +63,31 @@ export const COMMAND_GROUP_INDICATORS: {
         label: (
           <>
             <BadgeIndice>VI</BadgeIndice> Volume Inbalance
+          </>
+        ),
+      },
+      {
+        value: 'fairvaluegap',
+        label: (
+          <>
+            <BadgeIndice>FV</BadgeIndice> Fair Value Gap
+          </>
+        ),
+      },
+      {
+        disabled: true,
+        value: 'orderblock' as IndicatorKeys,
+        label: (
+          <>
+            <BadgeIndice>OR</BadgeIndice> Order Block
+          </>
+        ),
+      },
+      {
+        value: 'range',
+        label: (
+          <>
+            <BadgeIndice>R</BadgeIndice> Range Indicator
           </>
         ),
       },
