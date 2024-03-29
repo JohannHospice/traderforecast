@@ -15,30 +15,25 @@ export const metadata: Metadata = {
       url: 'https://johannhospice.linkedin.com',
     },
   ],
-  icons: [
-    {
-      url: '/traderforecast.svg',
-      sizes: '192x192',
-      type: 'image/svg+xml',
-    },
-  ],
+  icons: {
+    icon: '/traderforecast.svg',
+  },
   openGraph: {
     type: 'website',
     url: 'https://traderforecast.vercel.com',
     title: 'Traderforecast',
     siteName: 'Traderforecast',
     description: 'An application to analyze trading patterns',
-    images: [
-      {
-        url: 'https://traderforecast.com/opengraph.svg',
-      },
-    ],
+    images: 'opengraph.svg',
   },
   twitter: {
     card: 'summary_large_image',
-    site: '@site',
-    creator: '@creator',
-    images: 'https://traderforecast.com/opengraph.svg',
+    title: 'Traderforecast',
+    description: 'An application to analyze trading patterns',
+    images: {
+      url: 'https://traderforecast.com/opengraph.svg',
+      alt: 'Traderforecast Logo',
+    },
   },
 };
 
