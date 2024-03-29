@@ -24,13 +24,13 @@ export const metadata: Metadata = {
     title: 'Traderforecast',
     siteName: 'Traderforecast',
     description: 'An application to analyze trading patterns',
-    images: '/opengraph.svg',
+    images: '/opengraph.png',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Traderforecast',
     description: 'An application to analyze trading patterns',
-    images: '/opengraph.svg',
+    images: '/opengraph.png',
   },
 };
 
