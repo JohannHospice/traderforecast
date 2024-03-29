@@ -14,6 +14,7 @@ import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { cn } from '../../lib/tailwind/utils';
 
 // FIXME: This is a workaround to fix hydration and incoherence between client and server
 const NavigationLogo = dynamic(() => import('./navigation-logo'), {
@@ -36,7 +37,10 @@ export function Navigation() {
               <NavigationMenuItem>
                 <Link href='/' passHref legacyBehavior>
                   <NavigationMenuLink
-                    className={navigationMenuTriggerStyle()}
+                    className={cn(
+                      navigationMenuTriggerStyle(),
+                      'bg-transparent data-[active]:bg-accent'
+                    )}
                     active={pathname === '/'}
                   >
                     Market
