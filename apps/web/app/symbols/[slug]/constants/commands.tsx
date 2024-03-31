@@ -75,8 +75,7 @@ export const COMMAND_GROUP_INDICATORS: {
         ),
       },
       {
-        disabled: true,
-        value: 'orderblock' as IndicatorKeys,
+        value: 'orderblock',
         label: (
           <>
             <BadgeIndice>OR</BadgeIndice> Order Block

@@ -6,6 +6,7 @@ import { SwingLowIndicator } from '@/lib/chart/indicators/swing-low-indicator';
 import { FairValueGapIndicator } from '../chart/indicators/fair-value-gap-indicator';
 import { GapIndicator } from '../chart/indicators/gap-indicator';
 import { VolumeInbalanceIndicator } from '../chart/indicators/volume-inbalance-indicator';
+import { OrderBlockIndicator } from '../chart/indicators/order-block-indicator';
 
 export type IndicatorKeys = keyof typeof IndicatorValues;
 
@@ -18,4 +19,5 @@ export const IndicatorValues = {
   fairvaluegap: FairValueGapIndicator,
   gap: GapIndicator,
   volumeinbalance: VolumeInbalanceIndicator,
+  orderblock: OrderBlockIndicator,
 };

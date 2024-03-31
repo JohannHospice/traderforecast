@@ -35,22 +35,22 @@ export class LightWeightRectangleFactory
       new TrendLine(chart, series, points[0], points[1], {
         lineColor: range.color,
         showLabels: false,
-        width: 2,
+        width,
       }),
       new TrendLine(chart, series, points[0], points[2], {
         lineColor: range.color,
         showLabels: false,
-        width: 2,
-      }),
-      new TrendLine(chart, series, points[2], points[3], {
-        lineColor: range.color,
-        showLabels: false,
-        width: 2,
+        width,
       }),
       new TrendLine(chart, series, points[1], points[3], {
         lineColor: range.color,
         showLabels: false,
-        width: 2,
+        width,
+      }),
+      new TrendLine(chart, series, points[2], points[3], {
+        lineColor: range.color,
+        showLabels: false,
+        width,
       }),
     ].map((trend) => {
       series.attachPrimitive(trend);
@@ -58,3 +58,4 @@ export class LightWeightRectangleFactory
     });
   }
 }
+const width = 4;
