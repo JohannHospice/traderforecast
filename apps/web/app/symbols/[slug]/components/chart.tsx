@@ -169,13 +169,14 @@ export function Chart({
     instance.clear();
     instance.apply(
       klines,
-      indicators.map((indicator) => IndicatorValues[indicator])
+      indicators.map((indicator) => IndicatorValues[indicator]),
+      theme === 'light'
     );
 
     return () => {
       instance.clear();
     };
-  }, [indicators, interval, klines]);
+  }, [indicators, interval, klines, theme]);
 
   return (
     <ChartBase

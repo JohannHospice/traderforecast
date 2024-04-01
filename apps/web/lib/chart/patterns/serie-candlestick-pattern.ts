@@ -32,4 +32,8 @@ export class SerieCandlestickPattern {
   get(index: number): Kline {
     return this.serie[index];
   }
+
+  get length(): number {
+    return this.serie.length;
+  }
 }

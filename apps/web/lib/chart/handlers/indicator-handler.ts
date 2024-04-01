@@ -7,6 +7,7 @@ import {
   Marker,
   PriceLine,
   Rectangle,
+  Trendline,
 } from '@/lib/chart/indicators';
 import {
   IChartApi,
@@ -16,6 +17,7 @@ import {
   Time,
 } from 'lightweight-charts';
 import { TrendLine } from 'lightweight-charts-plugin/trend-line/trend-line';
+import { LightWeightTrendFactory } from './trend-factory/lightweight-trend-factory';
 
 export class IndicatorHandler {
   series: ISeriesApi<SeriesType, Time> | null = null;
@@ -29,18 +31,29 @@ export class IndicatorHandler {
     this.chart = chart;
   }
 
-  apply(klines: Kline[], indicators: (new () => Indicator)[]) {
+  apply(
+    klines: Kline[],
+    indicators: (new () => Indicator)[],
+    isLight: boolean
+  ) {
     Promise.all(
       indicators.map((Indicator) => {
         const indicator = new Indicator();
 
-        const { markers, priceLines, rectangles } = indicator.execute(klines);
+        if (indicator.setTheme) {
+          indicator.setTheme(isLight);
+        }
+
+        const { markers, priceLines, rectangles, trendlines } =
+          indicator.execute(klines);
 
         this.applyRectangles(rectangles);
 
         this.applyMarkers(markers);
 
         this.applyPricelines(priceLines);
+
+        this.applyTrendline(trendlines);
       })
     ).catch((error) => {
       console.error('Error on indicator: ', error);
@@ -106,6 +119,21 @@ export class IndicatorHandler {
         this.series.createPriceLine(
           pricelineFactory.createPriceline(priceLine)
         ),
+      ];
+    }
+  }
+
+  applyTrendline(trendlines: Trendline[] | undefined) {
+    if (!trendlines || !this.chart || !this.series) {
+      return;
+    }
+
+    const trendlineFactory = new LightWeightTrendFactory();
+
+    for (const trendline of trendlines) {
+      this.primitives = [
+        ...this.primitives,
+        trendlineFactory.createTrend(this.chart, this.series, trendline),
       ];
     }
   }

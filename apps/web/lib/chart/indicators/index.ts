@@ -2,12 +2,14 @@
 
 export interface Indicator {
   execute(klines: Kline[]): IndicatorResult;
+  setTheme?(isLight: boolean): void;
 }
 
 export type IndicatorResult = {
   markers?: Marker[];
   priceLines?: PriceLine[];
   rectangles?: Rectangle[];
+  trendlines?: Trendline[];
 };
 
 export type Marker = {
@@ -33,4 +35,12 @@ export type Rectangle = {
   close: number;
   color?: string;
   title?: string;
+};
+
+export type Trendline = {
+  openTime: number;
+  open: number;
+  closeTime: number;
+  close: number;
+  color?: string;
 };

@@ -1,113 +1,188 @@
-import { Indicator, IndicatorResult, Marker, Rectangle } from '.';
-import { CandlestickPattern } from '../patterns/candlestick-pattern';
-import { SerieCandlestickPattern } from '../patterns/SerieCandlestickPattern';
+import { Indicator, IndicatorResult, Marker, Rectangle, Trendline } from '.';
+import { SerieCandlestickPattern } from '../patterns/serie-candlestick-pattern';
 
 export class OrderBlockIndicator implements Indicator {
+  isLight: boolean = false;
+
+  setTheme(isLight: boolean) {
+    this.isLight = isLight;
+  }
+
   execute(klines: Kline[]): IndicatorResult {
-    const orderblocks: Rectangle[] = [];
+    const rectangles: Rectangle[] = [];
     const markers: Marker[] = [];
+    const trendlines: Trendline[] = [];
 
     const serie = new SerieCandlestickPattern(klines);
-    for (let i = 1; i < klines.length - 2; i++) {
-      if (serie.isSwingLow(i)) {
-        const id = Math.random().toString(36).substring(2, 4);
-        for (let j = i; j < klines.length - 2; j++) {
-          if (
-            serie.isFairValueGap(j + 1) &&
-            serie.isBullish(j + 1) &&
-            serie.isBullish(j)
-          ) {
-            const isDifferentFairValueGap = i !== j;
 
-            // add take profit Marker
-            markers.push({
-              time: serie.get(i).closeTime,
-              kline: serie.get(i),
-              position: 'belowBar',
-              color: isDifferentFairValueGap ? 'red' : 'green',
-              text: 'TP/' + id,
-            });
+    const breakofstructures: Record<number, number> = {};
+    for (
+      let breakofstructure = klines.length - 1;
+      breakofstructure > 1;
+      breakofstructure--
+    ) {
+      if (!serie.isSwingHigh(breakofstructure)) {
+        continue;
+      }
 
-            if (isDifferentFairValueGap) {
-              markers.push({
-                time: serie.get(j).closeTime,
-                kline: serie.get(j),
-                position: 'belowBar',
-                color: 'green',
-                text: 'TP+/' + id,
-              });
-            }
-            // TP zone
-            orderblocks.push({
-              openTime: serie.get(j - 1).openTime,
-              closeTime: serie.get(j + 1).closeTime,
-              open: serie.get(j).high,
-              close: serie.get(j).low,
-              color: 'green',
-            });
+      const breakofstructureConfirmation = OrderBlockIndicator.findHigher(
+        serie,
+        breakofstructure
+      );
 
-            // FVG zone
-            orderblocks.push({
-              openTime: serie.get(j).openTime,
-              closeTime: serie.get(j + 2).closeTime,
-              open: serie.get(j).high,
-              close: serie.get(j + 2).low,
-              color: 'purple',
-            });
-            markers.push({
-              time: serie.get(j + 1).closeTime,
-              kline: serie.get(j + 1),
-              position: 'aboveBar',
-              shape: 'arrowDown',
-              color: 'purple',
-              text: 'FVG/' + id,
-            });
+      if (breakofstructureConfirmation === -1) {
+        continue;
+      }
 
-            // Break of structure
-            for (let k = j - 1; k > 0; k--) {
-              if (
-                serie.isSwingHigh(k) &&
-                serie.get(k).high > serie.get(j).high
-              ) {
-                markers.push({
-                  time: serie.get(k).closeTime,
-                  kline: serie.get(k),
-                  position: 'aboveBar',
-                  shape: 'arrowDown',
-                  color: 'green',
-                  text: 'BOS/' + id,
-                });
-                break;
-              }
-            }
+      if (breakofstructures[breakofstructureConfirmation]) {
+        markers.push({
+          time: serie.get(breakofstructure).closeTime,
+          kline: serie.get(breakofstructure),
+          position: 'aboveBar',
+          shape: 'circle',
+          color: this.getColor('breakofstructureCanceled'),
+        });
+        continue;
+      }
 
-            // for (let y = j + 1; y < klines.length; y++) {
-            //   if (
-            //     serie.isSwingLow(y) &&
-            //     serie.get(y).low < serie.get(j + 2).low
-            //   ) {
-            //     markers.push({
-            //       time: serie.get(j + 2).closeTime,
-            //       kline: serie.get(j + 2),
-            //       position: 'belowBar',
-            //       shape: 'arrowUp',
-            //       color: 'purple',
-            //       text: 'BOS',
-            //     });
-            //     break;
-            //   }
-            // }
+      const fairValueGap = OrderBlockIndicator.findFairValueGap(
+        serie,
+        breakofstructure,
+        breakofstructureConfirmation
+      );
 
-            break;
-          }
+      if (fairValueGap === -1) {
+        continue;
+      }
 
-          if (serie.isSwingHigh(j)) {
-            break;
-          }
-        }
+      const orderblock = fairValueGap - 1;
+      breakofstructures[breakofstructureConfirmation] = breakofstructure;
+
+      markers.push({
+        time: serie.get(breakofstructure).closeTime,
+        kline: serie.get(breakofstructure),
+        position: 'aboveBar',
+        shape: 'circle',
+        color: this.getColor('breakofstructure'),
+        text: 'BOS',
+      });
+
+      trendlines.push({
+        closeTime: serie.get(breakofstructureConfirmation).closeTime,
+        openTime: serie.get(breakofstructure).openTime,
+        open: serie.get(breakofstructure).high,
+        close: serie.get(breakofstructure).high,
+        color: this.getColor('breakofstructure'),
+      });
+
+      rectangles.push({
+        openTime: serie.get(fairValueGap - 1).openTime,
+        closeTime: serie.get(fairValueGap + 1).closeTime,
+        open: serie.get(fairValueGap - 1).high,
+        close: serie.get(fairValueGap + 1).low,
+        color: this.getColor('fairValueGap'),
+      });
+
+      const entry = OrderBlockIndicator.findOrderBlockEntry(serie, orderblock);
+
+      if (entry === -1) {
+        markers.push({
+          time: serie.get(orderblock).closeTime,
+          kline: serie.get(orderblock),
+          position: 'belowBar',
+          shape: 'arrowUp',
+          color: this.getColor('entryWaiting'),
+          text: 'OB',
+        });
+        rectangles.push({
+          openTime: serie.get(orderblock - 1).openTime,
+          closeTime: serie.get(orderblock + 1).closeTime,
+          open: serie.get(orderblock).low,
+          close: serie.get(orderblock).high,
+          color: this.getColor('entryWaiting'),
+        });
+        continue;
+      }
+      markers.push({
+        time: serie.get(orderblock).closeTime,
+        kline: serie.get(orderblock),
+        position: 'belowBar',
+        shape: 'arrowUp',
+        color: this.getColor('entry'),
+        text: 'OB',
+      });
+      rectangles.push({
+        openTime: serie.get(orderblock - 1).openTime,
+        closeTime: serie.get(entry + 1).closeTime,
+        open: serie.get(orderblock).low,
+        close: serie.get(orderblock).high,
+        color: this.getColor('entry'),
+      });
+      markers.push({
+        time: serie.get(entry).closeTime,
+        kline: serie.get(entry),
+        position: 'belowBar',
+        shape: 'arrowUp',
+        color: this.getColor('entryPoint'),
+        text: 'E',
+      });
+    }
+
+    return { rectangles, markers, trendlines };
+  }
+
+  getColor(type: string) {
+    const colors = {
+      breakofstructureCanceled: this.isLight
+        ? 'rgba(0, 0, 0, .25)'
+        : 'rgba(255, 255, 255, .25)',
+      breakofstructure: 'orange',
+      fairValueGap: 'purple',
+      orderblock: 'green',
+      entryWaiting: 'grey',
+      entry: 'green',
+      entryPoint: 'red',
+    } as Record<string, string>;
+
+    return colors[type];
+  }
+
+  static findOrderBlockEntry(
+    serie: SerieCandlestickPattern,
+    orderblock: number
+  ): number {
+    for (let i = orderblock + 2; i < serie.length; i++) {
+      if (serie.get(orderblock).high > serie.get(i).low) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  static findHigher(serie: SerieCandlestickPattern, swingHigh: number): number {
+    for (let i = swingHigh; i < serie.length; i++) {
+      if (serie.get(i).high > serie.get(swingHigh).high) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  static findFairValueGap(
+    serie: SerieCandlestickPattern,
+    from: number,
+    to: number
+  ) {
+    for (let i = to; i > from; i--) {
+      if (
+        serie.isFairValueGap(i) &&
+        serie.isBullish(i) &&
+        serie.isBullish(i - 1)
+      ) {
+        return i;
       }
     }
 
-    return { rectangles: orderblocks, markers };
+    return -1;
   }
 }
