@@ -41,7 +41,11 @@ export class UnmitigatedFairValueGapIndicator implements Indicator {
       if (retouch === -1) {
         rectangles.push({
           openTime: serie.get(fairvaluegap - 1).openTime,
-          closeTime: serie.get(serie.length - 1).closeTime,
+          closeTime: serie.get(
+            fairvaluegap + 30 < serie.length
+              ? fairvaluegap + 30
+              : serie.length - 1
+          ).closeTime,
           open: range.high,
           close: range.low,
           color: this.getColor(

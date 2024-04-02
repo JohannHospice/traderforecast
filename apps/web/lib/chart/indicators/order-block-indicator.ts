@@ -17,7 +17,7 @@ export class OrderBlockIndicator implements Indicator {
 
     const breakofstructures: Record<number, number> = {};
     for (
-      let breakofstructure = klines.length - 1;
+      let breakofstructure = klines.length - 2;
       breakofstructure > 1;
       breakofstructure--
     ) {
