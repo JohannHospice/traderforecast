@@ -58,13 +58,11 @@ export default function Page() {
 }
 
 function SelectStrategyLabel({
-  value,
   title,
   titleBold,
   description,
   icon: Icon,
 }: {
-  value: string;
   title: string;
   titleBold: string;
   description: string;
@@ -105,6 +103,18 @@ function SettingCard({ strategies }) {
     <CardWrapper title='Settings'>
       <div className='flex flex-col gap-6'>
         <ControlledSelect
+          title='Symbol'
+          placeholder='Select a symbol'
+          options={[
+            { value: 'BTC', label: 'BTC' },
+            { value: 'ETH', label: 'ETH' },
+            { value: 'BNB', label: 'BNB' },
+            { value: 'USDT', label: 'USDT' },
+            { value: 'USDC', label: 'USDC' },
+            { value: 'BUSD', label: 'BUSD' },
+          ]}
+        />
+        <ControlledSelect
           title='Strategy'
           placeholder='Select a strategy'
           options={strategies.map((strategy) => ({
@@ -122,7 +132,7 @@ function SettingCard({ strategies }) {
           }))}
         />
         <ControlledSelect
-          title='Time Period'
+          title='Initial Time Period'
           placeholder='Select a time period'
           options={[
             { value: '1m', label: '1m' },
@@ -137,10 +147,18 @@ function SettingCard({ strategies }) {
           defaultValue='1d'
         />
         <div className='grid grid-cols-2 gap-4'>
-          <ControlledInput label='Start Date' placeholder='2021-01-01' />
-          <ControlledInput label='End Date' placeholder='2021-12-31' />
+          <ControlledInput
+            label='Start Date'
+            type='datetime-local'
+            placeholder='2021-01-01'
+          />
+          <ControlledInput
+            label='End Date'
+            type='datetime-local'
+            placeholder='2021-12-31'
+          />
         </div>
-        <ControlledInput label='Wallet' placeholder='1000' />
+        <ControlledInput label='Wallet' type='number' placeholder='1000' />
       </div>
     </CardWrapper>
   );
@@ -179,14 +197,16 @@ function ControlledSelect({
 function ControlledInput({
   label,
   placeholder,
+  type,
 }: {
   label: string;
   placeholder: string;
+  type: React.HTMLInputTypeAttribute;
 }) {
   return (
     <div className='grid gap-3'>
       <Label htmlFor={label}>{label}</Label>
-      <Input id={label} type='number' placeholder={placeholder} />
+      <Input id={label} type={type} placeholder={placeholder} />
     </div>
   );
 }
