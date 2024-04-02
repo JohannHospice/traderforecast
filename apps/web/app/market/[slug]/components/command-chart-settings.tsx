@@ -9,7 +9,7 @@ import {
   CommandSeparator,
 } from '@/components/ui/command';
 import { COMMAND_GROUP_INDICATORS } from '../constants/commands';
-import { useChartSettings } from '../contexts/chart-settings-context';
+import { useChartSettings } from '../../../../lib/contexts/chart-settings-context';
 
 export function CommandChartSettings() {
   const { indicators, live, setLive, toggleIndicator } = useChartSettings();

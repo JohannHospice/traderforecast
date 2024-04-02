@@ -53,7 +53,7 @@ export function GridSymbols({
   return (
     <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 xxl:grid-cols-6 gap-4 divide-y-[1px] sm:divide-y-0'>
       {items.map((symbol) => (
-        <Link key={symbol.slug} href={`/symbols/${symbol.slug}`}>
+        <Link key={symbol.slug} href={`/market/${symbol.slug}`}>
           <CardSymbol symbol={symbol} className='h-full' />
         </Link>
       ))}

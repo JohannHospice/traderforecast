@@ -12,7 +12,7 @@ import {
 import { useState } from 'react';
 import { Button } from '../../../../components/ui/button';
 import { CommandDialog } from '../../../../components/ui/command';
-import { useChartSettings } from '../contexts/chart-settings-context';
+import { useChartSettings } from '../../../../lib/contexts/chart-settings-context';
 import { CommandChartSettings } from './command-chart-settings';
 
 export function CardChartHeader({ intervals = [] }: { intervals?: string[] }) {

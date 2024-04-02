@@ -74,14 +74,6 @@ export const COMMAND_GROUP_INDICATORS: {
           </>
         ),
       },
-      {
-        value: 'range',
-        label: (
-          <>
-            <BadgeIndice>R</BadgeIndice> Range Indicator
-          </>
-        ),
-      },
     ],
   },
 ];

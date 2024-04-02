@@ -4,7 +4,8 @@ import { decodeSearchParamList } from '@/lib/helpers/string';
 import { Container } from '../components/container';
 import { GridSymbols } from './components/grid-symbols';
 import { MarketNav } from './components/market-nav';
-import { SymbolPagination } from './lib/symbol-pagination';
+import { SymbolPagination } from '../lib/helpers/symbol-pagination';
+import { Heading } from '../components/heading';
 
 export default async function Page({
   searchParams,
@@ -26,16 +27,12 @@ export default async function Page({
 
   return (
     <>
-      <Container>
-        <h1 className='scroll-m-20 text-lg font-extrabold tracking-tight lg:text-4xl'>
-          Traderforecast is open!
-        </h1>
-        <p className='leading-7 text-gray-500'>
-          Here&apos;s the market, a list of all the symbols available on the
-          exchange.
-        </p>
+      <Heading
+        title='Traderforecast is open!'
+        subtitle="Here's the market, a list of all the symbols available on the exchange."
+      >
         <MarketNav segments={allSegments} />
-      </Container>
+      </Heading>
       <Container fluid className='flex-1'>
         <GridSymbols
           symbols={symbols}

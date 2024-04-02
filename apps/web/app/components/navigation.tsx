@@ -41,9 +41,22 @@ export function Navigation() {
                       navigationMenuTriggerStyle(),
                       'bg-transparent data-[active]:bg-accent'
                     )}
-                    active={pathname === '/'}
+                    active={pathname.includes('/market') || pathname === '/'}
                   >
                     Market
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link href='/backtesting' passHref legacyBehavior>
+                  <NavigationMenuLink
+                    className={cn(
+                      navigationMenuTriggerStyle(),
+                      'bg-transparent data-[active]:bg-accent'
+                    )}
+                    active={pathname === '/backtesting'}
+                  >
+                    Backtesting
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
