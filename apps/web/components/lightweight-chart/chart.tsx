@@ -76,13 +76,11 @@ const ChartContainer = forwardRef(
       api.applyOptions(options);
 
       const handleResize = () => {
-        console.log('handleResize');
         api.applyOptions({
           ...options,
           width: container.clientWidth,
           height: container.clientHeight,
         });
-        console.log('applyOptions');
       };
 
       window.addEventListener('resize', handleResize);

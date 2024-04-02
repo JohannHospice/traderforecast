@@ -53,7 +53,7 @@ export function Chart({
   klines: Kline[];
   interval?: IntervalKeys;
 }) {
-  const { indicators, live } = useChartSettings();
+  const { indicators, live, lock, setLock } = useChartSettings();
   const { theme } = useTheme();
   const { redirectWithSearchParams, searchParams } =
     useRedirectWithSearchParams();
@@ -129,8 +129,6 @@ export function Chart({
       const [_, number, unit] = match;
       const newStart = `utc_now-${parseInt(number) + getNumberOfKlinesResponsive()}${unit}`;
 
-      console.log({ newStart, startUtc });
-
       waitingTimeRangeUpdate.current = null;
       redirectWithSearchParams(
         {
@@ -177,6 +175,26 @@ export function Chart({
       instance.clear();
     };
   }, [indicators, interval, klines, theme]);
+
+  // on lock
+  useLayoutEffect(() => {
+    chart.current?.priceScale('right').applyOptions({
+      autoScale: lock,
+    });
+
+    const timeout = setInterval(() => {
+      const autoScale = !!chart.current?.priceScale('right').options()
+        .autoScale;
+
+      if (autoScale !== lock) {
+        setLock(autoScale);
+      }
+    }, 500);
+
+    return () => {
+      clearInterval(timeout);
+    };
+  }, [lock, setLock]);
 
   return (
     <ChartBase
