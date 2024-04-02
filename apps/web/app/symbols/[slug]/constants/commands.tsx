@@ -58,22 +58,14 @@ export const COMMAND_GROUP_INDICATORS: {
         ),
       },
       {
-        disabled: true,
-        value: 'volumeinbalance',
+        value: 'unmitigatedfairvaluegap',
         label: (
           <>
-            <BadgeIndice>VI</BadgeIndice> Volume Inbalance
+            <BadgeIndice>FVG</BadgeIndice> Fair Value Gap
           </>
         ),
       },
-      {
-        value: 'fairvaluegap',
-        label: (
-          <>
-            <BadgeIndice>FV</BadgeIndice> Fair Value Gap
-          </>
-        ),
-      },
+
       {
         value: 'orderblock',
         label: (

@@ -25,10 +25,8 @@ export class OrderBlockIndicator implements Indicator {
         continue;
       }
 
-      const breakofstructureConfirmation = OrderBlockIndicator.findHigher(
-        serie,
-        breakofstructure
-      );
+      const breakofstructureConfirmation =
+        serie.findHigherHigh(breakofstructure);
 
       if (breakofstructureConfirmation === -1) {
         continue;
@@ -45,8 +43,7 @@ export class OrderBlockIndicator implements Indicator {
         continue;
       }
 
-      const fairValueGap = OrderBlockIndicator.findFairValueGap(
-        serie,
+      const fairValueGap = serie.findFairValueGap(
         breakofstructure,
         breakofstructureConfirmation
       );
@@ -83,7 +80,7 @@ export class OrderBlockIndicator implements Indicator {
         color: this.getColor('fairValueGap'),
       });
 
-      const entry = OrderBlockIndicator.findOrderBlockEntry(serie, orderblock);
+      const entry = serie.findOrderBlockEntry(orderblock);
 
       if (entry === -1) {
         markers.push({
@@ -113,7 +110,7 @@ export class OrderBlockIndicator implements Indicator {
       });
       rectangles.push({
         openTime: serie.get(orderblock - 1).openTime,
-        closeTime: serie.get(entry + 1).closeTime,
+        closeTime: serie.get(entry + 1)?.closeTime,
         open: serie.get(orderblock).low,
         close: serie.get(orderblock).high,
         color: this.getColor('entry'),
@@ -145,44 +142,5 @@ export class OrderBlockIndicator implements Indicator {
     } as Record<string, string>;
 
     return colors[type];
-  }
-
-  static findOrderBlockEntry(
-    serie: SerieCandlestickPattern,
-    orderblock: number
-  ): number {
-    for (let i = orderblock + 2; i < serie.length; i++) {
-      if (serie.get(orderblock).high > serie.get(i).low) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  static findHigher(serie: SerieCandlestickPattern, swingHigh: number): number {
-    for (let i = swingHigh; i < serie.length; i++) {
-      if (serie.get(i).high > serie.get(swingHigh).high) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  static findFairValueGap(
-    serie: SerieCandlestickPattern,
-    from: number,
-    to: number
-  ) {
-    for (let i = to; i > from; i--) {
-      if (
-        serie.isFairValueGap(i) &&
-        serie.isBullish(i) &&
-        serie.isBullish(i - 1)
-      ) {
-        return i;
-      }
-    }
-
-    return -1;
   }
 }
