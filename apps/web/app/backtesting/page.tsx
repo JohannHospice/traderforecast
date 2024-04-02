@@ -1,7 +1,16 @@
+import { Container } from '@/components/container';
+import { Heading } from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
@@ -10,10 +19,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Rabbit } from 'lucide-react';
-import { Container } from '../../components/container';
-import { Heading } from '../../components/heading';
-import { Card } from '../../components/ui/card';
+import { cn } from '@/lib/tailwind/utils';
+import { format } from 'date-fns';
+import { Calendar as CalendarIcon, Rabbit } from 'lucide-react';
+import * as React from 'react';
 
 /**
  * The backtesting page offer to the user the execution of multiple strategies and results of those strategies.
@@ -159,6 +168,7 @@ function SettingCard({ strategies }) {
           />
         </div>
         <ControlledInput label='Wallet' type='number' placeholder='1000' />
+        <Button className='w-full mt-4'>Backtest</Button>
       </div>
     </CardWrapper>
   );
@@ -229,18 +239,6 @@ function ControlledTextarea({
     </div>
   );
 }
-
-import { format } from 'date-fns';
-import { Calendar as CalendarIcon } from 'lucide-react';
-import * as React from 'react';
-
-import { Calendar } from '@/components/ui/calendar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { cn } from '../../lib/tailwind/utils';
 
 export function DatePicker({
   date,
