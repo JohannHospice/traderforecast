@@ -1,21 +1,22 @@
 'use client';
 
 import { Combobox } from '@/components/combobox';
-import {
-  decodeSearchParamList,
-  encodeSearchParamList,
-} from '@/lib/helpers/string';
-import { useRedirectWithSearchParams } from '@/lib/hooks/useRedirectWithSearchParams';
+import { encodeSearchParamList } from '@/lib/helpers/string';
+import { useRedirectParams } from '@/lib/hooks/use-redirect-params';
 import { useCallback } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 import { InputQuery } from './input-query';
 
-export function MarketNav({ segments }: { segments: string[] }) {
-  const { searchParams, redirectWithSearchParams } =
-    useRedirectWithSearchParams();
-
-  const segmentParams = decodeSearchParamList(
-    searchParams.get('segments') || ''
-  );
+export function MarketNav({
+  selectedSegments,
+  segments,
+  slug,
+}: {
+  segments: string[];
+  slug?: string;
+  selectedSegments: string[];
+}) {
+  const { redirectParams } = useRedirectParams();
 
   const onSelectSegment = useCallback(
     (valueLowercase: string) => {
@@ -25,23 +26,30 @@ export function MarketNav({ segments }: { segments: string[] }) {
       if (!value) return;
 
       const segmentParamsUpdated = encodeSearchParamList(
-        segmentParams.includes(value)
-          ? segmentParams.filter((detector) => detector !== value)
-          : [...segmentParams, value]
+        selectedSegments.includes(value)
+          ? selectedSegments.filter((detector) => detector !== value)
+          : [...selectedSegments, value]
       );
 
-      redirectWithSearchParams({
+      redirectParams({
         segments: segmentParamsUpdated,
         page: '1',
       });
     },
-    [redirectWithSearchParams, segmentParams, segments]
+    [redirectParams, selectedSegments, segments]
   );
+
+  const handleSearch = useDebouncedCallback((value) => {
+    redirectParams({
+      slug: value,
+      page: '1',
+    });
+  }, 300);
 
   return (
     <div className='flex-1 flex flex-row flex-wrap gap-4 w-full md:w-[66.66%] lg:w-[50%] xl:w-[40%] pr-2.5'>
       <div className='flex-1 '>
-        <InputQuery />
+        <InputQuery onChange={handleSearch} defaultValue={slug} />
       </div>
       <div className='flex-1'>
         <Combobox
@@ -52,10 +60,16 @@ export function MarketNav({ segments }: { segments: string[] }) {
           multiple
           options={segments
             .sort((a, b) => {
-              if (segmentParams.includes(a) && !segmentParams.includes(b)) {
+              if (
+                selectedSegments.includes(a) &&
+                !selectedSegments.includes(b)
+              ) {
                 return -1;
               }
-              if (!segmentParams.includes(a) && segmentParams.includes(b)) {
+              if (
+                !selectedSegments.includes(a) &&
+                selectedSegments.includes(b)
+              ) {
                 return 1;
               }
               return a.localeCompare(b);
@@ -64,7 +78,7 @@ export function MarketNav({ segments }: { segments: string[] }) {
               value: segment.toLowerCase(),
               label: segment,
             }))}
-          values={segmentParams.map((segment) => segment.toLowerCase())}
+          values={selectedSegments.map((segment) => segment.toLowerCase())}
           onSelect={onSelectSegment}
         />
       </div>

@@ -5,27 +5,20 @@ import {
 
 export class SymbolPagination {
   symbols?: GetAllSymbolResponse;
+
   constructor(
     private market: MarketRepository,
     private pageSize = 20
   ) {}
 
-  async load() {
+  private async loadSymbols() {
     this.symbols = (await this.market.getAllSymbols()).toSorted(
       // du rank le plus petit au plus grand en mettant les nulls et undefined à la fin
       (a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity)
     );
   }
 
-  async getSymbols({
-    query,
-    segments,
-    page,
-  }: {
-    query: string;
-    segments: string[];
-    page: number;
-  }) {
+  private getPageSlugs(query: string, segments: string[], page: number) {
     if (!this.symbols) {
       throw new Error('Symbols are not loaded');
     }
@@ -57,11 +50,30 @@ export class SymbolPagination {
     const pagedSlugs = filteredSymbols
       .slice((page - 1) * this.pageSize, page * this.pageSize)
       .map((symbol) => symbol.slug);
+    return pagedSlugs;
+  }
 
+  private async getSymbolesBySlugs(pagedSlugs: string[]) {
     return (await this.market.getSymbolsBySlugs(pagedSlugs)).toSorted(
       // du rank le plus petit au plus grand en mettant les nulls et undefined à la fin
       (a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity)
     );
+  }
+
+  async getSymbols({
+    query,
+    segments,
+    page,
+  }: {
+    query: string;
+    segments: string[];
+    page: number;
+  }) {
+    await this.loadSymbols();
+
+    const pagedSlugs = this.getPageSlugs(query, segments, page);
+
+    return await this.getSymbolesBySlugs(pagedSlugs);
   }
 }
 

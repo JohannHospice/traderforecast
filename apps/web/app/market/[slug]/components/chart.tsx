@@ -2,11 +2,13 @@
 import { ChartBase } from '@/components/lightweight-chart/chart';
 import { Series } from '@/components/lightweight-chart/series';
 import api from '@/lib/api';
+import { IndicatorHandler } from '@/lib/chart/handlers/indicator-handler';
 import { IndicatorValues } from '@/lib/constants/indicator';
 import { SEARCH_PARAMS } from '@/lib/constants/navigation';
+import { useChartSettings } from '@/lib/contexts/chart-settings-context';
 import { getNumberOfKlinesResponsive } from '@/lib/helpers/klines';
 import { klineToCandlestick } from '@/lib/helpers/lightweight-charts';
-import { useRedirectWithSearchParams } from '@/lib/hooks/useRedirectWithSearchParams';
+import { useRedirectParams } from '@/lib/hooks/use-redirect-params';
 import {
   CANDLESTICK_DARK_OPTIONS,
   CANDLESTICK_LIGHT_OPTIONS,
@@ -23,8 +25,6 @@ import {
 } from 'lightweight-charts';
 import { useTheme } from 'next-themes';
 import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
-import { IndicatorHandler } from '../../../../lib/chart/handlers/indicator-handler';
-import { useChartSettings } from '../../../../lib/contexts/chart-settings-context';
 
 const REALTIME_INTERVAL_DELAY: Record<IntervalKeys, number> = {
   '1h': 1000 * 60 * 60,
@@ -55,8 +55,7 @@ export function Chart({
 }) {
   const { indicators, live, lock, setLock } = useChartSettings();
   const { theme } = useTheme();
-  const { redirectWithSearchParams, searchParams } =
-    useRedirectWithSearchParams();
+  const { redirectParams, searchParams } = useRedirectParams();
 
   const { chartOptions, seriesOptions } = useMemo(
     () => (theme === 'light' ? LIGHT_OPTIONS : DARK_OPTIONS),
@@ -130,7 +129,7 @@ export function Chart({
       const newStart = `utc_now-${parseInt(number) + getNumberOfKlinesResponsive()}${unit}`;
 
       waitingTimeRangeUpdate.current = null;
-      redirectWithSearchParams(
+      redirectParams(
         {
           [SEARCH_PARAMS.START_TIME]: newStart,
         },
@@ -139,7 +138,7 @@ export function Chart({
         }
       );
     },
-    [interval, live, redirectWithSearchParams, searchParams]
+    [interval, live, redirectParams, searchParams]
   );
 
   // reset waiting time range update

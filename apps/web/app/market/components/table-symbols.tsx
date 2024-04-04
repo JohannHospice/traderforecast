@@ -4,13 +4,13 @@ import {
   createCellNumber,
   createSortButton,
 } from '@/components/template-data-table';
+import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import { formatNumber, formatPercent } from '@/lib/helpers/string';
+import { useRedirectParams } from '@/lib/hooks/use-redirect-params';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { ColumnDef } from '@tanstack/react-table';
 import { useRouter } from 'next/navigation';
-import { useRedirectWithSearchParams } from '../../lib/hooks/useRedirectWithSearchParams';
-import { SEARCH_PARAMS } from '../../lib/constants/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export function TableSymbols({
   symbols,
@@ -23,7 +23,7 @@ export function TableSymbols({
 }) {
   const router = useRouter();
 
-  const { redirectWithSearchParams } = useRedirectWithSearchParams();
+  const { redirectParams } = useRedirectParams();
 
   const pageSize = 10;
   const [pagination, setPagination] = useState({
@@ -41,7 +41,7 @@ export function TableSymbols({
       onRowClick={(row) => router.push(`/symbols/${row.original.slug}`)}
       setPagination={(pagination) => {
         if (pagination.pageIndex <= pagination.pages) {
-          redirectWithSearchParams({
+          redirectParams({
             [SEARCH_PARAMS.PAGE]: pagination.pageIndex + 1,
           });
         }

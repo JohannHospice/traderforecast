@@ -1,13 +1,12 @@
 'use client';
 import CardSymbol from '@/components/card-symbol';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { SEARCH_PARAMS } from '@/lib/constants/navigation';
+import { useRedirectParams } from '@/lib/hooks/use-redirect-params';
 import { useItemsOnScroll } from '@/lib/hooks/useItemsOnScroll';
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
 import { useCallback } from 'react';
-import { Alert, AlertDescription, AlertTitle } from '../../components/ui/alert';
-import { SEARCH_PARAMS } from '../../lib/constants/navigation';
-import { useRedirectWithSearchParams } from '../../lib/hooks/useRedirectWithSearchParams';
-import { Container } from '../../components/container';
 
 export function GridSymbols({
   symbols,
@@ -18,21 +17,21 @@ export function GridSymbols({
   symbols: Symbol[];
   page: number;
   query?: string;
-  segments?: string;
+  segments?: string[];
 }) {
-  const { redirectWithSearchParams } = useRedirectWithSearchParams();
+  const { redirectParams } = useRedirectParams();
 
   const handleLoadMore = useCallback(() => {
-    redirectWithSearchParams(
+    redirectParams(
       { [SEARCH_PARAMS.PAGE]: page + 1 },
       {
         scroll: false,
       }
     );
-  }, [page, redirectWithSearchParams]);
+  }, [page, redirectParams]);
 
   const items = useItemsOnScroll({
-    key: [query, segments],
+    key: [query, segments].flat(),
     items: symbols,
     offset: 1000,
     onLoadMore: handleLoadMore,

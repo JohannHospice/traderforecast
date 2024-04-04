@@ -1,10 +1,10 @@
 import { Navigation } from '@/app/components/navigation';
+import { BackgroundBlob } from '@/components/background-blob';
 import { ThemeProvider } from '@/components/theme-provider';
 import '@/styles/globals.css';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
-import { BackgroundBlob } from '../components/background-blob';
 
 export const metadata: Metadata = {
   title: 'Traderforecast',
@@ -48,7 +48,7 @@ export default function RootLayout({
           attribute='class'
           defaultTheme='system'
           enableSystem
-          disableTransitionOnChange
+          // disableTransitionOnChange
         >
           <Navigation />
           <div className='flex flex-col flex-1 py-4'>{children}</div>

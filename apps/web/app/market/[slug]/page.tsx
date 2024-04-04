@@ -3,13 +3,13 @@ import { Container } from '@/components/container';
 import { Card } from '@/components/ui/card';
 import { Command } from '@/components/ui/command';
 import api from '@/lib/api/';
+import { GetKlinesAndSymbolUsecase } from '@/lib/api/usecases/get-klines-and-symbol-usecase';
 import { SEARCH_PARAMS } from '@/lib/constants/navigation';
+import { getDefaultNumberOfKlines } from '@/lib/helpers/klines';
+import { formatInterval } from '@/lib/helpers/utc';
 import { redirect } from 'next/navigation';
-import { getDefaultNumberOfKlines } from '../../../lib/helpers/klines';
-import { formatInterval } from '../../../lib/helpers/utc';
 import CardChart from './components/card-chart';
 import { CommandChartSettings } from './components/command-chart-settings';
-import { GetKlinesAndSymbolUsecase } from '../../../lib/api/usecases/get-klines-and-symbol-usecase';
 
 export default async function Page({
   params: { slug },
