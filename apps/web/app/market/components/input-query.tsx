@@ -23,7 +23,7 @@ export function InputQuery({
     <div className={cn('relative', className)}>
       <MagnifyingGlassIcon className='absolute left-0 top-0 m-2.5 h-5 w-5 text-muted-foreground' />
       <Input
-        className='w-full pl-10 bg-card min-w-52'
+        className='w-full pl-10 min-w-52'
         type='symbol'
         placeholder='Search Currencies...'
         value={value}

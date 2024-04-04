@@ -25,7 +25,7 @@ export function NavigationButton({
             navigationMenuTriggerStyle(),
             'bg-transparent data-[active]:bg-accent'
           )}
-          active={pathname === href}
+          active={pathname.includes(href)}
         >
           {children}
         </NavigationMenuLink>

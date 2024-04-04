@@ -48,7 +48,7 @@ export default function RootLayout({
           attribute='class'
           defaultTheme='system'
           enableSystem
-          // disableTransitionOnChange
+          disableTransitionOnChange
         >
           <Navigation />
           <div className='flex flex-col flex-1 py-4'>{children}</div>
