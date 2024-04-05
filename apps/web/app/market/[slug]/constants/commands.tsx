@@ -1,11 +1,11 @@
-import { BadgeIndice } from '@/components/badge-indice';
 import { IndicatorKeys } from '@/lib/constants/indicator';
 
 export const COMMAND_GROUP_INDICATORS: {
   heading: React.ReactNode;
   items: {
     value: IndicatorKeys;
-    label: React.ReactNode;
+    title: string;
+    short?: string;
     disabled?: boolean;
   }[];
 }[] = [
@@ -14,35 +14,23 @@ export const COMMAND_GROUP_INDICATORS: {
     items: [
       {
         value: 'swinghigh',
-        label: (
-          <>
-            <BadgeIndice>SH</BadgeIndice> Swing High
-          </>
-        ),
+        title: 'Swing High',
+        short: 'SH',
       },
       {
         value: 'swinglow',
-        label: (
-          <>
-            <BadgeIndice>SL</BadgeIndice> Swing Low
-          </>
-        ),
+        title: 'Swing Low',
+        short: 'SL',
       },
       {
         value: 'engulfing',
-        label: (
-          <>
-            <BadgeIndice>E</BadgeIndice> Engulfing Candle
-          </>
-        ),
+        title: 'Engulfing Candle',
+        short: 'E',
       },
       {
         value: 'momentum',
-        label: (
-          <>
-            <BadgeIndice>M</BadgeIndice> Momentum Candle
-          </>
-        ),
+        title: 'Momentum Candle',
+        short: 'M',
       },
     ],
   },
@@ -51,28 +39,23 @@ export const COMMAND_GROUP_INDICATORS: {
     items: [
       {
         value: 'gap',
-        label: (
-          <>
-            <BadgeIndice>G</BadgeIndice> Gap
-          </>
-        ),
+        title: 'Gap',
+        short: 'G',
       },
       {
         value: 'unmitigatedfairvaluegap',
-        label: (
-          <>
-            <BadgeIndice>FVG</BadgeIndice> Fair Value Gap
-          </>
-        ),
+        title: 'Fair Value Gap',
+        short: 'FVG',
       },
-
+      {
+        value: 'imbalance',
+        title: 'Imbalance',
+        short: 'IB',
+      },
       {
         value: 'orderblock',
-        label: (
-          <>
-            <BadgeIndice>OR</BadgeIndice> Order Block
-          </>
-        ),
+        title: 'Order Block',
+        short: 'OB',
       },
     ],
   },

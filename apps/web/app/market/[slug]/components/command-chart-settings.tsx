@@ -10,9 +10,11 @@ import {
 } from '@/components/ui/command';
 import { useChartSettings } from '@/lib/contexts/chart-settings-context';
 import { COMMAND_GROUP_INDICATORS } from '../constants/commands';
+import { IndicatorCommandLabel } from './indicator-command-label';
 
 export function CommandChartSettings() {
   const { indicators, live, setLive, toggleIndicator } = useChartSettings();
+
   return (
     <CommandList className='sm:max-h-full max-h-[300px]'>
       <CommandEmpty>No results found.</CommandEmpty>
@@ -27,15 +29,19 @@ export function CommandChartSettings() {
         <CommandItem></CommandItem>
       </CommandGroup>
       <CommandSeparator />
-      {COMMAND_GROUP_INDICATORS.map((group, i) => (
-        <CommandGroup key={i} heading={group.heading} className='px-7'>
-          {group.items.map((indicator) => (
+      {COMMAND_GROUP_INDICATORS.map(({ heading, items }, i) => (
+        <CommandGroup key={i} heading={heading} className='px-7'>
+          {items.map(({ value, short, title, disabled }) => (
             <CommandItemCheck
-              key={indicator.value}
-              label={indicator.label}
-              disabled={indicator.disabled}
-              check={indicators.includes(indicator.value)}
-              onSelect={() => toggleIndicator(indicator.value)}
+              key={value}
+              label={
+                <IndicatorCommandLabel badge={short}>
+                  {title}
+                </IndicatorCommandLabel>
+              }
+              disabled={disabled}
+              check={indicators.includes(value)}
+              onSelect={() => toggleIndicator(value)}
             />
           ))}
         </CommandGroup>

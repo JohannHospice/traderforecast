@@ -7,6 +7,7 @@ import { GapIndicator } from '../chart/indicators/gap-indicator';
 import { VolumeInbalanceIndicator } from '../chart/indicators/volume-inbalance-indicator';
 import { OrderBlockIndicator } from '../chart/indicators/order-block-indicator';
 import { UnmitigatedFairValueGapIndicator } from '../chart/indicators/unmitigated-fair-value-gap-indicator';
+import { ImbalanceIndicator } from '../chart/indicators/imbalance-indicator';
 
 export type IndicatorKeys = keyof typeof IndicatorValues;
 
@@ -20,4 +21,5 @@ export const IndicatorValues = {
   volumeinbalance: VolumeInbalanceIndicator,
   orderblock: OrderBlockIndicator,
   unmitigatedfairvaluegap: UnmitigatedFairValueGapIndicator,
+  imbalance: ImbalanceIndicator,
 };
