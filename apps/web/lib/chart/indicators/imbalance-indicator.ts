@@ -1,43 +1,48 @@
 import { Indicator, IndicatorResult } from '.';
+import { SerieCandlestickPattern } from '../patterns/serie-candlestick-pattern';
+import { SeriePattern } from '../patterns/serie-pattern';
 
 export class ImbalanceIndicator implements Indicator {
   execute(klines: Kline[]): IndicatorResult {
-    const ranges = [];
-    const offsetTimeIndex = 1;
-    for (let i = 1; i < klines.length - 1; i++) {
-      const prev = klines[i - 1];
-      const next = klines[i + 1];
+    const rectangles = [];
+    const serie = new SerieCandlestickPattern(klines);
+    for (let i = 0; i < serie.length - 2; i++) {
+      const current = serie.get(i);
+      const next = serie.get(i + 1);
 
-      const openTime = klines[i - 1]?.openTime || 0;
-      const closeTime =
-        klines[i + offsetTimeIndex]?.closeTime ||
-        klines[klines.length - 1].closeTime;
-
-      if (prev.close < next.open) {
-        ranges.push({
-          openTime: openTime,
-          open: prev.high,
-          closeTime: closeTime,
-          close: next.low,
+      if (
+        serie.isBullish(i) &&
+        current.close < next.open &&
+        current.close < next.close
+      ) {
+        rectangles.push({
+          openTime: current.openTime,
+          open: current.close,
+          closeTime: next.closeTime,
+          close: serie.isBullish(i + 1) ? next.open : next.close,
           color: 'green',
-          title: 'FVG',
+          title: 'IM',
         });
       }
 
-      if (prev.close > next.open) {
-        ranges.push({
-          openTime: openTime,
-          open: prev.low,
-          closeTime: closeTime,
-          close: next.high,
+      if (
+        serie.isBearish(i) &&
+        current.close > next.open &&
+        current.close > next.close
+      ) {
+        rectangles.push({
+          openTime: current.openTime,
+          open: current.close,
+          closeTime: next.closeTime,
+          close: serie.isBearish(i + 1) ? next.open : next.close,
           color: 'red',
-          title: 'FVG',
+          title: 'IM',
         });
       }
     }
 
     return {
-      rectangles: ranges,
+      rectangles,
     };
   }
 }
