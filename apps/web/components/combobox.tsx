@@ -28,9 +28,9 @@ export function Combobox<T extends string>({
   onSelect,
   className = '',
 }: {
-  placeholder: string;
-  search: string;
-  noOptions: string;
+  placeholder?: string;
+  search?: string;
+  noOptions?: string;
   options?: { value: T; label: string }[];
   disabled?: boolean;
   multiple?: boolean;

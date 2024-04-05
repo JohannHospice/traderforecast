@@ -348,4 +348,71 @@ export class SantimentMarketRepository<T> implements MarketRepository {
 
     return currenciesMarketSegments.map((segment) => segment.name);
   }
+
+  async getSortedSymbols(): Promise<Symbol[]> {
+    const {
+      data: {
+        allProjectsByFunction: { projects },
+      },
+    } = await this.client.query<{
+      allProjectsByFunction: { projects: Symbol[] };
+    }>({
+      query: gql`
+        query GetProjects($fn: json) {
+          allProjectsByFunction(function: $fn) {
+            projects {
+              slug
+              name
+              ticker
+            }
+          }
+        }
+      `,
+      variables: {
+        fn: JSON.stringify({
+          name: 'selector',
+          args: {
+            filters: [
+              {
+                args: {
+                  metric: 'marketcap_usd',
+                  operator: 'greater_than',
+                  dynamicFrom: '1d',
+                  dynamicTo: 'now',
+                  aggregation: 'last',
+                  threshold: 10000000,
+                },
+                name: 'metric',
+              },
+              // {
+              //   args: {
+              //     metric: 'rank',
+              //     operator: 'less_than',
+              //     dynamicFrom: '1d',
+              //     dynamicTo: 'now',
+              //     aggregation: 'last',
+              //     threshold: 10,
+              //   },
+              //   name: 'metric',
+              // },
+            ],
+            orderBy: {
+              aggregation: 'last',
+              dynamicFrom: '1d',
+              direction: 'asc',
+              dynamicTo: 'now',
+              metric: 'rank',
+            },
+            pagination: {
+              page: 1,
+              pageSize: 10,
+            },
+          },
+        }),
+      },
+    });
+    console.log(projects);
+
+    return projects;
+  }
 }

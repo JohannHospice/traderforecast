@@ -18,6 +18,8 @@ export interface MarketRepository {
   getMarketSegments(): Promise<string[]>;
 
   getLatestKline(params: GetLatestKlineParams): Promise<Kline>;
+
+  getSortedSymbols(): Promise<Symbol[]>;
 }
 
 export interface GetKlinesAndSymbolParams {
