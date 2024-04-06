@@ -72,7 +72,7 @@ export default async function Page({
             <CardSymbol symbol={symbol} className='min-w-[270px]' />
           </div>
           <div className='row-start-2 row-end-3 flex-col hidden md:flex'>
-            <Card noBorder className='flex-1 pt-4'>
+            <Card noBorder className='flex-1 py-4'>
               <Command className='rounded-xl overflow-hidden'>
                 <CommandChartSettings />
               </Command>

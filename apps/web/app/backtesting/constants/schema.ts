@@ -8,15 +8,21 @@ export const backtestingSettingsSchema = object()
     strategy: string().required(),
     walletAmount: number()
       .typeError('Amount must be a number')
-      .positive()
-      .min(0)
-      .nonNullable()
-      .required(),
-    pair: string().required(),
-    timePeriod: string().oneOf(optionTimePeriod).required(),
+      .positive("Wallet amount can't be negative.")
+      .min(0, "Wallet amount can't be negative.")
+      .nonNullable("Wallet amount can't be empty.")
+      .required("Wallet amount can't be empty."),
+    pair: string().required("Pair can't be empty."),
+    timePeriod: string()
+      .oneOf(optionTimePeriod)
+      .required("Time period can't be empty."),
     endDate: date()
-      .max(new Date(Date.now() + 1000), 'End date must be before now.')
-      .required(),
+      .test(
+        'is-before-now',
+        'End date must be in the past.',
+        (value) => value && value < new Date()
+      )
+      .required("End date can't be empty."),
     startDate: date()
       .when(['timePeriod', 'endDate'], ([timePeriod, endDate], schema) => {
         const minDate = getMinDateByTimePeriod(timePeriod, endDate);
@@ -27,7 +33,7 @@ export const backtestingSettingsSchema = object()
           )
           .max(endDate, 'Start date must be before end date.');
       })
-      .required(),
+      .required("Start date can't be empty."),
   })
   .required();
 
