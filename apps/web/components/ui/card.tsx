@@ -4,12 +4,14 @@ import { cn } from '@/lib/tailwind/utils';
 
 const Card = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & { noBorder?: boolean }
+  React.HTMLAttributes<HTMLDivElement> & {
+    noBorder?: boolean;
+  }
 >(({ className, noBorder, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      'sm:rounded-xl border sm:bg-card text-card-foreground shadow',
+      'sm:rounded-xl border sm:bg-card text-card-foreground shadow relative overflow-hidden',
       noBorder ? 'border-0 sm:border-[1px] bg-transparent rounded-none' : '',
       className
     )}
