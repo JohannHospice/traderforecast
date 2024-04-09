@@ -5,15 +5,23 @@ import { ControlledSelect } from '@/components/fields/controlled-select';
 import { ControlledSlider } from '@/components/fields/controlled-slider';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { TimePeriod } from '@/lib/backtest';
+import { Backtester } from '@/lib/backtest/backtester';
+import { ApiMarket } from '@/lib/backtest/market/api-market';
+import { Wallet } from '@/lib/backtest/wallet';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Rocket } from 'lucide-react';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
-import { optionTimePeriod, strategies } from '../constants';
+import {
+  STRATEGIES,
+  STRATEGY_OPTION_PROPS,
+  optionTimePeriod,
+} from '../libs/constants';
 import {
   BacktestingSettingsSchemaType,
   backtestingSettingsSchema,
-} from '../constants/schema';
+} from '../libs/constants/schema';
 import { CardWrapper } from './card-wrapper';
 import { StrategyOption } from './strategy-option';
 
@@ -27,8 +35,39 @@ export function Backtesting({ symbols }: { symbols: Symbol[] }) {
     },
   });
 
-  function onSubmit(data: BacktestingSettingsSchemaType) {
-    console.log(data);
+  const [wallet, setWallet] = React.useState<Wallet | null>(null);
+
+  async function onSubmit({
+    pair,
+    timePeriod,
+    startDate,
+    endDate,
+    strategyKey,
+    walletAmount,
+  }: BacktestingSettingsSchemaType) {
+    const symbol = {
+      key: pair,
+      timeperiod: timePeriod as TimePeriod,
+    };
+
+    const backtester = new Backtester(
+      symbol,
+      new STRATEGIES[strategyKey](symbol, {
+        from: 9,
+        to: 17,
+        takeProfitRatio: 2,
+        stopLossMargin: 0.05,
+      }),
+      ApiMarket,
+      walletAmount
+    );
+    await backtester.run({
+      from: new Date(startDate).getTime(),
+      to: new Date(endDate).getTime(),
+    });
+
+    setWallet(backtester.getWallet());
+    console.log('wallet', wallet);
   }
 
   const options = React.useMemo(
@@ -46,18 +85,17 @@ export function Backtesting({ symbols }: { symbols: Symbol[] }) {
         <div>
           <CardWrapper title='Trading Behavior'>
             <ControlledSelect
-              name='strategy'
+              name='strategyKey'
               control={control}
               title='Strategy'
               placeholder='Select a strategy...'
-              options={strategies.map((strategy) => ({
-                value: strategy.value,
+              options={Object.keys(STRATEGY_OPTION_PROPS).map((value) => ({
+                value,
                 label: (
                   <StrategyOption
-                    icon={strategy.icon}
-                    title={strategy.title}
-                    titleBold={strategy.titleBold}
-                    description={strategy.description}
+                    {...STRATEGY_OPTION_PROPS[
+                      value as keyof typeof STRATEGY_OPTION_PROPS
+                    ]}
                   />
                 ),
               }))}
@@ -108,12 +146,17 @@ export function Backtesting({ symbols }: { symbols: Symbol[] }) {
           noBorder
           className='relative flex-[2] flex sm:min-h-[60vh] flex-col min-h-20'
         >
-          <div className='flex-1' />
-          <div className='absolute inset-0 flex justify-center items-center'>
-            <Button onClick={handleSubmit(onSubmit)}>
-              Run
-              <Rocket className='size-5 ml-2' />
-            </Button>
+          <div className='flex-1'>
+            {wallet ? (
+              <pre>{JSON.stringify(wallet, null, 2)}</pre>
+            ) : (
+              <div className='absolute inset-0 flex justify-center items-center'>
+                <Button onClick={handleSubmit(onSubmit)}>
+                  Run
+                  <Rocket className='size-5 ml-2' />
+                </Button>
+              </div>
+            )}
           </div>
         </Card>
       </div>

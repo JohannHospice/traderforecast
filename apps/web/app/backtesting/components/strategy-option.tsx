@@ -5,12 +5,7 @@ export function StrategyOption({
   titleBold,
   description,
   icon: Icon,
-}: {
-  title: string;
-  titleBold: string;
-  description: string;
-  icon: React.ExoticComponent<any>;
-}) {
+}: StrategyOptionProps) {
   return (
     <div className='flex items-start gap-3 text-muted-foreground'>
       <Icon className='size-5' />
@@ -25,4 +20,11 @@ export function StrategyOption({
       </div>
     </div>
   );
+}
+
+export interface StrategyOptionProps {
+  title: string;
+  titleBold: string;
+  description: string;
+  icon: React.ExoticComponent<any>;
 }

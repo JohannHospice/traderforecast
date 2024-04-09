@@ -2,10 +2,11 @@ import { format } from 'date-fns';
 import { InferType, date, number, object, string } from 'yup';
 import { optionTimePeriod } from '.';
 import { getMinDateByTimePeriod } from '../helper/date';
+import { STRATEGY_KEYS } from '.';
 
 export const backtestingSettingsSchema = object()
   .shape({
-    strategy: string().required(),
+    strategyKey: string().required().oneOf(STRATEGY_KEYS),
     walletAmount: number()
       .typeError('Amount must be a number')
       .positive("Wallet amount can't be negative.")
