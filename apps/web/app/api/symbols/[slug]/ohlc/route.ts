@@ -45,5 +45,22 @@ const schemaOHLC = object().shape({
   endTime: number().required(),
   startTime: number().required(),
   slug: string().required(),
-  interval: mixed((input): input is IntervalKeys => input).required(),
+  interval: mixed((input): input is IntervalKeys => input)
+    .test('is-interval', 'Invalid interval', (input) =>
+      [
+        '1s',
+        '5s',
+        '15s',
+        '30s',
+        '1m',
+        '5m',
+        '15m',
+        '30m',
+        '1h',
+        '4h',
+        '1d',
+        '1w',
+      ].includes(input as string)
+    )
+    .required(),
 });
