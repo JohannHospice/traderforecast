@@ -2,7 +2,7 @@
 import { ChartBase } from '@/components/lightweight-chart/chart';
 import { Series } from '@/components/lightweight-chart/series';
 import api from '@/lib/api';
-import { IndicatorHandler } from '@/lib/chart/handlers/indicator-handler';
+import { IndicatorHandler } from '@/lib/modules/chart/handlers/indicator-handler';
 import { IndicatorValues } from '@/lib/constants/indicator';
 import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import { useChartSettings } from '@/lib/contexts/chart-settings-context';

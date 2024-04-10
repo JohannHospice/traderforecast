@@ -13,6 +13,7 @@ export class ApiRealtimeMarket implements RealtimeMarket {
 
     return res.json();
   }
+
   async getOHLCs({
     slug,
     interval,
@@ -21,8 +22,8 @@ export class ApiRealtimeMarket implements RealtimeMarket {
   }: GetOHLCParams): Promise<Kline[]> {
     const query = new URLSearchParams();
     query.set(SEARCH_PARAMS.INTERVAL, interval);
-    if (startTime) query.set('startTime', String(startTime));
-    if (endTime) query.set('endTime', String(endTime));
+    query.set('startTime', String(startTime));
+    query.set('endTime', String(endTime));
 
     const res = await fetch(`/api/symbols/${slug}/ohlc?${query.toString()}`);
 

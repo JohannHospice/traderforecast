@@ -1,4 +1,4 @@
-import api from '../../api';
+import api from '../../../api';
 import { OHLC, Symbol, Timeframe } from '..';
 import { Market } from '.';
 import { getTimeperiodIncrementInMs } from '../helpers/timeperiod';
@@ -31,10 +31,10 @@ export class ApiMarket implements Market {
 
     if (shouldFetch) {
       const ohlcs = await api.realtimeMarket.getOHLCs({
-        interval: this.symbol.timeperiod as IntervalKeys,
-        slug: this.symbol.key,
         startTime: timeframe.from - this.extraTimeLoaded,
         endTime: timeframe.to + this.extraTimeLoaded,
+        interval: this.symbol.timeperiod as IntervalKeys,
+        slug: this.symbol.key,
       });
 
       this.ohlcs = this.ohlcs

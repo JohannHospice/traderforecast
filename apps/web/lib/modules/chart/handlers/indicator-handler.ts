@@ -1,14 +1,14 @@
 'use client';
-import { LightWeightMarkerFactory } from '@/lib/chart/handlers/marker-factory/lightweight-marker-factory';
-import { LightWeightPriceLineFactory } from '@/lib/chart/handlers/price-line-factory/lightweight-price-line-factory';
-import { LightWeightRectangleFactory } from '@/lib/chart/handlers/rectangle-factory/lightweight-rectangle-factory';
+import { LightWeightMarkerFactory } from '@/lib/modules/chart/handlers/marker-factory/lightweight-marker-factory';
+import { LightWeightPriceLineFactory } from '@/lib/modules/chart/handlers/price-line-factory/lightweight-price-line-factory';
+import { LightWeightRectangleFactory } from '@/lib/modules/chart/handlers/rectangle-factory/lightweight-rectangle-factory';
 import {
   Indicator,
   Marker,
   PriceLine,
   Rectangle,
   Trendline,
-} from '@/lib/chart/indicators';
+} from '@/lib/modules/chart/indicators';
 import {
   IChartApi,
   IPriceLine,
