@@ -25,26 +25,28 @@ export class ApiMarket implements Market {
   }
 
   async getOHLCs(timeframe: Timeframe): Promise<OHLC[]> {
-    const shouldFetch =
-      this.ohlcs.length === 0 ||
-      this.ohlcs[0].openTime > timeframe.from ||
-      this.ohlcs[this.ohlcs.length - 1].openTime < timeframe.to;
-
-    if (shouldFetch) {
-      await this.fetchOHLCs(timeframe);
+    if (this.shouldLoad(timeframe)) {
+      await this.load(timeframe);
     }
 
     return ApiMarket.filterOHLCs(this.ohlcs, timeframe);
   }
 
-  private async fetchOHLCs(timeframe: Timeframe): Promise<void> {
-    const params = {
+  shouldLoad(timeframe: Timeframe): boolean {
+    return (
+      this.ohlcs.length === 0 ||
+      this.ohlcs[0].openTime > timeframe.from ||
+      this.ohlcs[this.ohlcs.length - 1].openTime < timeframe.to
+    );
+  }
+
+  async load(timeframe: Timeframe): Promise<void> {
+    const ohlcs = await api.realtimeMarket.getOHLCs({
       startTime: timeframe.from - this.extraTimeLoaded,
       endTime: timeframe.to + this.extraTimeLoaded,
       interval: this.symbol.timeperiod as IntervalKeys,
       slug: this.symbol.key,
-    };
-    const ohlcs = await api.realtimeMarket.getOHLCs(params);
+    });
 
     this.ohlcs = this.ohlcs
       .concat(ohlcs)

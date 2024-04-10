@@ -1,4 +1,12 @@
-import { Mock, beforeEach, describe, expect, test, vi } from 'vitest';
+import {
+  Mock,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  test,
+  vi,
+} from 'vitest';
 import { OHLC, Symbol } from '..';
 import api from '../../../api';
 import { ApiMarket } from './api-market';
@@ -147,6 +155,76 @@ describe('ApiMarket', () => {
       test('should return false if times are not within approximation', () => {
         const result = ApiMarket.isSameTime(100, 200, 10);
         expect(result).toBe(false);
+      });
+    });
+  });
+
+  describe('shouldFetchOHLCs', () => {
+    const apiMarket = new ApiMarket({
+      key: 'BTC',
+      timeperiod: '1h',
+    });
+
+    beforeAll(() => {
+      (api.realtimeMarket.getOHLCs as Mock).mockResolvedValue(
+        Array(100)
+          .fill(0)
+          .map((_, i) => ({
+            openTime: i * 100,
+            closeTime: i * 100 + 100,
+            open: i * 100,
+            high: i * 100 + 100,
+            low: i * 100 - 100,
+            close: i * 100 + 50,
+          }))
+      );
+    });
+    describe('not loaded', () => {
+      test('should return true if no OHLCs are stored', () => {
+        expect(
+          apiMarket.shouldLoad({
+            from: 100,
+            to: 200,
+          })
+        ).toBe(true);
+        expect(
+          apiMarket.shouldLoad({
+            from: 900,
+            to: 9999,
+          })
+        ).toBe(true);
+      });
+    });
+
+    describe('loaded', () => {
+      beforeAll(async () => {
+        await apiMarket.load({
+          from: 500,
+          to: 1500,
+        });
+      });
+
+      test('should not load if timeframe is fully covered by stored OHLCs', () => {
+        expect(
+          apiMarket.shouldLoad({
+            from: 500,
+            to: 1500,
+          })
+        ).toBe(false);
+      });
+      test('should load if timeframe is partially covered by stored OHLCs', async () => {
+        expect(
+          apiMarket.shouldLoad({
+            from: 500,
+            to: 999900,
+          })
+        ).toBe(true);
+        expect(
+          apiMarket.shouldLoad({
+            from: -500,
+            to: 500,
+          })
+        ).toBe(true);
       });
     });
   });
