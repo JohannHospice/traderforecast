@@ -32,9 +32,7 @@ export default async function Page({
   }
 
   const interval = searchParams[SEARCH_PARAMS.INTERVAL] as IntervalKeys;
-  console.log({
-    interval,
-  });
+
   const startTime = searchParams[SEARCH_PARAMS.START_TIME];
 
   const intervals = api.market.intervals;

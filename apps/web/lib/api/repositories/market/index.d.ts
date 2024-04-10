@@ -11,12 +11,6 @@ export interface MarketRepository {
 
   getSymbolsBySlugs(slugs: string[]): Promise<Symbol[]>;
 
-  getSymbols(
-    params?: GetSymbolsParams
-  ): Promise<{ symbols: Symbol[]; pages: number }>;
-
-  getSymbol(slug: string): Promise<Symbol>;
-
   getMarketSegments(): Promise<string[]>;
 
   getLatestKline(params: GetLatestKlineParams): Promise<Kline>;
@@ -35,13 +29,6 @@ export interface GetOHLCParams {
   interval: IntervalKeys;
   startTime?: number;
   endTime?: number;
-}
-
-export interface GetSymbolsParams {
-  query?: string;
-  segments?: string[];
-  page?: number;
-  size?: number;
 }
 
 export interface GetLatestKlineParams {

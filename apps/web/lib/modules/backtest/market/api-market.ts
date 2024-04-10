@@ -1,7 +1,10 @@
 import api from '../../../api';
 import { OHLC, Symbol, Timeframe } from '..';
 import { Market } from '.';
-import { getTimeperiodIncrementInMs } from '../helpers/timeperiod';
+import {
+  getTimePeriodUnitInMs,
+  getTimeperiodIncrementInMs,
+} from '../helpers/timeperiod';
 
 export class ApiMarket implements Market {
   private ohlcs: OHLC[] = [];
@@ -12,10 +15,16 @@ export class ApiMarket implements Market {
   }
 
   async getOHLC(time: number): Promise<OHLC> {
-    const [ohlc] = await this.getOHLCs({
+    const timeframe = {
       from: time,
       to: time,
-    });
+    };
+    if (this.shouldLoad(timeframe)) {
+      await this.load(timeframe);
+    }
+    const approximation = getTimePeriodUnitInMs(this.symbol.timeperiod) / 2;
+
+    const ohlc = ApiMarket.findOHLC(this.ohlcs, time, approximation);
 
     if (!ohlc) {
       throw new Error('OHLC not found');
@@ -66,7 +75,6 @@ export class ApiMarket implements Market {
     );
   }
 
-  // TODO maybe hiding some bugs
   static findOHLC(
     ohlcs: OHLC[],
     time: number,

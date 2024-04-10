@@ -12,7 +12,6 @@ export class RangeIndicator implements Indicator {
       .flat()
       .sort((a, b) => a.time - +b.time);
 
-    console.log(swings);
     for (let i = 0; i < swings.length; i++) {
       const current = swings[i];
 

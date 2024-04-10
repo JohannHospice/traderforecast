@@ -29,7 +29,6 @@ export class UnmitigatedFairValueGapIndicator implements Indicator {
       if (!range) {
         continue;
       }
-      console.log('range', range);
 
       let retouch = -1;
       for (let j = fairvaluegap + 1; j < serie.length - 1; j++) {

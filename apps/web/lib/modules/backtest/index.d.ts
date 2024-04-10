@@ -22,6 +22,10 @@ export interface OHLC {
 }
 
 export type TimePeriod =
+  | '1s'
+  | '5s'
+  | '15s'
+  | '30s'
   | '1m'
   | '5m'
   | '15m'

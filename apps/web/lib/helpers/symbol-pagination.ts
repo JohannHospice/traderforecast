@@ -22,7 +22,6 @@ export class SymbolPagination {
     if (!this.symbols) {
       throw new Error('Symbols are not loaded');
     }
-    console.log(this.symbols[0]);
 
     // filter by query and segments
     const filteredSymbols = this.symbols

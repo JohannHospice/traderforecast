@@ -183,54 +183,6 @@ export class SantimentMarketRepository<T> implements MarketRepository {
     };
   }
 
-  async getSymbol(slug: string): Promise<Symbol> {
-    const {
-      data: { projectBySlug },
-    } = await this.client.query({
-      query: gql`
-        query getSymbol($slug: String!) {
-          projectBySlug(slug: $slug) {
-            slug
-            name
-            ticker
-            logoUrl
-            rank
-            market_segments
-            price_usd: aggregatedTimeseriesData(
-              metric: "price_usd"
-              from: "utc_now-1d"
-              to: "utc_now"
-              aggregation: LAST
-            )
-            price_usd_change_1d: aggregatedTimeseriesData(
-              metric: "price_usd_change_1d"
-              from: "utc_now-1d"
-              to: "utc_now"
-              aggregation: LAST
-            )
-            volume_usd: aggregatedTimeseriesData(
-              metric: "volume_usd"
-              from: "utc_now-1d"
-              to: "utc_now"
-              aggregation: LAST
-            )
-            marketcap_usd: aggregatedTimeseriesData(
-              metric: "marketcap_usd"
-              from: "utc_now-1d"
-              to: "utc_now"
-              aggregation: LAST
-            )
-          }
-        }
-      `,
-      variables: {
-        slug: slug,
-      },
-    });
-
-    return projectBySlug;
-  }
-
   async getAllSymbols(): Promise<GetAllSymbolResponse> {
     const {
       data: { allProjects },
@@ -295,101 +247,6 @@ export class SantimentMarketRepository<T> implements MarketRepository {
     });
 
     return allProjects;
-  }
-
-  async getSymbols(params?: {
-    query?: string | undefined;
-    segments?: string[];
-    page?: number;
-    size?: number;
-  }): Promise<{ symbols: Symbol[]; pages: number }> {
-    const {
-      data: { allProjects },
-    } = await this.client.query<{ allProjects: Symbol[] }>({
-      query: gql`
-        query getSymbols(
-          $minVolume: Int
-          $page: Int
-          $pageSize: Int
-          $segments: [String]
-        ) {
-          allProjects(
-            minVolume: $minVolume
-            page: $page
-            pageSize: $pageSize
-            selector: { slugs: $segments }
-          ) {
-            slug
-            name
-            ticker
-            logoUrl
-            market_segments
-            rank
-            price_usd: aggregatedTimeseriesData(
-              metric: "price_usd"
-              from: "utc_now-1d"
-              to: "utc_now"
-              aggregation: LAST
-            )
-            price_usd_change_1d: aggregatedTimeseriesData(
-              metric: "price_usd_change_1d"
-              from: "utc_now-1d"
-              to: "utc_now"
-              aggregation: LAST
-            )
-            volume_usd: aggregatedTimeseriesData(
-              metric: "volume_usd"
-              from: "utc_now-1d"
-              to: "utc_now"
-              aggregation: LAST
-            )
-            marketcap_usd: aggregatedTimeseriesData(
-              metric: "marketcap_usd"
-              from: "utc_now-1d"
-              to: "utc_now"
-              aggregation: LAST
-            )
-          }
-        }
-      `,
-      variables: {
-        slug: params?.query,
-        page: params?.page,
-        pageSize: params?.size,
-        segments: params?.segments,
-      },
-    });
-
-    const query = params?.query ? params.query.toLowerCase() : undefined;
-
-    const allUniqueProjects = allProjects.filter(
-      ({ ticker, slug, name, market_segments }, index, self) => {
-        const duplicate = self.findIndex((p) => p.ticker === ticker) === index;
-
-        const isSegmentLooklike =
-          (params?.segments?.length ?? 0) > 0
-            ? params?.segments?.some((seg) =>
-                market_segments?.some(
-                  (ms) => ms.toLowerCase() === seg.toLowerCase()
-                )
-              )
-            : true;
-
-        if (query) {
-          return (
-            duplicate &&
-            isSegmentLooklike &&
-            (slug.toLowerCase().includes(query) ||
-              name.toLowerCase().includes(query) ||
-              ticker?.toLowerCase().includes(query))
-          );
-        }
-
-        return duplicate && isSegmentLooklike;
-      }
-    );
-
-    return { symbols: allProjects, pages: 1 };
   }
 
   async getMarketSegments(): Promise<string[]> {
@@ -472,7 +329,6 @@ export class SantimentMarketRepository<T> implements MarketRepository {
         }),
       },
     });
-    console.log(projects);
 
     return projects;
   }

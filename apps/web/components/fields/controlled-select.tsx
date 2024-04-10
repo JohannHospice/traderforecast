@@ -100,7 +100,6 @@ export function ControlledCombobox<T extends FieldValues>({
             multiple
             values={value}
             onSelect={(value) => {
-              console.log(value);
               onChange(value);
             }}
           />

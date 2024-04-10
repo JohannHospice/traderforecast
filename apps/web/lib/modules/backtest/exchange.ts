@@ -32,7 +32,7 @@ export class Exchange implements MarketHandler {
     return this.markets[key];
   }
 
-  createMarketKey(symbol: Symbol): string {
-    return symbol.key + ';' + symbol.timeperiod;
+  private createMarketKey(symbol: Symbol): string {
+    return Object.values(symbol).join(':');
   }
 }
