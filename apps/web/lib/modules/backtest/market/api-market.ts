@@ -12,15 +12,16 @@ export class ApiMarket implements Market {
   }
 
   async getOHLC(time: number): Promise<OHLC> {
-    const ohlc = this.findOHLC(time);
-    if (ohlc) {
-      return ohlc;
-    }
-    const ohlcs = await this.getOHLCs({
-      from: Math.min(time, this.ohlcs[0]?.openTime),
-      to: Math.max(time, this.ohlcs[this.ohlcs.length - 1]?.openTime),
+    const [ohlc] = await this.getOHLCs({
+      from: time,
+      to: time,
     });
-    return ohlcs[ohlcs.length - 1];
+
+    if (!ohlc) {
+      throw new Error('OHLC not found');
+    }
+
+    return ohlc;
   }
 
   async getOHLCs(timeframe: Timeframe): Promise<OHLC[]> {
@@ -30,37 +31,55 @@ export class ApiMarket implements Market {
       this.ohlcs[this.ohlcs.length - 1].openTime < timeframe.to;
 
     if (shouldFetch) {
-      const ohlcs = await api.realtimeMarket.getOHLCs({
-        startTime: timeframe.from - this.extraTimeLoaded,
-        endTime: timeframe.to + this.extraTimeLoaded,
-        interval: this.symbol.timeperiod as IntervalKeys,
-        slug: this.symbol.key,
-      });
-
-      this.ohlcs = this.ohlcs
-        .concat(ohlcs)
-        // remove duplicates
-        .filter(
-          (ohlcs, index, self) =>
-            self.findIndex((t) => t.openTime === ohlcs.openTime) === index
-        )
-        // sort by openTime
-        .sort((a, b) => a.openTime - b.openTime);
+      await this.fetchOHLCs(timeframe);
     }
 
-    return this.ohlcs.filter(
+    return ApiMarket.filterOHLCs(this.ohlcs, timeframe);
+  }
+
+  private async fetchOHLCs(timeframe: Timeframe): Promise<void> {
+    const params = {
+      startTime: timeframe.from - this.extraTimeLoaded,
+      endTime: timeframe.to + this.extraTimeLoaded,
+      interval: this.symbol.timeperiod as IntervalKeys,
+      slug: this.symbol.key,
+    };
+    const ohlcs = await api.realtimeMarket.getOHLCs(params);
+
+    this.ohlcs = this.ohlcs
+      .concat(ohlcs)
+      // remove duplicates
+      .filter(
+        (ohlcs, index, self) =>
+          self.findIndex((t) => t.openTime === ohlcs.openTime) === index
+      )
+      // sort by openTime
+      .sort((a, b) => a.openTime - b.openTime);
+  }
+
+  static filterOHLCs(ohlcs: OHLC[], timeframe: Timeframe): OHLC[] {
+    return ohlcs.filter(
       (ohlcs) =>
-        ohlcs.openTime >= timeframe.from && ohlcs.openTime < timeframe.to
+        ohlcs.openTime >= timeframe.from && ohlcs.openTime <= timeframe.to
     );
   }
 
   // TODO maybe hiding some bugs
-  private findOHLC(time: number): OHLC | undefined {
-    return this.ohlcs.find((ohlcs) => this.isSameTime(ohlcs.openTime, time));
+  static findOHLC(
+    ohlcs: OHLC[],
+    time: number,
+    approximation: number
+  ): OHLC | undefined {
+    return ohlcs.find(({ openTime }) =>
+      ApiMarket.isSameTime(openTime, time, approximation)
+    );
   }
 
-  private isSameTime(t1: number, t2: number): boolean {
-    const approx = getTimeperiodIncrementInMs(this.symbol.timeperiod);
-    return Math.abs(t1 - t2) < approx;
+  static isSameTime(
+    t1: number,
+    t2: number,
+    approximation: number = 0
+  ): boolean {
+    return Math.abs(t1 - t2) <= approximation;
   }
 }

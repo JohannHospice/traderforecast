@@ -21,7 +21,7 @@ export class ShortTrade extends Trade {
 
   get profitLoss(): number {
     if (!this.ohlcClose) {
-      return NaN;
+      return 0;
     }
     if (this.isStatus('success')) {
       return this.entryPrice - this.takeProfitPrice;

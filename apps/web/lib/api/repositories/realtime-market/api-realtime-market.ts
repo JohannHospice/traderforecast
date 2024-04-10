@@ -1,14 +1,16 @@
-import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import { RealtimeMarket } from '.';
-import { GetKlinesAndSymbolParams, GetOHLCParams } from '../market';
+import { GetOHLCParams } from '../market';
 
 export class ApiRealtimeMarket implements RealtimeMarket {
   async getLatestKline(
     slug: string,
     interval: IntervalKeys = '1d'
   ): Promise<Kline> {
+    const query = new URLSearchParams();
+    query.set('interval', interval);
+
     const res = await fetch(
-      `/api/symbols/${slug}/lastKline?${SEARCH_PARAMS.INTERVAL}=${interval}`
+      `/api/symbols/${slug}/lastKline?${query.toString()}`
     );
 
     return res.json();
@@ -21,7 +23,7 @@ export class ApiRealtimeMarket implements RealtimeMarket {
     endTime,
   }: GetOHLCParams): Promise<Kline[]> {
     const query = new URLSearchParams();
-    query.set(SEARCH_PARAMS.INTERVAL, interval);
+    query.set('interval', interval);
     query.set('startTime', String(startTime));
     query.set('endTime', String(endTime));
 

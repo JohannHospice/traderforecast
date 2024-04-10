@@ -20,9 +20,6 @@ export class LongTrade extends Trade {
   }
 
   get profitLoss(): number {
-    if (!this.ohlcClose) {
-      return NaN;
-    }
     if (this.isStatus('success')) {
       return this.takeProfitPrice - this.entryPrice;
     }
