@@ -1,17 +1,18 @@
 export function getMinDateByTimePeriod(timePeriod: string, endDate: Date) {
+  const [, amount, unit] = timePeriod.match(/(\d+)(\w)/) || ['1', 'd'];
+  const amountNumber = parseInt(amount, 10);
   const awailableUnitsInThePast = {
-    w: 100,
-    d: 100,
-    h: 100,
-    m: 100,
+    w: 500 * amountNumber * 7,
+    d: 500 * amountNumber,
+    h: 500 * amountNumber,
+    m: 500 * amountNumber,
   };
 
-  const [, , unit] = timePeriod.match(/(\d+)(\w)/) || ['1', 'd'];
   const minDate = new Date(endDate);
 
   switch (unit) {
     case 'w':
-      minDate.setDate(endDate.getDate() - awailableUnitsInThePast.w * 7);
+      minDate.setDate(endDate.getDate() - awailableUnitsInThePast.w);
       break;
     case 'd':
       minDate.setDate(endDate.getDate() - awailableUnitsInThePast.d);

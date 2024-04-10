@@ -26,13 +26,15 @@ export const backtestingSettingsSchema = object()
       .required("End date can't be empty."),
     startDate: date()
       .when(['timePeriod', 'endDate'], ([timePeriod, endDate], schema) => {
-        const minDate = getMinDateByTimePeriod(timePeriod, endDate);
-        return schema
-          .min(
-            minDate,
-            `Start date can't exceed ${format(minDate, `yyyy-MM-dd\'T\'HH:mm`)} with the selected time period.`
-          )
-          .max(endDate, 'Start date must be before end date.');
+        // const minDate = getMinDateByTimePeriod(timePeriod, endDate);
+        return (
+          schema
+            // .min(
+            //   minDate,
+            //   `Start date can't exceed ${format(minDate, `yyyy-MM-dd HH:mm`)} with the selected time period.`
+            // )
+            .max(endDate, 'Start date must be before end date.')
+        );
       })
       .required("Start date can't be empty."),
   })

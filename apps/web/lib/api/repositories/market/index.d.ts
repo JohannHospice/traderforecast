@@ -1,6 +1,8 @@
 export interface MarketRepository {
   intervals: IntervalKeys[];
 
+  getOHLCs(params: GetOHLCParams): Promise<Kline[]>;
+
   getKlinesAndSymbol(
     params: GetKlinesAndSymbolParams
   ): Promise<{ symbol: Symbol; klines: Kline[] }>;
@@ -26,6 +28,12 @@ export interface GetKlinesAndSymbolParams {
   slug: string;
   interval: IntervalKeys;
   startTime?: number | string;
+  endTime?: number;
+}
+export interface GetOHLCParams {
+  slug: string;
+  interval: IntervalKeys;
+  startTime?: number;
   endTime?: number;
 }
 

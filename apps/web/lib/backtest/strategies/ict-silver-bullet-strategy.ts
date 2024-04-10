@@ -32,7 +32,8 @@ export class ICTSilverBulletStrategy implements Strategy {
       return;
     }
 
-    const trade = this.trade(await this.createSerie(time, exchange));
+    const serie = await this.createSerie(time, exchange);
+    const trade = this.trade(serie);
 
     if (!trade) {
       return;
@@ -52,10 +53,11 @@ export class ICTSilverBulletStrategy implements Strategy {
     exchange: ExchangeProxy
   ): Promise<SerieCandlestickPattern> {
     const from = time - getTimePeriodUnitInMs(this.symbol.timeperiod) * 4;
+    const to = time;
 
     const ohlcs = await exchange.getMarket(this.symbol).getOHLCs({
       from,
-      to: time,
+      to,
     });
     return new SerieCandlestickPattern(ohlcs);
   }

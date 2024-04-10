@@ -1,6 +1,11 @@
 import { ApolloClient, gql } from '@apollo/client';
 import { mapOhlcToKline } from '../../mappers/ohlc';
-import { GetAllSymbolResponse, MarketRepository } from '.';
+import {
+  GetAllSymbolResponse,
+  GetKlinesAndSymbolParams,
+  GetOHLCParams,
+  MarketRepository,
+} from '.';
 
 export class SantimentMarketRepository<T> implements MarketRepository {
   client: ApolloClient<T>;
@@ -43,6 +48,62 @@ export class SantimentMarketRepository<T> implements MarketRepository {
       },
     });
     return mapOhlcToKline(ohlc[0]);
+  }
+
+  async getOHLCs({
+    slug,
+    interval,
+    startTime,
+    endTime,
+  }: GetOHLCParams): Promise<Kline[]> {
+    const {
+      data: {
+        getMetric: { timeseriesData },
+      },
+    } = await this.client.query({
+      query: gql`
+        query ohlcs(
+          $slug: String!
+          $from: DateTime!
+          $to: DateTime!
+          $interval: interval!
+        ) {
+          getMetric(metric: "price_usd") {
+            timeseriesData(
+              selector: { slug: $slug, source: "cryptocompare" }
+              from: $from
+              to: $to
+              interval: $interval
+              aggregation: OHLC
+              cachingParams: { baseTtl: 1, maxTtlOffset: 1 }
+            ) {
+              datetime
+              valueOhlc {
+                close
+                high
+                low
+                open
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        slug: slug,
+        interval: interval,
+        from: startTime && new Date(startTime)?.toISOString(),
+        to: endTime && new Date(endTime)?.toISOString(),
+      },
+    });
+
+    return timeseriesData.map((data: any) => ({
+      close: parseFloat(data.valueOhlc.close),
+      high: parseFloat(data.valueOhlc.high),
+      low: parseFloat(data.valueOhlc.low),
+      open: parseFloat(data.valueOhlc.open),
+      closeTime: new Date(data.datetime).getTime(),
+      openTime: new Date(data.datetime).getTime(),
+    }));
   }
 
   async getKlinesAndSymbol({

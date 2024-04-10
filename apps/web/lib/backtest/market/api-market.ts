@@ -5,44 +5,40 @@ import { getTimeperiodIncrementInMs } from '../helpers/timeperiod';
 
 export class ApiMarket implements Market {
   private ohlcs: OHLC[] = [];
+  private extraTimeLoaded: number;
 
-  constructor(private symbol: Symbol) {}
+  constructor(private symbol: Symbol) {
+    this.extraTimeLoaded = getTimeperiodIncrementInMs(symbol.timeperiod) * 100;
+  }
 
   async getOHLC(time: number): Promise<OHLC> {
-    let ohlc = this.findOHLC(time);
-
-    if (!ohlc) {
-      const maxFetchedTime = this.ohlcs[this.ohlcs.length - 1].openTime;
-      const minFetchedTime = this.ohlcs[0].openTime;
-
-      await this.getOHLCs({
-        from: Math.min(time, minFetchedTime),
-        to: Math.max(time, maxFetchedTime),
-      });
+    const ohlc = this.findOHLC(time);
+    if (ohlc) {
+      return ohlc;
     }
-    ohlc = this.findOHLC(time);
-
-    if (!ohlc) {
-      throw new Error('OHLC not found');
-    }
-
-    return ohlc;
+    const ohlcs = await this.getOHLCs({
+      from: Math.min(time, this.ohlcs[0]?.openTime),
+      to: Math.max(time, this.ohlcs[this.ohlcs.length - 1]?.openTime),
+    });
+    return ohlcs[ohlcs.length - 1];
   }
 
   async getOHLCs(timeframe: Timeframe): Promise<OHLC[]> {
-    if (
+    const shouldFetch =
       this.ohlcs.length === 0 ||
       this.ohlcs[0].openTime > timeframe.from ||
-      this.ohlcs[this.ohlcs.length - 1].openTime < timeframe.to
-    ) {
-      const { klines } = await api.market.getKlinesAndSymbol({
+      this.ohlcs[this.ohlcs.length - 1].openTime < timeframe.to;
+
+    if (shouldFetch) {
+      const ohlcs = await api.realtimeMarket.getOHLCs({
         interval: this.symbol.timeperiod as IntervalKeys,
         slug: this.symbol.key,
-        startTime: timeframe.from,
+        startTime: timeframe.from - this.extraTimeLoaded,
+        endTime: timeframe.to + this.extraTimeLoaded,
       });
 
       this.ohlcs = this.ohlcs
-        .concat(klines)
+        .concat(ohlcs)
         // remove duplicates
         .filter(
           (ohlcs, index, self) =>
@@ -59,11 +55,11 @@ export class ApiMarket implements Market {
   }
 
   // TODO maybe hiding some bugs
-  findOHLC(time: number): OHLC | undefined {
+  private findOHLC(time: number): OHLC | undefined {
     return this.ohlcs.find((ohlcs) => this.isSameTime(ohlcs.openTime, time));
   }
 
-  isSameTime(t1: number, t2: number): boolean {
+  private isSameTime(t1: number, t2: number): boolean {
     const approx = getTimeperiodIncrementInMs(this.symbol.timeperiod);
     return Math.abs(t1 - t2) < approx;
   }
