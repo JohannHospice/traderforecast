@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model Backtest {
+  id                  String   @id @default(cuid())
+  from                DateTime
+  to                  DateTime
+  timeperiod          String
+  createdAt           DateTime @default(now())
+  strategyId          String
+  strategy            Strategy @relation(fields: [strategyId], references: [id])
+  SymbolId            String
+  symbol              Symbol   @relation(fields: [SymbolId], references: [id])
+  initialWalletAmount Float
+  finalWalletAmount   Float
+  trades              Trade[]
+}
+
+model Strategy {
+  id        String     @id @default(cuid())
+  name      String
+  backtests Backtest[]
+}
+
+model Trade {
+  id         String      @id @default(cuid())
+  entry      Float
+  stopLoss   Float
+  takeProfit Float
+  entryTime  DateTime?
+  exitTime   DateTime?
+  status     TradeStatus
+
+  symbolId String
+  symbol   Symbol @relation(fields: [symbolId], references: [id])
+
+  backtestId String
+  backtest   Backtest @relation(fields: [backtestId], references: [id])
+}
+
+model Symbol {
+  id        String     @id @default(cuid())
+  name      String
+  trades    Trade[]
+  backtests Backtest[]
+}
+
+enum TradeStatus {
+  AWAIT
+  OPEN
+  SUCCESS
+  FAILED
+  CANCELLED
+}
