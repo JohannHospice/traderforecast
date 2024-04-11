@@ -8,7 +8,7 @@ export class LongTrade extends Trade {
     public stopLossPrice?: number,
     entryTime?: number | undefined
   ) {
-    super(entryPrice, entryTime);
+    super(entryPrice, 'long', entryTime);
   }
 
   shouldSucceed(ohlc: OHLC): boolean {

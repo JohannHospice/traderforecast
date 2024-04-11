@@ -24,7 +24,7 @@ describe('Trade class', () => {
         return false;
       }
     }
-    const trade = new DefaultTrade(100);
+    const trade = new DefaultTrade(100, 'default');
 
     test('shouldOpen', () => {
       expect(trade.shouldOpen(ohlc)).toBe(true);
@@ -62,7 +62,7 @@ describe('Trade class', () => {
         return false;
       }
     }
-    const successTrade = new SuccessTrade(100);
+    const successTrade = new SuccessTrade(100, 'default');
 
     test('open to success', () => {
       expect(successTrade.isStatus('open')).toBe(true);
@@ -91,7 +91,7 @@ describe('Trade class', () => {
         return true;
       }
     }
-    const failTrade = new FailTrade(100);
+    const failTrade = new FailTrade(100, 'default');
 
     test('open to fail', () => {
       expect(failTrade.isStatus('open')).toBe(true);

@@ -1,5 +1,5 @@
 import { SerieCandlestickPattern } from '../../chart/patterns/serie-candlestick-pattern';
-import { getTimePeriodUnitInMs } from '../helpers/timeperiod';
+import { getTimeperiodIncrementInMs } from '../helpers/timeperiod';
 import { ExchangeProxy } from '../exchange-proxy';
 import { LongTrade } from '../trade/long-trade';
 import { ShortTrade } from '../trade/short-trade';
@@ -13,6 +13,8 @@ import { Trade } from '../trade';
  * take profit is 2 times the fair value gap and stop loss is the fair value gap
  */
 export class ICTSilverBulletStrategy implements Strategy {
+  private alreadyTraded = false;
+
   constructor(
     private symbol: Symbol,
     private config: {
@@ -21,14 +23,35 @@ export class ICTSilverBulletStrategy implements Strategy {
       takeProfitRatio: number;
       stopLossMargin: number;
     }
-  ) {}
+  ) {
+    if (this.config.startHour >= this.config.endHour) {
+      throw new Error('startHour must be less than endHour');
+    }
+    if (this.config.takeProfitRatio <= 0) {
+      throw new Error('takeProfitRatio must be greater than 0');
+    }
+    if (this.config.stopLossMargin <= 0) {
+      throw new Error('stopLossMargin must be greater than 0');
+    }
+    if (
+      !['1s', '15s', '30s', '1m', '5m', '15m', '30m', '1h'].includes(
+        this.symbol.timeperiod
+      )
+    ) {
+      throw new Error('timeperiod not supported');
+    }
+  }
 
   async onTime(time: number, exchange: ExchangeProxy): Promise<void> {
-    if (exchange.activeTrades.length > 0) {
+    if (!this.isTradingHour(time)) {
+      exchange.activeTrades.forEach((trade) => {
+        exchange.cancelTrade(trade);
+      });
+      this.alreadyTraded = false;
       return;
     }
 
-    if (!this.isTradingHour(time)) {
+    if (exchange.activeTrades.length > 0 || this.alreadyTraded) {
       return;
     }
 
@@ -40,6 +63,7 @@ export class ICTSilverBulletStrategy implements Strategy {
     }
 
     exchange.addTrade(trade);
+    this.alreadyTraded = true;
   }
 
   isTradingHour(time: number): boolean {
@@ -52,7 +76,7 @@ export class ICTSilverBulletStrategy implements Strategy {
     time: number,
     exchange: ExchangeProxy
   ): Promise<SerieCandlestickPattern> {
-    const from = time - getTimePeriodUnitInMs(this.symbol.timeperiod) * 4;
+    const from = time - getTimeperiodIncrementInMs(this.symbol.timeperiod) * 4;
     const to = time;
 
     const ohlcs = await exchange.getMarket(this.symbol).getOHLCs({
@@ -74,15 +98,18 @@ export class ICTSilverBulletStrategy implements Strategy {
     if (serie.isBullish(fvg)) {
       return new LongTrade(
         serie.get(entry).low,
-        (serie.get(fvg).open - serie.get(fvg).low) *
-          this.config.takeProfitRatio,
+        serie.get(entry).low +
+          Math.abs(serie.get(fvg).open - serie.get(fvg).low) *
+            this.config.takeProfitRatio,
         serie.get(fvg).low * (1 - this.config.stopLossMargin)
       );
     }
 
     return new ShortTrade(
       serie.get(entry).high,
-      (serie.get(fvg).high - serie.get(fvg).open) * this.config.takeProfitRatio,
+      serie.get(entry).high -
+        Math.abs(serie.get(fvg).high - serie.get(fvg).open) *
+          this.config.takeProfitRatio,
       serie.get(fvg).high * (1 + this.config.stopLossMargin)
     );
   }

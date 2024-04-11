@@ -1,17 +1,16 @@
 import api from '../../../api';
 import { OHLC, Symbol, Timeframe } from '..';
 import { Market } from '.';
-import {
-  getTimePeriodUnitInMs,
-  getTimeperiodIncrementInMs,
-} from '../helpers/timeperiod';
+import { getTimeperiodIncrementInMs } from '../helpers/timeperiod';
 
-export class ApiMarket implements Market {
+export class BacktestApiMarket implements Market {
   private ohlcs: OHLC[] = [];
-  private extraTimeLoaded: number;
+  private loadCount = 0;
+  private periodInterval: number;
+  private loadTimeOffset = 5000;
 
   constructor(private symbol: Symbol) {
-    this.extraTimeLoaded = getTimeperiodIncrementInMs(symbol.timeperiod) * 100;
+    this.periodInterval = getTimeperiodIncrementInMs(symbol.timeperiod) - 1;
   }
 
   async getOHLC(time: number): Promise<OHLC> {
@@ -22,9 +21,12 @@ export class ApiMarket implements Market {
     if (this.shouldLoad(timeframe)) {
       await this.load(timeframe);
     }
-    const approximation = getTimePeriodUnitInMs(this.symbol.timeperiod) / 2;
 
-    const ohlc = ApiMarket.findOHLC(this.ohlcs, time, approximation);
+    const ohlc = BacktestApiMarket.findOHLC(
+      this.ohlcs,
+      time,
+      this.periodInterval
+    );
 
     if (!ohlc) {
       throw new Error('OHLC not found');
@@ -38,7 +40,7 @@ export class ApiMarket implements Market {
       await this.load(timeframe);
     }
 
-    return ApiMarket.filterOHLCs(this.ohlcs, timeframe);
+    return BacktestApiMarket.filterOHLCs(this.ohlcs, timeframe);
   }
 
   shouldLoad(timeframe: Timeframe): boolean {
@@ -50,22 +52,25 @@ export class ApiMarket implements Market {
   }
 
   async load(timeframe: Timeframe): Promise<void> {
+    // TODO: to optimize the loading, we load a little more data than requested
+    const extraTimeLoaded = this.loadTimeOffset * this.periodInterval;
     const ohlcs = await api.realtimeMarket.getOHLCs({
-      startTime: timeframe.from - this.extraTimeLoaded,
-      endTime: timeframe.to + this.extraTimeLoaded,
+      startTime: timeframe.from - extraTimeLoaded,
+      endTime: timeframe.to + extraTimeLoaded,
       interval: this.symbol.timeperiod as IntervalKeys,
       slug: this.symbol.key,
     });
 
-    this.ohlcs = this.ohlcs
-      .concat(ohlcs)
-      // remove duplicates
-      .filter(
-        (ohlcs, index, self) =>
-          self.findIndex((t) => t.openTime === ohlcs.openTime) === index
-      )
-      // sort by openTime
-      .sort((a, b) => a.openTime - b.openTime);
+    const concatOhlcs = this.ohlcs.concat(ohlcs);
+    // remove duplicates
+    const filteredOhlcs = concatOhlcs.filter(
+      (ohlcs, index, self) =>
+        self.findIndex((t) => t.openTime === ohlcs.openTime) === index
+    );
+    console.log('duplicates', concatOhlcs.length - filteredOhlcs.length);
+    // sort by openTime
+    this.ohlcs = filteredOhlcs.sort((a, b) => a.openTime - b.openTime);
+    this.loadCount++;
   }
 
   static filterOHLCs(ohlcs: OHLC[], timeframe: Timeframe): OHLC[] {
@@ -81,7 +86,7 @@ export class ApiMarket implements Market {
     approximation: number
   ): OHLC | undefined {
     return ohlcs.find(({ openTime }) =>
-      ApiMarket.isSameTime(openTime, time, approximation)
+      BacktestApiMarket.isSameTime(openTime, time, approximation)
     );
   }
 

@@ -20,10 +20,24 @@ export class Backtester {
   async run(timeframe: Timeframe): Promise<void> {
     const increment = getTimeperiodIncrementInMs(this.symbol.timeperiod);
 
+    const errorTimes = [];
+    const cleanTimes = [];
+
     for (let time = timeframe.from; time < timeframe.to; time += increment) {
-      await this.strategy.onTime(time, this.exchange.proxy);
-      await this.updateWallet(time);
+      try {
+        await this.strategy.onTime(time, this.exchange.proxy);
+        await this.updateWallet(time);
+        cleanTimes.push(time);
+      } catch (e: any) {
+        if (e.message === 'OHLC not found') {
+          errorTimes.push(time);
+          continue;
+        }
+        console.error(`Error at time ${time}`, e);
+      }
     }
+
+    console.log({ errorTimes, cleanTimes });
   }
 
   async updateWallet(time: number): Promise<void> {

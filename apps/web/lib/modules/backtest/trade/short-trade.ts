@@ -8,7 +8,7 @@ export class ShortTrade extends Trade {
     public stopLossPrice?: number,
     entryTime?: number | undefined
   ) {
-    super(entryPrice, entryTime);
+    super(entryPrice, 'short', entryTime);
   }
 
   shouldSucceed(ohlc: OHLC): boolean {
@@ -20,9 +20,6 @@ export class ShortTrade extends Trade {
   }
 
   get profitLoss(): number {
-    if (!this.ohlcClose) {
-      return 0;
-    }
     if (this.isStatus('success')) {
       return this.entryPrice - this.takeProfitPrice;
     }

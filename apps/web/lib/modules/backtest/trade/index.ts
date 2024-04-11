@@ -2,11 +2,12 @@ import { OHLC } from '..';
 
 export abstract class Trade {
   protected ohlcClose?: OHLC;
-  protected status: TradeStatus = 'await';
+  public status: TradeStatus = 'await';
 
   constructor(
-    protected entryPrice: number,
-    protected entryTime?: number
+    public entryPrice: number,
+    public type: string,
+    public entryTime?: number
   ) {
     if (!entryTime) this.status = 'open';
   }
