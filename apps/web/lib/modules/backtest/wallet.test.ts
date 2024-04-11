@@ -1,4 +1,4 @@
-import { describe, test, expect, vi } from 'vitest';
+import { describe, test, expect, vi, it } from 'vitest';
 
 import { Wallet } from './wallet';
 import { OHLC } from '.';
@@ -66,8 +66,8 @@ describe('Wallet class', () => {
 
   describe('balance', () => {
     test('should have balance of 1000', () => {
-      const wallet = new Wallet(1000);
-      expect(wallet.balance).toBe(1000);
+      const wallet = new Wallet(500);
+      expect(wallet.balance).toBe(500);
     });
 
     test('should increase balance by 100', () => {
@@ -121,6 +121,27 @@ describe('Wallet class', () => {
       });
 
       expect(wallet.balance).toBe(3000);
+    });
+  });
+
+  describe('profitLoss', () => {
+    it('should have profitLoss of 0', () => {
+      const wallet = new Wallet(1000);
+      expect(wallet.profitLoss).toBe(0);
+    });
+
+    it('should have profitLoss of 100', () => {
+      const wallet = new Wallet(1000);
+      wallet.addTrade(new LongTrade(68412.1245, 69412.1245));
+      wallet.updateTrades({
+        open: 100000,
+        high: 100000,
+        low: 100000,
+        close: 100000,
+        openTime: 100000,
+        closeTime: 100000,
+      });
+      expect(wallet.profitLoss).toBe(1000);
     });
   });
 });

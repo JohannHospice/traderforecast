@@ -7,7 +7,7 @@ export class Wallet implements WalletClient {
   private _mutex: boolean = false;
   private _activeTrades: Trade[] = [];
   private _closedTrades: Trade[] = [];
-  private _balance: number = 0;
+  private _profitLoss: number = 0;
 
   constructor(readonly initialBalance: number = 0) {}
 
@@ -34,32 +34,35 @@ export class Wallet implements WalletClient {
   }
 
   get activeTrades(): Trade[] {
-    if (this._mutex) {
-      this.resetMutex();
-    }
+    this.runMutex();
     return this._activeTrades;
   }
 
   get closedTrades(): Trade[] {
-    if (this._mutex) {
-      this.resetMutex();
-    }
+    this.runMutex();
     return this._closedTrades;
   }
 
   get balance(): number {
-    if (this._mutex) {
-      this.resetMutex();
-    }
-    return this._balance;
+    this.runMutex();
+    return this.initialBalance + this._profitLoss;
   }
 
-  private resetMutex(): void {
+  get profitLoss(): number {
+    this.runMutex();
+    return this._profitLoss;
+  }
+
+  private runMutex(): void {
+    if (!this._mutex) {
+      return;
+    }
+
     this._activeTrades = this._trades.filter((trade) => trade.isActive());
     this._closedTrades = this._trades.filter((trade) => trade.isClosed());
-    this._balance = this._trades.reduce(
+    this._profitLoss = this._trades.reduce(
       (acc, trade) => acc + trade.profitLoss,
-      this.initialBalance
+      0
     );
     this._mutex = false;
   }

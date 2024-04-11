@@ -25,6 +25,19 @@ describe('LongTrade class', () => {
       longTrade.update(ohlc);
       expect(longTrade.profitLoss).toBe(50);
     });
+
+    test('should succeed with a low ahead of the high', () => {
+      expect(
+        longTrade.shouldSucceed({
+          high: 1000,
+          low: 160,
+          close: 900,
+          open: 500,
+          openTime: 100,
+          closeTime: 100,
+        })
+      ).toBe(true);
+    });
   });
 
   describe('fail', () => {
