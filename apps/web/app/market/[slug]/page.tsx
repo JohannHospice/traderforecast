@@ -60,7 +60,6 @@ export default async function Page({
     <>
       <Heading
         title={`${symbol.name} Chart`}
-        // subtitle={`${symbol.name} is a trading pair available on the exchange.`}
         breadcrumbs={[
           {
             title: 'All Symbols',
