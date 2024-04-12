@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { Button } from '../../../components/ui/button';
 import Link from 'next/link';
 
-export function BacktestDataTable({ backtests }: { backtests: Backtest[] }) {
+export function BacktestDataTable({ backtests }: { backtests: any[] }) {
   return (
     <DataTable
       className='bg-card flex-1 flex flex-col sm:mx-0 mx-4 sm:mt-0 mt-4'

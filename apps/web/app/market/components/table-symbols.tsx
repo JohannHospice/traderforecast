@@ -35,7 +35,6 @@ export function TableSymbols({
   return (
     <DataTable
       className='mt-8 sm:mt-0'
-      pageSize={pageSize}
       pagination={pagination}
       data={symbols}
       onRowClick={(row) => router.push(`/symbols/${row.original.slug}`)}

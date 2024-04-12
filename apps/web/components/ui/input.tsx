@@ -7,7 +7,7 @@ export interface InputProps
 
 const Input = React.forwardRef<
   HTMLInputElement,
-  InputProps & { endAdornment: React.ReactNode }
+  InputProps & { endAdornment?: React.ReactNode }
 >(({ className, endAdornment, type, ...props }, ref) => {
   return (
     <div className='relative'>
