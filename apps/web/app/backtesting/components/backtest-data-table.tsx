@@ -1,9 +1,8 @@
 'use client';
 
-import { Backtest } from '@prisma/client';
 import { DataTable } from '@/components/data-table';
+import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
-import { Button } from '../../../components/ui/button';
 import Link from 'next/link';
 
 export function BacktestDataTable({ backtests }: { backtests: any[] }) {
