@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/table';
 import { useState } from 'react';
 import { Button } from './ui/button';
+import { cn } from '../lib/tailwind/utils';
 
 export function DataTable<TData, TValue>({
   columns,
@@ -36,13 +37,12 @@ export function DataTable<TData, TValue>({
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   onRowClick?: (row: Row<TData>) => void;
-  pageSize?: number;
-  pagination: {
+  pagination?: {
     pageIndex: number;
     pageSize: number;
     pages: number;
   };
-  setPagination: (pagination: {
+  setPagination?: (pagination: {
     pageIndex: number;
     pageSize: number;
     pages: number;
@@ -74,8 +74,8 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className={className}>
-      <div className='rounded-md border'>
+    <>
+      <div className={cn('rounded-md border', className)}>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -127,43 +127,46 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className='flex items-center justify-end space-x-2 pt-4'>
-        <div className='flex-1 text-sm text-muted-foreground'>
-          {table.getFilteredSelectedRowModel().rows.length > 0
-            ? `${table.getFilteredSelectedRowModel().rows.length} of ${table.getFilteredRowModel().rows.length} row(s) selected.`
-            : `Page ${pagination.pageIndex + 1} of ${
-                pagination.pages || Math.ceil(data.length / pagination.pageSize)
-              }`}
+      {pagination && setPagination && (
+        <div className='flex items-center justify-end space-x-2 pt-4'>
+          <div className='flex-1 text-sm text-muted-foreground'>
+            {table.getFilteredSelectedRowModel().rows.length > 0
+              ? `${table.getFilteredSelectedRowModel().rows.length} of ${table.getFilteredRowModel().rows.length} row(s) selected.`
+              : `Page ${pagination.pageIndex + 1} of ${
+                  pagination.pages ||
+                  Math.ceil(data.length / pagination.pageSize)
+                }`}
+          </div>
+          <div className='space-x-2'>
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={() =>
+                setPagination({
+                  ...pagination,
+                  pageIndex: pagination.pageIndex - 1,
+                })
+              }
+              disabled={!table.getCanPreviousPage()}
+            >
+              Previous
+            </Button>
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={() =>
+                setPagination({
+                  ...pagination,
+                  pageIndex: pagination.pageIndex + 1,
+                })
+              }
+              disabled={!table.getCanNextPage()}
+            >
+              Next
+            </Button>
+          </div>
         </div>
-        <div className='space-x-2'>
-          <Button
-            variant='outline'
-            size='sm'
-            onClick={() =>
-              setPagination({
-                ...pagination,
-                pageIndex: pagination.pageIndex - 1,
-              })
-            }
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant='outline'
-            size='sm'
-            onClick={() =>
-              setPagination({
-                ...pagination,
-                pageIndex: pagination.pageIndex + 1,
-              })
-            }
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }

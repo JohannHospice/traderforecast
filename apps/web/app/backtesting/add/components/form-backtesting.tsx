@@ -13,7 +13,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Rocket, X } from 'lucide-react';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
-import { ICTSilverBulletStrategy } from '../../../lib/modules/backtest/strategies/ict-silver-bullet-strategy';
+import { ICTSilverBulletStrategy } from '../../../../lib/modules/backtest/strategies/ict-silver-bullet-strategy';
 import {
   STRATEGIES,
   STRATEGY_OPTION_PROPS,

@@ -16,14 +16,14 @@ model Backtest {
   from                DateTime
   to                  DateTime
   timeperiod          String
-  createdAt           DateTime @default(now())
-  strategyId          String
-  strategy            Strategy @relation(fields: [strategyId], references: [id])
-  SymbolId            String
-  symbol              Symbol   @relation(fields: [SymbolId], references: [id])
   initialWalletAmount Float
   finalWalletAmount   Float
+  createdAt           DateTime @default(now())
   trades              Trade[]
+  strategyId          String
+  strategy            Strategy @relation(fields: [strategyId], references: [id])
+  symbolId            String
+  symbol              Symbol   @relation(fields: [symbolId], references: [id])
 }
 
 model Strategy {
@@ -48,17 +48,17 @@ model Trade {
   backtest   Backtest @relation(fields: [backtestId], references: [id])
 }
 
-model Symbol {
-  id        String     @id @default(cuid())
-  name      String
-  trades    Trade[]
-  backtests Backtest[]
-}
-
 enum TradeStatus {
   AWAIT
   OPEN
   SUCCESS
   FAILED
   CANCELLED
+}
+
+model Symbol {
+  id        String     @id @default(cuid())
+  name      String
+  trades    Trade[]
+  backtests Backtest[]
 }

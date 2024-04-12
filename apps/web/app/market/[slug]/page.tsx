@@ -10,6 +10,8 @@ import { formatInterval } from '@/lib/helpers/utc';
 import { redirect } from 'next/navigation';
 import CardChart from './components/card-chart';
 import { CommandChartSettings } from './components/command-chart-settings';
+import { Heading } from '../../../components/heading';
+import { ArrowLeft } from 'lucide-react';
 
 export default async function Page({
   params: { slug },
@@ -56,14 +58,20 @@ export default async function Page({
 
   return (
     <>
-      <Container>
-        <h1 className='scroll-m-20 text-lg font-extrabold tracking-tight lg:text-4xl'>
-          {symbol.name} Chart
-        </h1>
-        <p className='leading-7 text-gray-500'>
-          {symbol.name} is a trading pair available on the exchange.
-        </p>
-      </Container>
+      <Heading
+        title={`${symbol.name} Chart`}
+        // subtitle={`${symbol.name} is a trading pair available on the exchange.`}
+        breadcrumbs={[
+          {
+            title: 'All Symbols',
+            href: '/market',
+            icon: ArrowLeft,
+          },
+          {
+            title: 'Cryptocurrency Pair',
+          },
+        ]}
+      />
       <Container fluid className='flex-1'>
         <div className='grid grid-cols-[270px_1fr] grid-rows-[auto_1fr] gap-4 gap-y-0 sm:gap-y-4 flex-1'>
           <div className='col-span-2 md:col-span-1 md:flex'>

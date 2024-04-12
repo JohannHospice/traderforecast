@@ -35,14 +35,13 @@ export default async function Page({
       <Heading
         title='Traderforecast is open!'
         subtitle="Here's the market, a list of all the symbols available on the exchange."
-      >
+      ></Heading>
+      <Container fluid className='flex-1'>
         <MarketNav
           selectedSegments={paramSegments}
           segments={marketSegments}
           slug={paramQuery}
         />
-      </Heading>
-      <Container fluid className='flex-1'>
         <GridSymbols
           symbols={symbols}
           page={paramPage}

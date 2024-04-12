@@ -7,9 +7,9 @@ import { Wallet } from './wallet';
 
 export class Backtester {
   private exchange: Exchange;
-
+  public timeframe?: Timeframe;
   constructor(
-    private symbol: Symbol,
+    private _symbol: Symbol,
     private strategy: Strategy,
     Market: new (symbol: Symbol) => Market,
     initialBalance: number
@@ -18,7 +18,8 @@ export class Backtester {
   }
 
   async run(timeframe: Timeframe): Promise<void> {
-    const increment = getTimeperiodIncrementInMs(this.symbol.timeperiod);
+    this.timeframe = timeframe;
+    const increment = getTimeperiodIncrementInMs(this._symbol.timeperiod);
 
     const errorTimes = [];
     const cleanTimes = [];
@@ -41,12 +42,15 @@ export class Backtester {
   }
 
   async updateWallet(time: number): Promise<void> {
-    const ohlc = await this.exchange.getMarket(this.symbol).getOHLC(time);
+    const ohlc = await this.exchange.getMarket(this._symbol).getOHLC(time);
 
     await this.exchange.updateTrades(ohlc);
   }
 
   getWallet(): Wallet {
     return this.exchange.getWallet();
+  }
+  get symbol(): Symbol {
+    return this._symbol;
   }
 }

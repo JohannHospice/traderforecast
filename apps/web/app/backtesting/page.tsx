@@ -1,19 +1,37 @@
 import { Container } from '@/components/container';
 import { Heading } from '@/components/heading';
-import api from '../../lib/api';
-import { Backtesting } from './components/form-backtesting';
+import { Button } from '@/components/ui/button';
+import prisma from '@/lib/prisma';
+import { Plus } from 'lucide-react';
+import Link from 'next/link';
+import { BacktestDataTable } from './components/backtest-data-table';
 
 export default async function Page() {
-  const symbols = await api.market.getSortedSymbols();
+  const backtests = await prisma.backtest.findMany({
+    include: {
+      trades: true,
+      strategy: true,
+      symbol: true,
+    },
+  });
 
   return (
     <>
       <Heading
         title='Backtesting'
-        subtitle="Here's the backtesting page, where you can test your strategies."
-      />
-      <Container fluid className='flex-1'>
-        <Backtesting symbols={symbols} />
+        subtitle="Here's a list of latest backtests created"
+      >
+        <div className='flex justify-end flex-1'>
+          <Link href='/backtesting/add'>
+            <Button color='primary' size='default' className='gap-2'>
+              <Plus />
+              Create backtest
+            </Button>
+          </Link>
+        </div>
+      </Heading>
+      <Container fluid className='flex-1 gap-8'>
+        <BacktestDataTable backtests={backtests} />
       </Container>
     </>
   );
