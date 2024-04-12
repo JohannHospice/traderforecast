@@ -22,12 +22,14 @@ export default async function Page() {
         subtitle="Here's a list of latest backtests created"
       >
         <div className='flex justify-end flex-1'>
-          <Link href='/backtesting/create'>
-            <Button color='primary' size='default' className='gap-2'>
-              <Plus />
-              Create backtest
-            </Button>
-          </Link>
+          <div>
+            <Link href='/backtesting/create'>
+              <Button color='primary' size='default' className='gap-2'>
+                <Plus />
+                Create backtest
+              </Button>
+            </Link>
+          </div>
         </div>
       </Heading>
       <Container fluid className='flex-1 gap-8'>

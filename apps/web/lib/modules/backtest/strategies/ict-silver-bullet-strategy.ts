@@ -16,6 +16,7 @@ export class ICTSilverBulletStrategy implements Strategy {
   private alreadyTraded = false;
 
   constructor(
+    public name: string,
     private symbol: Symbol,
     private config: {
       startHour: number;

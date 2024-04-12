@@ -47,7 +47,7 @@ export function MarketNav({
   }, 300);
 
   return (
-    <div className='flex-1 flex flex-row flex-wrap gap-4 w-full md:w-[66.66%] lg:w-[50%] xl:w-[40%] pr-2.5'>
+    <div className='flex-1 flex flex-row flex-wrap gap-4 w-full md:w-[66.66%] lg:w-[50%] xl:w-[40%] pr-2.5 px-4 sm:px-0 mt-4 sm:mt-0'>
       <div className='flex-1 '>
         <InputQuery onChange={handleSearch} defaultValue={slug} />
       </div>

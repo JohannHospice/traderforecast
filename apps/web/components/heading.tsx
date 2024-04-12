@@ -41,7 +41,7 @@ export function Heading({
                       {breadcrumb.href ? (
                         <BreadcrumbLink
                           href={breadcrumb.href}
-                          className='flex items-center gap-2'
+                          className='flex items-center gap-2 leading-7'
                         >
                           {breadcrumb.icon && (
                             <breadcrumb.icon className='h-4 w-4' />
@@ -66,6 +66,7 @@ export function Heading({
     </Container>
   );
 }
+
 function interleave<T>(arr: T[], thing: T) {
   return ([] as T[]).concat(...arr.map((n) => [n, thing])).slice(0, -1);
 }

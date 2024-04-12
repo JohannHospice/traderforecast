@@ -33,9 +33,9 @@ export default async function Page({
   return (
     <>
       <Heading
-        title='Traderforecast is open!'
+        title='Market'
         subtitle="Here's the market, a list of all the symbols available on the exchange."
-      ></Heading>
+      />
       <Container fluid className='flex-1'>
         <MarketNav
           selectedSegments={paramSegments}

@@ -1,8 +1,8 @@
 import { Container } from '@/components/container';
 import { Heading } from '@/components/heading';
 import api from '@/lib/api';
-import { Backtesting } from './components/form-backtesting';
 import { ArrowLeft } from 'lucide-react';
+import { Backtesting } from './components/form-backtesting';
 
 export default async function Page() {
   const symbols = await api.market.getSortedSymbols();

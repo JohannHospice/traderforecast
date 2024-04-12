@@ -4,202 +4,238 @@ import { ControlledInput } from '@/components/fields/controlled-input';
 import { ControlledSelect } from '@/components/fields/controlled-select';
 import { ControlledSlider } from '@/components/fields/controlled-slider';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { useToast } from '@/components/ui/use-toast';
 import { Symbol as BacktestSymbol, TimePeriod } from '@/lib/modules/backtest';
 import { Backtester } from '@/lib/modules/backtest/backtester';
 import { BacktestApiMarket } from '@/lib/modules/backtest/market/backtest-api-market';
-import { Wallet } from '@/lib/modules/backtest/wallet';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Rocket, X } from 'lucide-react';
-import * as React from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { CircleDollarSign, Loader, Rocket } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { ICTSilverBulletStrategy } from '../../../../lib/modules/backtest/strategies/ict-silver-bullet-strategy';
+import createBacktest from '../actions';
 import {
-  STRATEGIES,
   STRATEGY_OPTION_PROPS,
+  createStrategy,
   optionTimePeriod,
 } from '../libs/constants';
 import {
   BacktestingSettingsSchemaType,
   backtestingSettingsSchema,
 } from '../libs/constants/schema';
-import { CardWrapper } from './card-wrapper';
 import { StrategyOption } from './strategy-option';
 
 export function Backtesting({ symbols }: { symbols: Symbol[] }) {
+  const router = useRouter();
+  const { toast } = useToast();
+
   const { control, handleSubmit } = useForm({
     mode: 'onChange',
     resolver: yupResolver(backtestingSettingsSchema),
     defaultValues: {
       endDate: new Date(),
-      timePeriod: '1h',
+      timePeriod: '5m',
+      walletAmount: 1000,
+      pair: symbols[0].slug,
+      strategyKey: 'ict-silver-bullet' as any,
+      startDate: new Date(Date.now() - 24 * 60 * 60 * 1000),
     },
   });
 
-  const [wallet, setWallet] = React.useState<Wallet | null>(null);
+  const { mutate, isPending } = useMutation({
+    mutationKey: ['backtest', 'create'],
+    mutationFn: async (params: BacktestingSettingsSchemaType) => {
+      const backtester = await runBacktest(params);
 
-  async function onSubmit({
-    pair,
-    timePeriod,
-    startDate,
-    endDate,
-    strategyKey,
-    walletAmount,
-  }: BacktestingSettingsSchemaType) {
-    const Strategy = STRATEGIES[strategyKey] as new (
-      symbol: BacktestSymbol,
-      config: any
-    ) => ICTSilverBulletStrategy;
+      return createBacktest(mapBacktesterToBacktest(backtester));
+    },
+    onSuccess: (backtest) => {
+      toast({
+        description: 'Your backtest has been created successfully.',
+      });
+      router.push('/backtesting/' + backtest.id);
+    },
+    onError: (error, variables) => {
+      console.error(error, variables);
+      toast({
+        title: 'An error occurred while creating the backtest.',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
 
-    const symbol = {
-      key: pair,
-      timeperiod: timePeriod as TimePeriod,
-    } as BacktestSymbol;
-    const strategyParams = {
+  const onSubmit = handleSubmit((data) => mutate(data));
+
+  return (
+    <div className='sm:mt-0 mt-8 md:flex-1 flex-none gap-4 flex flex-col divide-y-[1px] sm:divide-y-0'>
+      <Card noBorder>
+        <CardHeader>
+          <CardTitle>Trading Behavior</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ControlledSelect
+            name='strategyKey'
+            control={control}
+            title='Strategy'
+            placeholder='Select a strategy...'
+            options={Object.keys(STRATEGY_OPTION_PROPS).map((value) => ({
+              value,
+              label: (
+                <StrategyOption
+                  {...STRATEGY_OPTION_PROPS[
+                    value as keyof typeof STRATEGY_OPTION_PROPS
+                  ]}
+                />
+              ),
+            }))}
+            required
+          />
+          <ControlledSlider
+            name='timePeriod'
+            control={control}
+            title='Initial time period'
+            options={optionTimePeriod}
+          />
+          <ControlledInput
+            name='walletAmount'
+            control={control}
+            label='Wallet amount'
+            type='number'
+            placeholder='1000'
+            endAdornment={<CircleDollarSign className='size-5' />}
+            required
+          />
+        </CardContent>
+      </Card>
+      <Card noBorder>
+        <CardHeader>
+          <CardTitle>Market Target</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ControlledSelect
+            name='pair'
+            control={control}
+            title='Symbol pair'
+            placeholder='Select a symbol...'
+            options={symbols.map(({ slug, ticker }) => ({
+              value: slug,
+              label: ticker,
+            }))}
+            required
+          />
+          <ControlledInput
+            name='startDate'
+            control={control}
+            label='Start date'
+            type='datetime-local'
+            required
+            placeholder='2021-01-01'
+          />
+          <ControlledInput
+            name='endDate'
+            control={control}
+            label='End date'
+            type='datetime-local'
+            disabled
+            required
+          />
+        </CardContent>
+        <CardFooter>
+          <div className='flex justify-end items-center'>
+            <Button
+              size='lg'
+              onClick={onSubmit}
+              disabled={isPending}
+              className='gap-2'
+            >
+              Run
+              {isPending ? (
+                <Loader className='size-5 animate-spin' />
+              ) : (
+                <Rocket className='size-5' />
+              )}
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
+    </div>
+  );
+}
+
+async function runBacktest({
+  pair,
+  timePeriod,
+  startDate,
+  endDate,
+  strategyKey,
+  walletAmount,
+}: BacktestingSettingsSchemaType) {
+  const symbol = {
+    key: pair,
+    timeperiod: timePeriod as TimePeriod,
+  } as BacktestSymbol;
+
+  const timeframe = {
+    from: new Date(startDate).getTime(),
+    to: new Date(endDate).getTime(),
+  };
+
+  const strategy = createStrategy(strategyKey, {
+    symbol,
+    options: {
       startHour: 9,
       endHour: 17,
       takeProfitRatio: 2,
       stopLossMargin: 0.05,
-    };
+    },
+  });
 
-    const strategy = new Strategy(symbol, strategyParams);
-
-    const backtester = new Backtester(
-      symbol,
-      strategy,
-      BacktestApiMarket,
-      walletAmount
-    );
-
-    await backtester.run({
-      from: new Date(startDate).getTime(),
-      to: new Date(endDate).getTime(),
-    });
-
-    setWallet(backtester.getWallet());
-  }
-
-  const options = React.useMemo(
-    () =>
-      symbols.map(({ slug, ticker }) => ({
-        value: slug,
-        label: ticker,
-      })),
-    [symbols]
+  const backtester = new Backtester(
+    symbol,
+    strategy,
+    BacktestApiMarket,
+    walletAmount
   );
 
-  return (
-    <div className='flex flex-1 flex-col md:flex-row gap-4 divide-y-[1px] sm:divide-y-0'>
-      <div className='sm:mt-0 mt-8 md:flex-1 flex-none gap-2 flex flex-col md:max-w-[380px] divide-y-[1px] sm:divide-y-0'>
-        <div>
-          <CardWrapper title='Trading Behavior'>
-            <ControlledSelect
-              name='strategyKey'
-              control={control}
-              title='Strategy'
-              placeholder='Select a strategy...'
-              options={Object.keys(STRATEGY_OPTION_PROPS).map((value) => ({
-                value,
-                label: (
-                  <StrategyOption
-                    {...STRATEGY_OPTION_PROPS[
-                      value as keyof typeof STRATEGY_OPTION_PROPS
-                    ]}
-                  />
-                ),
-              }))}
-            />
-            <ControlledSlider
-              name='timePeriod'
-              control={control}
-              title='Initial Time Period'
-              options={optionTimePeriod}
-            />
-            <ControlledInput
-              name='walletAmount'
-              control={control}
-              label='Wallet'
-              type='number'
-              placeholder='1000'
-            />
-          </CardWrapper>
-        </div>
-        <div>
-          <CardWrapper title='Market Target'>
-            <ControlledSelect
-              name='pair'
-              control={control}
-              title='Pair'
-              placeholder='Select a symbol...'
-              options={options}
-            />
-            <ControlledInput
-              name='startDate'
-              control={control}
-              label='Start Date'
-              type='datetime-local'
-              placeholder='2021-01-01'
-            />
-            <ControlledInput
-              name='endDate'
-              control={control}
-              label='End Date'
-              type='datetime-local'
-              disabled
-            />
-          </CardWrapper>
-        </div>
-      </div>
-      <div className='flex flex-1'>
-        <Card
-          noBorder
-          className='relative flex-[2] flex sm:min-h-[60vh] flex-col min-h-20'
-        >
-          <CardContent className=' flex flex-row flex-1 pt-6 sm:pt-8'>
-            {wallet ? (
-              <div className='relative flex-1'>
-                <pre className='flex-1 text-sm'>
-                  {JSON.stringify(
-                    {
-                      balance: wallet.balance,
-                      initialBalance: wallet.initialBalance,
-                      tradeCount: wallet.trades.length,
-                      trades: wallet.trades.map((trade: any) => ({
-                        type: trade.type,
-                        status: trade.status,
-                        entryPrice: trade.entryPrice,
-                        takeProfitPrice: trade.takeProfitPrice,
-                        stopLossPrice: trade.stopLossPrice,
-                        profitLoss: trade.profitLoss,
-                      })),
-                    },
-                    null,
-                    2
-                  )}
-                </pre>
-                <div className='top-0 right-0 absolute'>
-                  <Button
-                    variant='destructive'
-                    size='icon'
-                    onClick={() => {
-                      setWallet(null);
-                    }}
-                  >
-                    <X />
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className='absolute inset-0 flex justify-center items-center'>
-                <Button onClick={handleSubmit(onSubmit)}>
-                  Run
-                  <Rocket className='size-5 ml-2' />
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
+  await backtester.run(timeframe);
+
+  return backtester;
+}
+
+function mapBacktesterToBacktest(backtester: Backtester): any {
+  const wallet = backtester.getWallet();
+  return {
+    finalWalletAmount: wallet.balance,
+    initialWalletAmount: wallet.initialBalance,
+    timeperiod: backtester.symbol.timeperiod,
+    from: new Date(backtester.timeframe?.from || 0),
+    to: new Date(backtester.timeframe?.to || 0),
+    trades: backtester.getWallet().trades.map((trade) => ({
+      entry: trade.entryPrice,
+      // @ts-ignore
+      stopLoss: (trade['stopLossPrice'] as number) || 0,
+      // @ts-ignore
+      takeProfit: (trade['takeProfitPrice'] as number) || 0,
+      entryTime: trade.entryTime ? new Date(trade.entryTime) : undefined,
+      exitTime: trade.ohlcClose?.closeTime
+        ? new Date(trade.ohlcClose?.closeTime)
+        : undefined,
+      status: trade.status.toUpperCase(),
+      symbolId: backtester.symbol.key,
+    })),
+    symbol: {
+      id: backtester.symbol.key,
+    },
+    strategy: {
+      id: backtester.strategy.name,
+    },
+  };
 }

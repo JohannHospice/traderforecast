@@ -1,7 +1,7 @@
 import { OHLC } from '..';
 
 export abstract class Trade {
-  protected ohlcClose?: OHLC;
+  public ohlcClose?: OHLC;
   public status: TradeStatus = 'await';
 
   constructor(

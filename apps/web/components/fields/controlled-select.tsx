@@ -17,6 +17,7 @@ export function ControlledSelect<T extends FieldValues>({
   defaultValue,
   name,
   control,
+  required,
 }: {
   title: string;
   placeholder: string;
@@ -24,6 +25,7 @@ export function ControlledSelect<T extends FieldValues>({
   defaultValue?: string;
   name: Path<T>;
   control: Control<T>;
+  required?: boolean;
 }) {
   return (
     <Controller
@@ -34,7 +36,10 @@ export function ControlledSelect<T extends FieldValues>({
         fieldState: { error },
       }) => (
         <div className='grid gap-3'>
-          <Label htmlFor={title}>{title}</Label>
+          <Label htmlFor={title}>
+            {title}
+            {required && ' *'}
+          </Label>
           <Select
             defaultValue={defaultValue}
             name={name}

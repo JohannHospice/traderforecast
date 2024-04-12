@@ -18,34 +18,36 @@ model Backtest {
   timeperiod          String
   initialWalletAmount Float
   finalWalletAmount   Float
-  createdAt           DateTime @default(now())
   trades              Trade[]
   strategyId          String
   strategy            Strategy @relation(fields: [strategyId], references: [id])
   symbolId            String
   symbol              Symbol   @relation(fields: [symbolId], references: [id])
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 }
 
 model Strategy {
   id        String     @id @default(cuid())
-  name      String
   backtests Backtest[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
 model Trade {
   id         String      @id @default(cuid())
   entry      Float
-  stopLoss   Float
+  stopLoss   Float?
   takeProfit Float
   entryTime  DateTime?
   exitTime   DateTime?
   status     TradeStatus
-
-  symbolId String
-  symbol   Symbol @relation(fields: [symbolId], references: [id])
-
-  backtestId String
-  backtest   Backtest @relation(fields: [backtestId], references: [id])
+  symbolId   String
+  symbol     Symbol      @relation(fields: [symbolId], references: [id])
+  backtestId String?
+  backtest   Backtest?   @relation(fields: [backtestId], references: [id])
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 }
 
 enum TradeStatus {
@@ -57,8 +59,9 @@ enum TradeStatus {
 }
 
 model Symbol {
-  id        String     @id @default(cuid())
-  name      String
+  id        String     @id
   trades    Trade[]
   backtests Backtest[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }

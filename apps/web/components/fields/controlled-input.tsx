@@ -11,6 +11,8 @@ export function ControlledInput<T extends FieldValues>({
   name,
   control,
   disabled,
+  endAdornment,
+  required,
 }: {
   label: string;
   type: React.HTMLInputTypeAttribute;
@@ -18,6 +20,8 @@ export function ControlledInput<T extends FieldValues>({
   name: Path<T>;
   control: Control<T>;
   disabled?: boolean;
+  endAdornment?: React.ReactNode;
+  required?: boolean;
 }) {
   const formatterByType: Partial<
     Record<React.HTMLInputTypeAttribute, (value: string) => string>
@@ -36,7 +40,10 @@ export function ControlledInput<T extends FieldValues>({
       control={control}
       render={({ field: { onChange, name, value }, fieldState: { error } }) => (
         <div className='grid gap-3'>
-          <Label htmlFor={label}>{label}</Label>
+          <Label htmlFor={label}>
+            {label}
+            {required && ' *'}
+          </Label>
           <Input
             id={label}
             name={name}
@@ -45,6 +52,7 @@ export function ControlledInput<T extends FieldValues>({
             disabled={disabled}
             value={valueFormatter(value)}
             onChange={onChange}
+            endAdornment={endAdornment}
           />
           {error && (
             <p className='text-red-500 text-sm mt-1' data-description>

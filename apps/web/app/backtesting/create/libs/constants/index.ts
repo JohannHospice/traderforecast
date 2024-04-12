@@ -3,6 +3,7 @@ import { StrategyOptionProps } from '../../components/strategy-option';
 import { ICTSilverBulletStrategy } from '../../../../../lib/modules/backtest/strategies/ict-silver-bullet-strategy';
 import { Strategy } from '../../../../../lib/modules/backtest/strategies';
 import { Symbol } from '../../../../../lib/modules/backtest';
+import { Symbol as BacktestSymbol } from '@/lib/modules/backtest';
 
 export const optionTimePeriod = [
   '1m',
@@ -19,12 +20,31 @@ export type StrategyKeys = 'fvg-in-fvg' | 'order-blocks' | 'ict-silver-bullet';
 
 export const STRATEGIES: Record<
   StrategyKeys,
-  new (symbol: Symbol, config: any) => Strategy
+  new (name: string, symbol: Symbol, config: any) => Strategy
 > = {
   'fvg-in-fvg': ICTSilverBulletStrategy,
   'order-blocks': ICTSilverBulletStrategy,
   'ict-silver-bullet': ICTSilverBulletStrategy,
 };
+
+export function getStrategy(strategyKey: StrategyKeys) {
+  return STRATEGIES[strategyKey] as new (
+    name: string,
+    symbol: BacktestSymbol,
+    config: any
+  ) => ICTSilverBulletStrategy;
+}
+
+export function createStrategy(
+  strategyKey: StrategyKeys,
+  config: { symbol: Symbol; options: any }
+) {
+  return new STRATEGIES[strategyKey](
+    strategyKey,
+    config.symbol,
+    config.options
+  );
+}
 
 export const STRATEGY_KEYS = Object.keys(STRATEGIES) as StrategyKeys[];
 

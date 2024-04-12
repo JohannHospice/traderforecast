@@ -10,7 +10,7 @@ export class Backtester {
   public timeframe?: Timeframe;
   constructor(
     private _symbol: Symbol,
-    private strategy: Strategy,
+    public strategy: Strategy,
     Market: new (symbol: Symbol) => Market,
     initialBalance: number
   ) {

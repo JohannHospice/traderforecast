@@ -69,7 +69,10 @@ export function DataTable<TData, TValue>({
       columnFilters,
       columnVisibility,
       rowSelection,
-      pagination,
+      pagination: {
+        pageIndex: pagination?.pageIndex || 0,
+        pageSize: pagination?.pageSize || data.length,
+      },
     },
   });
 

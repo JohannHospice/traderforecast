@@ -32,7 +32,7 @@ export default function CardSymbol({
         </div>
         <Badge
           variant='outline'
-          className='absolute top-8 sm:top-4 right-4 bg-background'
+          className='flex-auto bg-background text-nowrap place-self-start'
         >
           Rank #{symbol.rank}
         </Badge>
