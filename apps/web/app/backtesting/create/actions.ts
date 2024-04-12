@@ -3,6 +3,8 @@ import { Backtest, TradeStatus } from '@prisma/client';
 import { array, date, mixed, number, object, string } from 'yup';
 import prisma from '../../../lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 const symbolSchema = object().shape({
   id: string().required(),
 });
