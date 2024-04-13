@@ -67,7 +67,7 @@ export function Backtesting({
     mutationFn: async (params: BacktestingSettingsSchemaType) => {
       const backtester = await runBacktest(params);
 
-      return createBacktest(mapBacktesterToBacktest(backtester));
+      return createBacktest(backtester.map());
     },
     onSuccess: (backtest) => {
       toast({
@@ -221,34 +221,4 @@ async function runBacktest({
   await backtester.run(timeframe);
 
   return backtester;
-}
-
-function mapBacktesterToBacktest(backtester: Backtester): any {
-  const wallet = backtester.getWallet();
-  return {
-    finalWalletAmount: wallet.balance,
-    initialWalletAmount: wallet.initialBalance,
-    timeperiod: backtester.symbol.timeperiod,
-    from: new Date(backtester.timeframe?.from || 0),
-    to: new Date(backtester.timeframe?.to || 0),
-    trades: backtester.getWallet().trades.map((trade) => ({
-      entry: trade.entryPrice,
-      // @ts-ignore
-      stopLoss: (trade['stopLossPrice'] as number) || 0,
-      // @ts-ignore
-      takeProfit: (trade['takeProfitPrice'] as number) || 0,
-      entryTime: trade.entryTime ? new Date(trade.entryTime) : undefined,
-      exitTime: trade.ohlcClose?.closeTime
-        ? new Date(trade.ohlcClose?.closeTime)
-        : undefined,
-      status: trade.status.toUpperCase(),
-      symbolId: backtester.symbol.key,
-    })),
-    symbol: {
-      id: backtester.symbol.key,
-    },
-    strategy: {
-      id: backtester.strategy.name,
-    },
-  };
 }

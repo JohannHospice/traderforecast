@@ -50,7 +50,39 @@ export class Backtester {
   getWallet(): Wallet {
     return this.exchange.getWallet();
   }
+
   get symbol(): Symbol {
     return this._symbol;
+  }
+
+  map(): any {
+    const wallet = this.getWallet();
+
+    return {
+      finalWalletAmount: wallet.balance,
+      initialWalletAmount: wallet.initialBalance,
+      timeperiod: this.symbol.timeperiod,
+      from: new Date(this.timeframe?.from || 0),
+      to: new Date(this.timeframe?.to || 0),
+      trades: this.getWallet().trades.map((trade) => ({
+        entry: trade.entryPrice,
+        // @ts-ignore
+        stopLoss: (trade['stopLossPrice'] as number) || 0,
+        // @ts-ignore
+        takeProfit: (trade['takeProfitPrice'] as number) || 0,
+        entryTime: trade.entryTime ? new Date(trade.entryTime) : undefined,
+        exitTime: trade.ohlcClose?.closeTime
+          ? new Date(trade.ohlcClose?.closeTime)
+          : undefined,
+        status: trade.status.toUpperCase(),
+        symbolId: this.symbol.key,
+      })),
+      symbol: {
+        id: this.symbol.key,
+      },
+      strategy: {
+        id: this.strategy.name,
+      },
+    };
   }
 }
