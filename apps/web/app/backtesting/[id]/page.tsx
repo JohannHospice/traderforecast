@@ -1,3 +1,4 @@
+import { CardPreCode } from '@/components/card-pre-code';
 import { Container } from '@/components/container';
 import { Heading } from '@/components/heading';
 import prisma from '@/lib/prisma';
@@ -12,10 +13,34 @@ export default async function Page({
     where: {
       id,
     },
-    include: {
-      symbol: true,
-      strategy: true,
-      trades: true,
+    select: {
+      id: true,
+      createdAt: true,
+      to: true,
+      from: true,
+      symbol: {
+        select: {
+          id: true,
+          createdAt: true,
+        },
+      },
+      strategy: {
+        select: {
+          id: true,
+          createdAt: true,
+        },
+      },
+      trades: {
+        select: {
+          id: true,
+          entry: true,
+          takeProfit: true,
+          stopLoss: true,
+          exitTime: true,
+          status: true,
+          entryTime: true,
+        },
+      },
     },
   });
 
@@ -35,16 +60,8 @@ export default async function Page({
         ]}
       />
       <Container fluid className='flex-1 gap-8'>
-        <DataComponent data={backtests} />
+        <CardPreCode data={backtests} />
       </Container>
     </>
-  );
-}
-
-function DataComponent({ data }: { data: any }) {
-  return (
-    <div className='relative flex-1'>
-      <pre className='flex-1 text-sm'>{JSON.stringify(data, null, 2)}</pre>
-    </div>
   );
 }

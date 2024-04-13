@@ -58,11 +58,15 @@ CardDescription.displayName = 'CardDescription';
 
 const CardContent = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+  React.HTMLAttributes<HTMLDivElement> & { noHeader?: boolean }
+>(({ className, noHeader, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('flex flex-col gap-8 p-4 sm:p-6 sm:pt-0 pt-0', className)}
+    className={cn(
+      'flex flex-col gap-8 p-4 sm:p-6 ',
+      noHeader ? '' : 'sm:pt-0 pt-0',
+      className
+    )}
     {...props}
   />
 ));

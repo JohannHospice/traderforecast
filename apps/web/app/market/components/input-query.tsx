@@ -21,7 +21,6 @@ export function InputQuery({
 
   return (
     <div className={cn('relative', className)}>
-      <MagnifyingGlassIcon className='absolute left-0 top-0 m-2.5 h-5 w-5 text-muted-foreground' />
       <Input
         className='w-full pl-10 min-w-52'
         type='symbol'
@@ -29,6 +28,7 @@ export function InputQuery({
         value={value}
         onChange={(e) => setValue(e.target.value)}
       />
+      <MagnifyingGlassIcon className='absolute left-0 top-0 m-2.5 h-5 w-5 text-muted-foreground' />
     </div>
   );
 }

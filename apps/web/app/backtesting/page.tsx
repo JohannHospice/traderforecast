@@ -8,12 +8,32 @@ import { BacktestDataTable } from './components/backtest-data-table';
 
 export default async function Page() {
   const backtests = await prisma.backtest.findMany({
-    include: {
-      trades: true,
-      strategy: true,
-      symbol: true,
+    select: {
+      id: true,
+      initialWalletAmount: true,
+      createdAt: true,
+      from: true,
+      to: true,
+      finalWalletAmount: true,
+      timeperiod: true,
+      _count: {
+        select: {
+          trades: true,
+        },
+      },
+      strategy: {
+        select: {
+          id: true,
+        },
+      },
+      symbol: {
+        select: {
+          id: true,
+        },
+      },
     },
   });
+  console.log(backtests);
 
   return (
     <>

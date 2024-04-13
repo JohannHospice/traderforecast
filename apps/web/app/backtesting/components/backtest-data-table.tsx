@@ -42,7 +42,7 @@ export function BacktestDataTable({ backtests }: { backtests: any[] }) {
         {
           header: 'Trades',
           accessorKey: 'trades',
-          accessorFn: (row) => (row.trades || []).length,
+          accessorFn: (row) => row._count.trades,
         },
         {
           id: 'actions',
