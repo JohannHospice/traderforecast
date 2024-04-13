@@ -1,5 +1,5 @@
 {
-  "name": "lightweight-charts-plugin",
+  "name": "@traderforecast/lightweight-charts-plugin",
   "version": "0.0.0",
   "private": true,
   "type": "module",

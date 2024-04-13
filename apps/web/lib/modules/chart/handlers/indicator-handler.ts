@@ -9,6 +9,7 @@ import {
   Rectangle,
   Trendline,
 } from '@/lib/modules/chart/indicators';
+import { TrendLine } from '@traderforecast/lightweight-charts-plugin/trend-line/trend-line';
 import {
   IChartApi,
   IPriceLine,
@@ -16,7 +17,6 @@ import {
   SeriesType,
   Time,
 } from 'lightweight-charts';
-import { TrendLine } from 'lightweight-charts-plugin/trend-line/trend-line';
 import { LightWeightTrendFactory } from './trend-factory/lightweight-trend-factory';
 
 export class IndicatorHandler {

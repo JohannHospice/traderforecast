@@ -2,31 +2,38 @@
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local"],
   "pipeline": {
-    "build": {
+    "@traderforecast/lightweight-charts-plugin#build": {
       "dependsOn": ["^build"],
+      "outputs": ["compiled/**", ".next/**", "!.next/cache/**"]
+    },
+    "@traderforecast/web#dev": {
+      "dependsOn": ["@traderforecast/lightweight-charts-plugin#build"]
+    },
+    "build": {
+      "dependsOn": ["^db:generate", "^build"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
-    "lint": {},
-    "type-check": {},
+    "clean": {
+      "cache": false
+    },
+    "db:generate": {
+      "cache": false
+    },
+    "db:push": {
+      "cache": false
+    },
     "dev": {
+      "dependsOn": ["^db:generate"],
       "cache": false,
       "persistent": true
     },
+    "lint": {},
     "test": {
       "cache": false,
       "persistent": true,
       "dependsOn": ["^test"],
       "outputs": ["coverage/**"]
     },
-    "clean": {
-      "cache": false
-    },
-    "@traderforecast/web#dev": {
-      "dependsOn": ["lightweight-charts-plugin#build"]
-    },
-    "lightweight-charts-plugin#build": {
-      "dependsOn": ["^build"],
-      "outputs": ["compiled/**", ".next/**", "!.next/cache/**"]
-    }
+    "type-check": {}
   }
 }
