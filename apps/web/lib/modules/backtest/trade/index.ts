@@ -1,8 +1,9 @@
+import { TradeStatus } from '@prisma/client';
 import { OHLC } from '..';
 
 export class Trade {
   public ohlcClose?: OHLC;
-  public status: TradeStatus = 'open';
+  public status: TradeStatus = TradeStatus.OPEN;
   constructor(
     public config: {
       entryPrice: number;
@@ -13,32 +14,38 @@ export class Trade {
   ) {}
 
   update(ohlc: OHLC): void {
-    if (!this.isStatus('open')) return;
+    if (!this.isStatus(TradeStatus.OPEN)) return;
 
     if (this.hitTakeProfit(ohlc)) {
-      this.status = 'success';
+      this.status = TradeStatus.SUCCESS;
       this.ohlcClose = ohlc;
     }
 
     if (this.hitStopLoss(ohlc)) {
-      this.status = 'fail';
+      this.status = TradeStatus.FAILED;
       this.ohlcClose = ohlc;
     }
   }
 
   cancel(): void {
-    if (!this.isStatus('await')) {
-      throw new Error('Trade can only be canceled if it is awaiting');
-    }
-    this.status = 'canceled';
+    // if (!this.isStatus('AWAIT')) {
+    //   throw new Error('Trade can only be canceled if it is awaiting');
+    // }
+
+    // todo register cancel pricxe
+    this.status = TradeStatus.CANCELLED;
   }
 
   isActive(): boolean {
-    return this.isStatus('open', 'await');
+    return this.isStatus(TradeStatus.OPEN, 'AWAIT');
   }
 
   isClosed(): boolean {
-    return this.isStatus('success', 'fail', 'canceled');
+    return this.isStatus(
+      TradeStatus.SUCCESS,
+      TradeStatus.FAILED,
+      TradeStatus.CANCELLED
+    );
   }
 
   isStatus(...status: TradeStatus[]): boolean {
@@ -63,12 +70,10 @@ export class Trade {
   }
 
   public get profitLoss(): number {
-    if (this.isStatus('success'))
+    if (this.isStatus(TradeStatus.SUCCESS))
       return this.config.takeProfit - this.config.entryPrice;
-    if (this.isStatus('fail'))
+    if (this.isStatus(TradeStatus.FAILED))
       return this.config.stopLoss - this.config.entryPrice;
     return 0;
   }
 }
-
-export type TradeStatus = 'await' | 'open' | 'success' | 'fail' | 'canceled';

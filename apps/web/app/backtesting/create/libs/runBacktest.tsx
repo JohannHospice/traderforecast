@@ -22,14 +22,16 @@ export async function runBacktest({
     to: new Date(endDate).getTime(),
   };
 
+  const options = {
+    startHour: 9,
+    endHour: 17,
+    takeProfitRatio: 2,
+    stopLossMargin: 0.05,
+  };
+
   const strategy = createStrategy(strategyKey, {
     symbol,
-    options: {
-      startHour: 9,
-      endHour: 17,
-      takeProfitRatio: 2,
-      stopLossMargin: 0.05,
-    },
+    options,
   });
 
   const backtester = new Backtester(

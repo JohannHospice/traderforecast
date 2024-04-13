@@ -10,10 +10,10 @@ export default async function Page() {
   const backtests = await prisma.backtest.findMany({
     select: {
       id: true,
-      initialWalletAmount: true,
       createdAt: true,
       from: true,
       to: true,
+      initialWalletAmount: true,
       finalWalletAmount: true,
       timeperiod: true,
       _count: {

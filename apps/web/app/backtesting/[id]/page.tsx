@@ -18,6 +18,8 @@ export default async function Page({
       createdAt: true,
       to: true,
       from: true,
+      initialWalletAmount: true,
+      finalWalletAmount: true,
       symbol: {
         select: {
           id: true,

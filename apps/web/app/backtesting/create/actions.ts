@@ -14,10 +14,20 @@ export default async function createBacktest(backtest: Backtest) {
     data: {
       ...data,
       symbol: {
-        create: data.symbol,
+        connectOrCreate: {
+          where: {
+            id: data.symbol.id,
+          },
+          create: data.symbol,
+        },
       },
       strategy: {
-        create: data.strategy,
+        connectOrCreate: {
+          where: {
+            id: data.strategy.id,
+          },
+          create: data.strategy,
+        },
       },
       trades: {
         createMany: {
