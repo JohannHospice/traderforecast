@@ -53,9 +53,7 @@ export function Heading({
                       )}
                     </BreadcrumbItem>
                   )),
-                  <BreadcrumbSeparator>
-                    <Slash />
-                  </BreadcrumbSeparator>
+                  BreadcrumbSeparatorSlash
                 )}
               </BreadcrumbList>
             </Breadcrumb>
@@ -67,6 +65,19 @@ export function Heading({
   );
 }
 
-function interleave<T>(arr: T[], thing: T) {
-  return ([] as T[]).concat(...arr.map((n) => [n, thing])).slice(0, -1);
+function BreadcrumbSeparatorSlash() {
+  return (
+    <BreadcrumbSeparator>
+      <Slash />
+    </BreadcrumbSeparator>
+  );
+}
+
+function interleave(
+  arr: JSX.Element[],
+  Thing: React.ComponentType<{ key: string }>
+) {
+  return ([] as JSX.Element[])
+    .concat(...arr.map((n, i) => [n, <Thing key={i + '_slash'} />]))
+    .slice(0, -1);
 }
