@@ -12,99 +12,37 @@ describe('Trade class', () => {
     open: 100,
   };
 
-  describe('basic functions', () => {
-    class DefaultTrade extends Trade {
-      get profitLoss(): number {
-        return 0;
-      }
-      protected shouldSucceed(ohlc: OHLC): boolean {
-        return false;
-      }
-      protected shouldFail(ohlc: OHLC): boolean {
-        return false;
-      }
-    }
-    const trade = new DefaultTrade(100, 'default');
-
-    test('shouldOpen', () => {
-      expect(trade.shouldOpen(ohlc)).toBe(true);
+  describe('success', () => {
+    const longTrade = new Trade({
+      entryPrice: 100,
+      takeProfit: 150,
+      stopLoss: 50,
+      entryTime: 100,
     });
 
-    test('isActive', () => {
-      expect(trade.isActive()).toBe(true);
+    test('shouldSucceed', () => {
+      expect(longTrade.hitTakeProfit(ohlc)).toBe(false);
+      ohlc.high = 150;
+      expect(longTrade.hitTakeProfit(ohlc)).toBe(true);
     });
 
-    test('isClosed', () => {
-      expect(trade.isClosed()).toBe(false);
+    test('profitLoss', () => {
+      expect(longTrade.profitLoss).toBe(0);
+      longTrade.update(ohlc);
+      expect(longTrade.profitLoss).toBe(50);
     });
 
-    test('isStatus', () => {
-      expect(trade.isStatus('await')).toBe(false);
-      expect(trade.isStatus('open')).toBe(true);
-      expect(trade.isStatus('success')).toBe(false);
-    });
-
-    test('cancel', () => {
-      trade.cancel();
-      expect(trade.isStatus('canceled')).toBe(true);
-    });
-  });
-
-  describe('update/success', () => {
-    class SuccessTrade extends Trade {
-      get profitLoss(): number {
-        return 0;
-      }
-      protected shouldSucceed(ohlc: OHLC): boolean {
-        return true;
-      }
-      protected shouldFail(ohlc: OHLC): boolean {
-        return false;
-      }
-    }
-    const successTrade = new SuccessTrade(100, 'default');
-
-    test('open to success', () => {
-      expect(successTrade.isStatus('open')).toBe(true);
-      successTrade.update(ohlc);
-      expect(successTrade.isStatus('success')).toBe(true);
-    });
-
-    test('success is closed', () => {
-      expect(successTrade.isClosed()).toBe(true);
-    });
-
-    test('success is not active', () => {
-      expect(successTrade.isActive()).toBe(false);
-    });
-  });
-
-  describe('update/fail', () => {
-    class FailTrade extends Trade {
-      get profitLoss(): number {
-        return 0;
-      }
-      protected shouldSucceed(ohlc: OHLC): boolean {
-        return false;
-      }
-      protected shouldFail(ohlc: OHLC): boolean {
-        return true;
-      }
-    }
-    const failTrade = new FailTrade(100, 'default');
-
-    test('open to fail', () => {
-      expect(failTrade.isStatus('open')).toBe(true);
-      failTrade.update(ohlc);
-      expect(failTrade.isStatus('fail')).toBe(true);
-    });
-
-    test('fail is closed', () => {
-      expect(failTrade.isClosed()).toBe(true);
-    });
-
-    test('fail is not active', () => {
-      expect(failTrade.isActive()).toBe(false);
+    test('should succeed with a low ahead of the high', () => {
+      expect(
+        longTrade.hitTakeProfit({
+          high: 1000,
+          low: 160,
+          close: 900,
+          open: 500,
+          openTime: 100,
+          closeTime: 100,
+        })
+      ).toBe(true);
     });
   });
 });

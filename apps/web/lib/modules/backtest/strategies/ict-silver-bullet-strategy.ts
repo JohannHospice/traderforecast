@@ -1,8 +1,6 @@
 import { SerieCandlestickPattern } from '../../chart/patterns/serie-candlestick-pattern';
 import { getTimeperiodIncrementInMs } from '../helpers/timeperiod';
 import { ExchangeProxy } from '../exchange-proxy';
-import { LongTrade } from '../trade/long-trade';
-import { ShortTrade } from '../trade/short-trade';
 import { Symbol } from '..';
 import { Strategy } from '.';
 import { Trade } from '../trade';
@@ -97,21 +95,25 @@ export class ICTSilverBulletStrategy implements Strategy {
     const entry = serie.length - 1;
 
     if (serie.isBullish(fvg)) {
-      return new LongTrade(
-        serie.get(entry).low,
-        serie.get(entry).low +
+      return new Trade({
+        entryPrice: serie.get(entry).low,
+        takeProfit:
+          serie.get(entry).low +
           Math.abs(serie.get(fvg).open - serie.get(fvg).low) *
             this.config.takeProfitRatio,
-        serie.get(fvg).low * (1 - this.config.stopLossMargin)
-      );
+        stopLoss: serie.get(fvg).low * (1 - this.config.stopLossMargin),
+        entryTime: serie.get(entry).openTime,
+      });
     }
 
-    return new ShortTrade(
-      serie.get(entry).high,
-      serie.get(entry).high -
+    return new Trade({
+      entryPrice: serie.get(entry).high,
+      takeProfit:
+        serie.get(entry).high -
         Math.abs(serie.get(fvg).high - serie.get(fvg).open) *
           this.config.takeProfitRatio,
-      serie.get(fvg).high * (1 + this.config.stopLossMargin)
-    );
+      stopLoss: serie.get(fvg).high * (1 + this.config.stopLossMargin),
+      entryTime: serie.get(entry).openTime,
+    });
   }
 }

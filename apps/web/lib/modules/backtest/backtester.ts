@@ -65,12 +65,10 @@ export class Backtester {
       from: new Date(this.timeframe?.from || 0),
       to: new Date(this.timeframe?.to || 0),
       trades: this.getWallet().trades.map((trade) => ({
-        entry: trade.entryPrice,
-        // @ts-ignore
-        stopLoss: (trade['stopLossPrice'] as number) || 0,
-        // @ts-ignore
-        takeProfit: (trade['takeProfitPrice'] as number) || 0,
-        entryTime: trade.entryTime ? new Date(trade.entryTime) : undefined,
+        entry: trade.config.entryPrice,
+        stopLoss: trade.config.stopLoss,
+        takeProfit: trade.config.takeProfit,
+        entryTime: new Date(trade.config.entryTime),
         exitTime: trade.ohlcClose?.closeTime
           ? new Date(trade.ohlcClose?.closeTime)
           : undefined,

@@ -1,44 +1,35 @@
 import { OHLC } from '..';
 
-export abstract class Trade {
+export class Trade {
   public ohlcClose?: OHLC;
-  public status: TradeStatus = 'await';
-
+  public status: TradeStatus = 'open';
   constructor(
-    public entryPrice: number,
-    public type: string,
-    public entryTime?: number
-  ) {
-    if (!entryTime) this.status = 'open';
-  }
+    public config: {
+      entryPrice: number;
+      takeProfit: number;
+      stopLoss: number;
+      entryTime: number;
+    }
+  ) {}
 
   update(ohlc: OHLC): void {
-    if (this.shouldOpen(ohlc)) {
-      this.status = 'open';
-    }
-
     if (!this.isStatus('open')) return;
 
-    if (this.shouldSucceed(ohlc)) {
+    if (this.hitTakeProfit(ohlc)) {
       this.status = 'success';
       this.ohlcClose = ohlc;
     }
 
-    if (this.shouldFail(ohlc)) {
+    if (this.hitStopLoss(ohlc)) {
       this.status = 'fail';
       this.ohlcClose = ohlc;
     }
   }
 
-  shouldOpen(ohlc: OHLC): boolean {
-    return (
-      this.isStatus('await') ||
-      !this.entryTime ||
-      !!(this.entryTime && ohlc.closeTime > this.entryTime)
-    );
-  }
-
   cancel(): void {
+    if (!this.isStatus('await')) {
+      throw new Error('Trade can only be canceled if it is awaiting');
+    }
     this.status = 'canceled';
   }
 
@@ -54,9 +45,30 @@ export abstract class Trade {
     return status.includes(this.status);
   }
 
-  public abstract get profitLoss(): number;
-  protected abstract shouldSucceed(ohlc: OHLC): boolean;
-  protected abstract shouldFail(ohlc: OHLC): boolean;
+  public get type(): 'long' | 'short' {
+    return this.config.entryPrice > this.config.takeProfit ? 'short' : 'long';
+  }
+
+  public hitTakeProfit(ohlc: OHLC): boolean {
+    if (this.type === 'long') {
+      return ohlc.high >= this.config.takeProfit;
+    }
+    return ohlc.low <= this.config.takeProfit;
+  }
+  public hitStopLoss(ohlc: OHLC): boolean {
+    if (this.type === 'long') {
+      return ohlc.low <= this.config.stopLoss;
+    }
+    return ohlc.high >= this.config.stopLoss;
+  }
+
+  public get profitLoss(): number {
+    if (this.isStatus('success'))
+      return this.config.takeProfit - this.config.entryPrice;
+    if (this.isStatus('fail'))
+      return this.config.stopLoss - this.config.entryPrice;
+    return 0;
+  }
 }
 
 export type TradeStatus = 'await' | 'open' | 'success' | 'fail' | 'canceled';
