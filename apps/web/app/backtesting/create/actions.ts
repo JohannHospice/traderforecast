@@ -1,6 +1,5 @@
 'use server';
-import prisma from '@/lib/prisma';
-import { Backtest, TradeStatus } from '@prisma/client';
+import { Backtest, TradeStatus, prisma } from '@traderforecast/database';
 import { array, date, mixed, number, object, string } from 'yup';
 
 export default async function createBacktest(backtest: Backtest) {

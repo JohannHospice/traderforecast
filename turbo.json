@@ -2,38 +2,34 @@
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local"],
   "pipeline": {
-    "@traderforecast/lightweight-charts-plugin#build": {
-      "dependsOn": ["^build"],
-      "outputs": ["compiled/**", ".next/**", "!.next/cache/**"]
-    },
-    "@traderforecast/web#dev": {
-      "dependsOn": ["@traderforecast/lightweight-charts-plugin#build"]
-    },
-    "build": {
-      "dependsOn": ["^db:generate", "^build"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
-    },
-    "clean": {
-      "cache": false
-    },
-    "db:generate": {
-      "cache": false
-    },
-    "db:push": {
-      "cache": false
-    },
     "dev": {
       "dependsOn": ["^db:generate"],
       "cache": false,
       "persistent": true
     },
-    "lint": {},
+    "build": {
+      "dependsOn": ["^build", "^db:generate"],
+      "outputs": ["compiled/**", "dist/**", ".next/**", "!.next/cache/**"]
+    },
     "test": {
       "cache": false,
       "persistent": true,
       "dependsOn": ["^test"],
-      "outputs": ["coverage/**"]
+      "outputs": ["coverage/**"],
+      "inputs": ["**/*.tsx", "**/*.ts", "**/*.test.ts"],
+      "outputMode": "full"
     },
+    "db:generate": {
+      "cache": false,
+      "env": ["DATABASE_URL", "DIRECT_URL"]
+    },
+    "db:push": {
+      "cache": false
+    },
+    "clean": {
+      "cache": false
+    },
+    "lint": {},
     "type-check": {}
   }
 }

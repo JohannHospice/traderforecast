@@ -1,12 +1,13 @@
 {
   "name": "@traderforecast/database",
   "version": "0.0.0",
-  "main": "./index.ts",
-  "types": "./index.ts",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "scripts": {
     "db:generate": "prisma generate",
-    "db:push": "prisma db push --skip-generate",
     "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push --skip-generate",
+    "db:reset": "prisma migrate reset",
     "db:studio": "prisma studio"
   },
   "dependencies": {

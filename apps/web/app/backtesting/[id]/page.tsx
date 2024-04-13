@@ -1,7 +1,7 @@
 import { CardPreCode } from '@/components/card-pre-code';
 import { Container } from '@/components/container';
 import { Heading } from '@/components/heading';
-import prisma from '@/lib/prisma';
+import { prisma } from '@traderforecast/database';
 import { ArrowLeft } from 'lucide-react';
 
 export default async function Page({

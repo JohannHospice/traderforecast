@@ -1,5 +1,5 @@
 export class Realtime {
-  intervals: NodeJS.Timeout[] = [];
+  intervals: Timer[] = [];
   time: number;
 
   constructor(time: number) {
@@ -11,8 +11,8 @@ export class Realtime {
     if (this.intervals.length > 0) {
       this.clear();
     }
-
-    this.intervals.push(setInterval(onUpdate, this.time));
+    const interval = setInterval(onUpdate, this.time);
+    this.intervals.push(interval);
   }
 
   clear() {

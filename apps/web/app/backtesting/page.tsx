@@ -1,7 +1,7 @@
 import { Container } from '@/components/container';
 import { Heading } from '@/components/heading';
 import { Button } from '@/components/ui/button';
-import prisma from '@/lib/prisma';
+import { prisma } from '@traderforecast/database';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import { BacktestDataTable } from './components/backtest-data-table';
