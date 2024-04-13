@@ -13,7 +13,7 @@ describe('Backtester', () => {
 
   beforeEach(() => {
     symbol = { key: 'symbolKey', timeperiod: '1s' };
-    strategy = { onTime: vi.fn() };
+    strategy = { name: 'strategyName', onTime: vi.fn() };
     MarketMock = vi.fn(() => ({ getOHLC: vi.fn() }));
     initialBalance = 1000;
     backtester = new Backtester(symbol, strategy, MarketMock, initialBalance);

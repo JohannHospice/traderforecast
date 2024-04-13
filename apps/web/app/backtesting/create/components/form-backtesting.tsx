@@ -12,25 +12,19 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
-import { Symbol as BacktestSymbol, TimePeriod } from '@/lib/modules/backtest';
-import { Backtester } from '@/lib/modules/backtest/backtester';
-import { BacktestApiMarket } from '@/lib/modules/backtest/market/backtest-api-market';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
 import { CircleDollarSign, Loader, Rocket } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import createBacktest from '../actions';
-import {
-  STRATEGY_OPTION_PROPS,
-  createStrategy,
-  optionTimePeriod,
-} from '../libs/constants';
+import { STRATEGY_OPTION_PROPS, optionTimePeriod } from '../libs/constants';
 import {
   BacktestingSettingsSchemaType,
   backtestingSettingsSchema,
 } from '../libs/constants/schema';
 import { StrategyOption } from './strategy-option';
+import { runBacktest } from '../libs/runBacktest';
 
 export function Backtesting({
   symbols,
@@ -57,6 +51,7 @@ export function Backtesting({
           }
         : {
             timePeriod: '1h',
+            startDate: new Date(Date.now() - 24 * 60 * 60 * 1000),
           }),
       ...(defaultValues as BacktestingSettingsSchemaType),
     },
@@ -181,44 +176,4 @@ export function Backtesting({
       </Card>
     </div>
   );
-}
-
-async function runBacktest({
-  pair,
-  timePeriod,
-  startDate,
-  endDate,
-  strategyKey,
-  walletAmount,
-}: BacktestingSettingsSchemaType) {
-  const symbol = {
-    key: pair,
-    timeperiod: timePeriod as TimePeriod,
-  } as BacktestSymbol;
-
-  const timeframe = {
-    from: new Date(startDate).getTime(),
-    to: new Date(endDate).getTime(),
-  };
-
-  const strategy = createStrategy(strategyKey, {
-    symbol,
-    options: {
-      startHour: 9,
-      endHour: 17,
-      takeProfitRatio: 2,
-      stopLossMargin: 0.05,
-    },
-  });
-
-  const backtester = new Backtester(
-    symbol,
-    strategy,
-    BacktestApiMarket,
-    walletAmount
-  );
-
-  await backtester.run(timeframe);
-
-  return backtester;
 }
