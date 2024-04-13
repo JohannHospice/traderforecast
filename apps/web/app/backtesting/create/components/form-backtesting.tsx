@@ -32,7 +32,13 @@ import {
 } from '../libs/constants/schema';
 import { StrategyOption } from './strategy-option';
 
-export function Backtesting({ symbols }: { symbols: Symbol[] }) {
+export function Backtesting({
+  symbols,
+  defaultValues,
+}: {
+  symbols: Symbol[];
+  defaultValues: Partial<BacktestingSettingsSchemaType>;
+}) {
   const router = useRouter();
   const { toast } = useToast();
 
@@ -40,12 +46,19 @@ export function Backtesting({ symbols }: { symbols: Symbol[] }) {
     mode: 'onChange',
     resolver: yupResolver(backtestingSettingsSchema),
     defaultValues: {
-      endDate: new Date(),
-      timePeriod: '5m',
-      walletAmount: 1000,
-      pair: symbols[0].slug,
-      strategyKey: 'ict-silver-bullet' as any,
-      startDate: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      ...(process.env.NODE_ENV === 'development'
+        ? {
+            endDate: new Date(),
+            timePeriod: '5m',
+            walletAmount: 1000,
+            pair: symbols[0].slug,
+            strategyKey: 'ict-silver-bullet' as any,
+            startDate: new Date(Date.now() - 24 * 60 * 60 * 1000),
+          }
+        : {
+            timePeriod: '1h',
+          }),
+      ...(defaultValues as BacktestingSettingsSchemaType),
     },
   });
 
@@ -125,9 +138,9 @@ export function Backtesting({ symbols }: { symbols: Symbol[] }) {
             control={control}
             title='Symbol pair'
             placeholder='Select a symbol...'
-            options={symbols.map(({ slug, ticker }) => ({
+            options={symbols.map(({ slug, name }) => ({
               value: slug,
-              label: ticker,
+              label: name,
             }))}
             required
           />

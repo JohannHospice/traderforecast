@@ -7,11 +7,13 @@ import { GetKlinesAndSymbolUsecase } from '@/lib/api/usecases/get-klines-and-sym
 import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import { getDefaultNumberOfKlines } from '@/lib/helpers/klines';
 import { formatInterval } from '@/lib/helpers/utc';
+import { ArrowLeft, Plus } from 'lucide-react';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { Heading } from '@/components/heading';
+import { Button } from '@/components/ui/button';
 import CardChart from './components/card-chart';
 import { CommandChartSettings } from './components/command-chart-settings';
-import { Heading } from '../../../components/heading';
-import { ArrowLeft } from 'lucide-react';
 
 export default async function Page({
   params: { slug },
@@ -70,7 +72,18 @@ export default async function Page({
             title: 'Cryptocurrency Pair',
           },
         ]}
-      />
+      >
+        <div className='flex justify-end flex-1'>
+          <div>
+            <Link href={'/backtesting/create/?symbol=' + symbol.slug}>
+              <Button color='primary' size='default' className='gap-2'>
+                <Plus />
+                Create a backtest
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </Heading>
       <Container fluid className='flex-1'>
         <div className='grid grid-cols-[270px_1fr] grid-rows-[auto_1fr] gap-4 gap-y-0 sm:gap-y-4 flex-1'>
           <div className='col-span-2 md:col-span-1 md:flex'>

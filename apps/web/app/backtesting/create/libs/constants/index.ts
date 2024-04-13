@@ -1,8 +1,8 @@
 import { Crosshair, Droplets, Rabbit } from 'lucide-react';
 import { StrategyOptionProps } from '../../components/strategy-option';
-import { ICTSilverBulletStrategy } from '../../../../../lib/modules/backtest/strategies/ict-silver-bullet-strategy';
-import { Strategy } from '../../../../../lib/modules/backtest/strategies';
-import { Symbol } from '../../../../../lib/modules/backtest';
+import { ICTSilverBulletStrategy } from '@/lib/modules/backtest/strategies/ict-silver-bullet-strategy';
+import { Strategy } from '@/lib/modules/backtest/strategies';
+import { Symbol } from '@/lib/modules/backtest';
 import { Symbol as BacktestSymbol } from '@/lib/modules/backtest';
 
 export const optionTimePeriod = [

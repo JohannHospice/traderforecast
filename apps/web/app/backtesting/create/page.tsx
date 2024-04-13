@@ -4,7 +4,13 @@ import api from '@/lib/api';
 import { ArrowLeft } from 'lucide-react';
 import { Backtesting } from './components/form-backtesting';
 
-export default async function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: {
+    symbol: string;
+  };
+}) {
   const symbols = await api.market.getSortedSymbols();
 
   return (
@@ -20,7 +26,12 @@ export default async function Page() {
         ]}
       />
       <Container fluid className='flex-1'>
-        <Backtesting symbols={symbols} />
+        <Backtesting
+          symbols={symbols}
+          defaultValues={{
+            pair: searchParams.symbol,
+          }}
+        />
       </Container>
     </>
   );

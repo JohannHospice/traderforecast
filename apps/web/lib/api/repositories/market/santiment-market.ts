@@ -323,13 +323,16 @@ export class SantimentMarketRepository<T> implements MarketRepository {
             },
             pagination: {
               page: 1,
-              pageSize: 10,
+              pageSize: 100,
             },
           },
         }),
       },
     });
 
-    return projects;
+    return projects.filter(
+      (project, index, self) =>
+        index === self.findIndex((p) => p.slug === project.slug)
+    );
   }
 }
