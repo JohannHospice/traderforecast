@@ -11,28 +11,43 @@ export class Trade {
       stopLoss: number;
       entryTime: number;
     }
-  ) {}
+  ) {
+    if (
+      (config.takeProfit < config.entryPrice &&
+        config.stopLoss < config.entryPrice) ||
+      (config.takeProfit > config.entryPrice &&
+        config.stopLoss > config.entryPrice) ||
+      config.takeProfit === config.stopLoss ||
+      config.entryPrice === config.takeProfit
+    ) {
+      throw new Error('Invalid trade configuration');
+    }
+  }
 
   update(ohlc: OHLC): void {
-    if (!this.isStatus(TradeStatus.OPEN)) return;
+    if (this.isStatus(TradeStatus.OPEN)) {
+      if (this.hitTakeProfit(ohlc)) {
+        this.status = TradeStatus.SUCCESS;
+        this.ohlcClose = ohlc;
+        return;
+      }
 
-    if (this.hitTakeProfit(ohlc)) {
-      this.status = TradeStatus.SUCCESS;
-      this.ohlcClose = ohlc;
+      if (this.hitStopLoss(ohlc)) {
+        this.status = TradeStatus.FAILED;
+        this.ohlcClose = ohlc;
+        return;
+      }
+
+      return;
     }
 
-    if (this.hitStopLoss(ohlc)) {
-      this.status = TradeStatus.FAILED;
+    if (this.isStatus(TradeStatus.CANCELLED) && !this.ohlcClose) {
       this.ohlcClose = ohlc;
+      return;
     }
   }
 
   cancel(): void {
-    // if (!this.isStatus('AWAIT')) {
-    //   throw new Error('Trade can only be canceled if it is awaiting');
-    // }
-
-    // todo register cancel pricxe
     this.status = TradeStatus.CANCELLED;
   }
 
@@ -64,6 +79,7 @@ export class Trade {
     }
     return ohlc.low <= this.config.takeProfit;
   }
+
   public hitStopLoss(ohlc: OHLC): boolean {
     if (this.type === TradeType.LONG) {
       return ohlc.low <= this.config.stopLoss;

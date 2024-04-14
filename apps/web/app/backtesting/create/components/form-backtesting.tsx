@@ -51,7 +51,7 @@ export function Backtesting({
           }
         : {
             timePeriod: '1h',
-            startDate: new Date(Date.now() - 24 * 60 * 60 * 1000),
+            endDate: new Date(),
           }),
       ...(defaultValues as BacktestingSettingsSchemaType),
     },

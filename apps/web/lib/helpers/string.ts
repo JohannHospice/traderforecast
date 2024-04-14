@@ -2,15 +2,19 @@ import { SEARCH_PARAM_ARRAY_SEPARATOR } from '../constants/navigation';
 
 export function formatNumber(
   value: string | number | undefined,
-  notation?: 'standard' | 'scientific' | 'engineering' | 'compact'
+  notation?: 'standard' | 'scientific' | 'engineering' | 'compact',
+  maximumFractionDigits?: number
 ) {
+  const number = maximumFractionDigits
+    ? Number(value).toFixed(maximumFractionDigits)
+    : value;
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     notation,
     maximumSignificantDigits: 5,
     currencyDisplay: 'narrowSymbol',
-  }).format(Number(value));
+  }).format(Number(number));
 }
 
 export function formatPercent(value: string | number | undefined) {

@@ -33,7 +33,6 @@ export default async function Page() {
       },
     },
   });
-  console.log(backtests);
 
   return (
     <>
