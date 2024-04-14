@@ -18,6 +18,8 @@ export function TradesTableCard({
     entryTime: Date | null;
     exitTime: Date | null;
     status: $Enums.TradeStatus;
+    type: $Enums.TradeType;
+    profitLoss: number | null;
   }[];
   className?: string;
 }) {

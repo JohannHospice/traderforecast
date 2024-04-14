@@ -52,6 +52,8 @@ export default async function Page({
           exitTime: true,
           status: true,
           entryTime: true,
+          profitLoss: true,
+          type: true,
         },
       },
     },
