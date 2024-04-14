@@ -1,5 +1,10 @@
 'use server';
-import { Backtest, TradeStatus, prisma } from '@traderforecast/database';
+import {
+  Backtest,
+  TradeStatus,
+  TradeType,
+  prisma,
+} from '@traderforecast/database';
 import { array, date, mixed, number, object, string } from 'yup';
 
 export default async function createBacktest(backtest: Backtest) {
@@ -53,6 +58,8 @@ const tradeSchema = object().shape({
   exitTime: date().optional(),
   status: mixed<TradeStatus>().oneOf(Object.values(TradeStatus)).required(),
   symbolId: string().required(),
+  type: mixed<TradeType>().oneOf(Object.values(TradeType)).required(),
+  profitLoss: number().optional(),
 });
 
 const backtestSchema = object().shape({
