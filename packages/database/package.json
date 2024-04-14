@@ -12,11 +12,10 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
-    "@prisma/client": "latest"
+    "@prisma/client": "^5.12.1"
   },
   "devDependencies": {
-    "prisma": "latest",
-    "@types/bun": "latest"
+    "prisma": "^5.12.1"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

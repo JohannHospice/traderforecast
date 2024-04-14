@@ -8,7 +8,7 @@
       "persistent": true
     },
     "build": {
-      "dependsOn": ["^build", "^db:generate"],
+      "dependsOn": ["^build", "^db:generate", "^db:push"],
       "outputs": ["compiled/**", "dist/**", ".next/**", "!.next/cache/**"]
     },
     "test": {
