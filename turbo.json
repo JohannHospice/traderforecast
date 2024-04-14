@@ -12,6 +12,7 @@
       "persistent": true
     },
     "build": {
+      "outputMode": "new-only",
       "dependsOn": ["^build", "^db:generate", "^db:push"],
       "outputs": ["compiled/**", "dist/**", ".next/**", "!.next/cache/**"]
     },
@@ -20,8 +21,7 @@
       "persistent": true,
       "dependsOn": ["^test"],
       "outputs": ["coverage/**"],
-      "inputs": ["**/*.tsx", "**/*.ts", "**/*.test.ts"],
-      "outputMode": "full"
+      "inputs": ["**/*.tsx", "**/*.ts", "**/*.test.ts"]
     },
     "db:generate": {
       "cache": false,

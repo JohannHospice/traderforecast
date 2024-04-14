@@ -1,41 +1,57 @@
 'use server';
 import {
-  Backtest,
+  Prisma,
   TradeStatus,
   TradeType,
   prisma,
 } from '@traderforecast/database';
-import { array, date, mixed, number, object, string } from 'yup';
+import { Infer } from 'next/dist/compiled/superstruct';
+import {
+  InferType,
+  Schema,
+  array,
+  date,
+  mixed,
+  number,
+  object,
+  string,
+} from 'yup';
 
-export default async function createBacktest(backtest: Backtest) {
-  console.log('Creating backtest');
-
-  const data = await backtestSchema.validate(backtest);
-
+export default async function createBacktest(data: Input) {
   console.log('Validated backtest data:', data);
+
+  const trades = await tradeSchema.validate(data.trades);
+  const strategy = await strategySchema.validate(data.strategy);
+  const symbol = await symbolSchema.validate(data.symbol);
+  const backtest = await backtestSchema.validate(data);
+
+  console.log('Creating backtest');
 
   return await prisma.backtest.create({
     data: {
-      ...data,
+      ...backtest,
       symbol: {
         connectOrCreate: {
           where: {
-            id: data.symbol.id,
+            id: symbol.id,
           },
-          create: data.symbol,
+          create: symbol,
         },
       },
       strategy: {
         connectOrCreate: {
           where: {
-            id: data.strategy.id,
+            id: strategy.id,
           },
-          create: data.strategy,
+          create: strategy,
         },
       },
       trades: {
         createMany: {
-          data: data.trades,
+          data: {
+            ...trades,
+            symbolId: symbol.id,
+          },
         },
       },
     },
@@ -44,11 +60,11 @@ export default async function createBacktest(backtest: Backtest) {
 
 const strategySchema = object().shape({
   id: string().required(),
-});
+}) satisfies Schema<Prisma.StrategyCreateWithoutBacktestsInput>;
 
 const symbolSchema = object().shape({
   id: string().required(),
-});
+}) satisfies Schema<Prisma.SymbolCreateWithoutBacktestsInput>;
 
 const tradeSchema = object().shape({
   entry: number().required(),
@@ -60,7 +76,7 @@ const tradeSchema = object().shape({
   symbolId: string().required(),
   type: mixed<TradeType>().oneOf(Object.values(TradeType)).required(),
   profitLoss: number().optional(),
-});
+}) satisfies Schema<Prisma.TradeCreateWithoutSymbolInput>;
 
 const backtestSchema = object().shape({
   to: date().required(),
@@ -72,6 +88,12 @@ const backtestSchema = object().shape({
     .of(tradeSchema)
     .transform((value) => value || [])
     .required(),
-  strategy: strategySchema,
-  symbol: symbolSchema,
-});
+}) satisfies Schema<
+  Omit<Prisma.BacktestCreateInput, 'strategy' | 'symbol' | 'trades'>
+>;
+
+type Input = InferType<typeof backtestSchema> & {
+  symbol: InferType<typeof symbolSchema>;
+  strategy: InferType<typeof strategySchema>;
+  trades: InferType<typeof tradeSchema>[];
+};
