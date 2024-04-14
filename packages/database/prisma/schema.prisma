@@ -42,6 +42,7 @@ model Trade {
   entry      Float
   stopLoss   Float?
   takeProfit Float
+  profitLoss Float?
   entryTime  DateTime?
   exitTime   DateTime?
   status     TradeStatus

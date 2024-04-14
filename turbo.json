@@ -1,9 +1,10 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local"],
+  "experimentalUI": true,
   "pipeline": {
     "dev": {
-      "dependsOn": ["^db:generate"],
+      "dependsOn": ["^db:generate", "^db:migrate"],
       "cache": false,
       "persistent": true
     },
@@ -25,6 +26,7 @@
     },
     "db:migrate": {
       "cache": false,
+      "interactive": true,
       "env": ["DATABASE_URL", "DIRECT_URL"]
     },
     "db:push": {

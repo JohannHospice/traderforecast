@@ -68,6 +68,7 @@ export class Backtester {
         entry: trade.config.entryPrice,
         stopLoss: trade.config.stopLoss,
         takeProfit: trade.config.takeProfit,
+        profitLoss: trade.profitLoss,
         entryTime: new Date(trade.config.entryTime),
         exitTime: trade.ohlcClose?.closeTime
           ? new Date(trade.ohlcClose?.closeTime)
