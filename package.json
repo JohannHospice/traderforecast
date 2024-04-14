@@ -6,12 +6,13 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "test": "turbo test",
-    "lint": "turbo lint",
-    "db:migrate": "turbo run db:migrate",
-    "db:push": "turbo run db:push",
+    "build": "turbo run build --",
+    "dev": "turbo run dev --",
+    "test": "turbo run test --",
+    "lint": "turbo run lint --",
+    "db:generate": "turbo run db:generate --",
+    "db:migrate": "turbo run db:migrate --",
+    "db:push": "turbo run db:push --",
     "type-check": "turbo type-check",
     "clean": "turbo clean",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""

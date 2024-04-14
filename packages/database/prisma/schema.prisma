@@ -39,6 +39,7 @@ model Strategy {
 
 model Trade {
   id         String      @id @default(cuid())
+  type       TradeType
   entry      Float
   stopLoss   Float?
   takeProfit Float
@@ -60,6 +61,11 @@ enum TradeStatus {
   SUCCESS
   FAILED
   CANCELLED
+}
+
+enum TradeType {
+  LONG
+  SHORT
 }
 
 model Symbol {

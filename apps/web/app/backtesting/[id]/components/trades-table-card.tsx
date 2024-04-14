@@ -32,6 +32,10 @@ export function TradesTableCard({
             accessorKey: 'status',
           },
           {
+            header: 'Type',
+            accessorKey: 'type',
+          },
+          {
             header: 'Entry',
             accessorKey: 'entry',
             accessorFn: (row) => formatNumber(row.entry),

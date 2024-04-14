@@ -1,4 +1,4 @@
-import { TradeStatus } from '@prisma/client';
+import { TradeStatus, TradeType } from '@prisma/client';
 import { OHLC } from '..';
 
 export class Trade {
@@ -52,18 +52,20 @@ export class Trade {
     return status.includes(this.status);
   }
 
-  public get type(): 'long' | 'short' {
-    return this.config.entryPrice > this.config.takeProfit ? 'short' : 'long';
+  public get type(): TradeType {
+    return this.config.entryPrice > this.config.takeProfit
+      ? TradeType.SHORT
+      : TradeType.LONG;
   }
 
   public hitTakeProfit(ohlc: OHLC): boolean {
-    if (this.type === 'long') {
+    if (this.type === TradeType.LONG) {
       return ohlc.high >= this.config.takeProfit;
     }
     return ohlc.low <= this.config.takeProfit;
   }
   public hitStopLoss(ohlc: OHLC): boolean {
-    if (this.type === 'long') {
+    if (this.type === TradeType.LONG) {
       return ohlc.low <= this.config.stopLoss;
     }
     return ohlc.high >= this.config.stopLoss;
