@@ -10,4 +10,5 @@ export interface Strategy<T extends StrategySettings = StrategySettings> {
 }
 export interface StrategySettings {
   symbol: Symbol;
+  tradingFees: number;
 }

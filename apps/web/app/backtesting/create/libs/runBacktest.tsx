@@ -12,29 +12,24 @@ export async function runBacktest({
   strategyKey,
   walletAmount,
 }: BacktestingSettingsSchemaType) {
-  const symbol = {
-    key: pair,
-    timeperiod: timePeriod as TimePeriod,
-  } as Symbol;
-
-  const timeframe = {
-    from: new Date(startDate).getTime(),
-    to: new Date(endDate).getTime(),
-  };
-
-  const options = {
-    symbol,
+  const strategy = createStrategy(strategyKey, {
+    symbol: {
+      key: pair,
+      timeperiod: timePeriod as TimePeriod,
+    },
     startHour: 9,
     endHour: 17,
     takeProfitRatio: 2,
     stopLossMargin: 0.01,
-  };
-
-  const strategy = createStrategy(strategyKey, options);
+    tradingFees: 0,
+  });
 
   const backtester = new Backtester(strategy, BacktestApiMarket, walletAmount);
 
-  await backtester.run(timeframe);
+  await backtester.run({
+    from: new Date(startDate).getTime(),
+    to: new Date(endDate).getTime(),
+  });
 
   return backtester;
 }

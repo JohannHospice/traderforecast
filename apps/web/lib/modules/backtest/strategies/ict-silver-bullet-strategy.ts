@@ -47,6 +47,7 @@ export class ICTSilverBulletStrategy
       takeProfitRatio: 'number',
       stopLossMargin: 'number',
       symbol: 'Symbol',
+      tradingFees: 'number',
     };
   }
 

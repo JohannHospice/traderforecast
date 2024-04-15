@@ -137,18 +137,8 @@ export default async function Page({
             <CardContent>
               <PriceTitle
                 vertical
-                title='Strategy name'
+                title='Strategy'
                 value={backtests.strategy.name}
-              />
-              <PriceTitle
-                vertical
-                title='Time period'
-                value={backtests.timeperiod}
-              />
-              <PriceTitle
-                vertical
-                title='Time period'
-                value={JSON.stringify(backtests.settings)}
               />
               <PriceTitle title='Symbol' value={backtests.symbol.id} vertical />
               <PriceTitle
@@ -160,6 +150,15 @@ export default async function Page({
                 vertical
                 title='To'
                 value={format(backtests.to, 'yyyy-MM-dd HH:mm')}
+              />
+              <PriceTitle
+                vertical
+                title='Parameters'
+                value={
+                  <pre className='text-sm bg-muted text-muted-foreground p-2 rounded-md'>
+                    {JSON.stringify(backtests.settings, null, 2)}
+                  </pre>
+                }
               />
             </CardContent>
           </Card>
