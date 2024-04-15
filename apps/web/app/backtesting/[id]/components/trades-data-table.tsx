@@ -84,6 +84,15 @@ export function TradesDataTable({
           ),
         },
         {
+          id: 'profitLossPercentage',
+          header: 'Profit/Loss %',
+          accessorFn: (row) =>
+            row.profitLoss ? row.profitLoss / (row.amount * row.entry) : null,
+          cell: ({ getValue }) => (
+            <ProfitLossTypography value={getValue()} percentage />
+          ),
+        },
+        {
           header: 'Entry Time',
           accessorKey: 'entryTime',
           accessorFn: (row) =>

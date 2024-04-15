@@ -120,16 +120,6 @@ export default async function Page({
               />
               <PriceTitle
                 vertical
-                title='From'
-                value={format(backtests.from, 'yyyy-MM-dd HH:mm')}
-              />
-              <PriceTitle
-                vertical
-                title='To'
-                value={format(backtests.to, 'yyyy-MM-dd HH:mm')}
-              />
-              <PriceTitle
-                vertical
                 title='Created at'
                 value={format(backtests.createdAt, 'yyyy-MM-dd HH:mm')}
               />
@@ -154,6 +144,16 @@ export default async function Page({
                 value={backtests.timeperiod}
               />
               <PriceTitle title='Symbol' value={backtests.symbol.id} vertical />
+              <PriceTitle
+                vertical
+                title='From'
+                value={format(backtests.from, 'yyyy-MM-dd HH:mm')}
+              />
+              <PriceTitle
+                vertical
+                title='To'
+                value={format(backtests.to, 'yyyy-MM-dd HH:mm')}
+              />
             </CardContent>
           </Card>
           <Card
