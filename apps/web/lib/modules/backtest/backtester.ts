@@ -20,7 +20,7 @@ export class Backtester {
   async run(timeframe: Timeframe): Promise<void> {
     this.timeframe = timeframe;
     const increment = getTimeperiodIncrementInMs(
-      this.strategy.settings.symbol.timeperiod
+      this.strategy.symbol.timeperiod
     );
 
     const errorTimes = [];
@@ -55,7 +55,7 @@ export class Backtester {
 
   async updateWallet(time: number): Promise<void> {
     const ohlc = await this.exchange
-      .getMarket(this.strategy.settings.symbol)
+      .getMarket(this.strategy.symbol)
       .getOHLC(time);
 
     await this.exchange.updateTrades(ohlc);
@@ -66,7 +66,7 @@ export class Backtester {
   }
 
   get symbol(): Symbol {
-    return this.strategy.settings.symbol;
+    return this.strategy.symbol;
   }
 
   map(): CreateBacktestAction {

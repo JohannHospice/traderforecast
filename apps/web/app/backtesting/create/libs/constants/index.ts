@@ -20,17 +20,21 @@ export const optionTimePeriod = [
 
 export function createStrategy(
   strategyKey: string,
+  symbol: Symbol,
   config: ICTSilverBulletStrategySettings
 ) {
   const Strategy = STRATEGY_OPTION_PROPS[strategyKey].strategy;
-  return new Strategy(config);
+  return new Strategy(symbol, config);
 }
 
 export const STRATEGY_OPTION_PROPS: Record<
   string,
   {
     optionProps: StrategyOptionProps;
-    strategy: new (config: ICTSilverBulletStrategySettings) => Strategy;
+    strategy: new (
+      symbol: Symbol,
+      config: ICTSilverBulletStrategySettings
+    ) => Strategy;
   }
 > = {
   'fvg-in-fvg': {

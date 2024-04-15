@@ -2,17 +2,23 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import * as React from 'react';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
+import { DescriptionLabel } from '../description-label';
+import { cn } from '../../lib/tailwind/utils';
 
 export function ControlledSlider<T extends FieldValues>({
   title,
   options,
   name,
   control,
+  description,
+  className,
 }: {
   title: string;
   options: string[];
   name: Path<T>;
   control: Control<T>;
+  description?: string;
+  className?: string;
 }) {
   return (
     <Controller
@@ -22,7 +28,7 @@ export function ControlledSlider<T extends FieldValues>({
         field: { onChange, name, value, disabled },
         fieldState: { error },
       }) => (
-        <div className='grid gap-6'>
+        <div className={cn('grid gap-6', className)}>
           <Label className='flex justify-between' htmlFor={title}>
             {title}
             <span className='text-gray-500'>{value}</span>
@@ -35,10 +41,10 @@ export function ControlledSlider<T extends FieldValues>({
             max={options.length - 1}
             step={1}
           />
-          {error && (
-            <p className='text-red-500 text-sm mt-1' data-description>
-              {error.message}
-            </p>
+          {(description || error) && (
+            <DescriptionLabel isError={!!error}>
+              {error?.message || description}
+            </DescriptionLabel>
           )}
         </div>
       )}

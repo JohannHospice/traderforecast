@@ -55,7 +55,7 @@ export default function RootLayout({
             <Navigation />
             <div className='flex flex-col flex-1 py-4'>{children}</div>
             {/* https://www.hyperflow.co/ */}
-            <Pattern className='absolute -top-24 left-0 right-0 w-full -z-10 scale-[3] origin-top opacity-10 sm:opacity-100 blur-sm sm:blur-0' />
+            <Pattern className='absolute -top-24 left-0 right-0 w-full -z-10 scale-[3] origin-top opacity-10 sm:opacity-100 blur-lg sm:blur-0' />
           </div>
         </ThemeProvider>
         <Analytics />

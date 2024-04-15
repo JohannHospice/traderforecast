@@ -9,6 +9,7 @@ import {
 import * as React from 'react';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 import { Combobox } from '../combobox';
+import { cn } from '../../lib/tailwind/utils';
 
 export function ControlledSelect<T extends FieldValues>({
   title,
@@ -18,6 +19,7 @@ export function ControlledSelect<T extends FieldValues>({
   name,
   control,
   required,
+  description,
 }: {
   title: string;
   placeholder: string;
@@ -26,6 +28,7 @@ export function ControlledSelect<T extends FieldValues>({
   name: Path<T>;
   control: Control<T>;
   required?: boolean;
+  description?: string;
 }) {
   return (
     <Controller
@@ -35,7 +38,7 @@ export function ControlledSelect<T extends FieldValues>({
         field: { onChange, name, value, disabled },
         fieldState: { error },
       }) => (
-        <div className='grid gap-3'>
+        <div className='flex flex-col gap-3 flex-1'>
           <Label htmlFor={title}>
             {title}
             {required && ' *'}
@@ -62,9 +65,15 @@ export function ControlledSelect<T extends FieldValues>({
               ))}
             </SelectContent>
           </Select>
-          {error && (
-            <p className='text-red-500 text-sm mt-1' data-description>
-              {error.message}
+          {(description || error) && (
+            <p
+              className={cn(
+                error ? 'text-red-500' : 'text-gray-500',
+                'text-sm '
+              )}
+              data-description
+            >
+              {description || error?.message}
             </p>
           )}
         </div>

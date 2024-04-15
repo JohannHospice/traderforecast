@@ -11,6 +11,7 @@ export class Trade {
       stopLoss: number;
       entryTime: number;
       amount: number;
+      tradingFees?: number;
     }
   ) {
     if (
@@ -122,7 +123,11 @@ export class Trade {
   }
 
   public get profitLoss(): number {
-    return this.profitLossRaw * this.config.amount;
+    return (
+      this.profitLossRaw *
+      this.config.amount *
+      (1 - (this.config.tradingFees || 0))
+    );
   }
 
   public get profitLossRatio(): number {

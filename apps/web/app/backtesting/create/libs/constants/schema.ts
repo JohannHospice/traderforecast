@@ -1,5 +1,7 @@
+import { isBefore, parse } from 'date-fns';
 import { InferType, date, number, object, string } from 'yup';
 import { STRATEGY_KEYS, optionTimePeriod } from '.';
+import { ICTSilverBulletStrategy } from '@/lib/modules/backtest/strategies/ict-silver-bullet-strategy';
 
 export const backtestingSettingsSchema = object()
   .shape({
@@ -40,3 +42,33 @@ export const backtestingSettingsSchema = object()
 export type BacktestingSettingsSchemaType = InferType<
   typeof backtestingSettingsSchema
 >;
+
+export const silverBulletSettingSchema = object()
+  .shape({
+    startHour: string()
+      .test('not empty', 'Start time cant be empty', function (value) {
+        return !!value;
+      })
+      .required(),
+    endHour: string()
+      .test('is_time', 'End time must be a valid time', function (value) {
+        return (
+          !!value &&
+          parse(value, 'HH:mm', new Date()).toString() !== 'Invalid Date'
+        );
+      })
+      .required(),
+    takeProfitRatio: number().min(0).required(),
+    stopLossMargin: number().min(0).required(),
+    tradingFees: number().min(0).required(),
+    timezone: string(),
+  })
+  .required();
+
+export type SilverBulletSettingSchemaType = InferType<
+  typeof silverBulletSettingSchema
+>;
+
+export const settingSchemas = {
+  [ICTSilverBulletStrategy._id]: silverBulletSettingSchema,
+};

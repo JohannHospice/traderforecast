@@ -3,6 +3,7 @@ import { getTimeperiodIncrementInMs } from '../helpers/timeperiod';
 import { ExchangeProxy } from '../exchange-proxy';
 import { Strategy, StrategySettings } from '.';
 import { Trade } from '../trade';
+import { Symbol } from '..';
 
 /**
  * ICT Silver Bullet Strategy
@@ -18,10 +19,10 @@ export class ICTSilverBulletStrategy
   id = ICTSilverBulletStrategy._id;
   name = 'ICT Silver Bullet Strategy';
 
-  constructor(public settings: ICTSilverBulletStrategySettings) {
-    if (this.settings.startHour >= this.settings.endHour) {
-      throw new Error('startHour must be less than endHour');
-    }
+  constructor(
+    public symbol: Symbol,
+    public settings: ICTSilverBulletStrategySettings
+  ) {
     if (this.settings.takeProfitRatio <= 0) {
       throw new Error('takeProfitRatio must be greater than 0');
     }
@@ -30,7 +31,7 @@ export class ICTSilverBulletStrategy
     }
     if (
       !['1s', '15s', '30s', '1m', '5m', '15m', '30m', '1h'].includes(
-        this.settings.symbol.timeperiod
+        this.symbol.timeperiod
       )
     ) {
       throw new Error('timeperiod not supported');
@@ -46,7 +47,6 @@ export class ICTSilverBulletStrategy
       endHour: 'number',
       takeProfitRatio: 'number',
       stopLossMargin: 'number',
-      symbol: 'Symbol',
       tradingFees: 'number',
     };
   }
@@ -78,18 +78,20 @@ export class ICTSilverBulletStrategy
   isTradingHour(time: number): boolean {
     const date = new Date(time);
     const hour = date.getHours();
-    return hour >= this.settings.startHour && hour < this.settings.endHour;
+    if (this.settings.startHour < this.settings.endHour) {
+      return hour >= this.settings.startHour && hour < this.settings.endHour;
+    }
+    return hour >= this.settings.startHour || hour < this.settings.endHour;
   }
 
   async createSerie(
     time: number,
     exchange: ExchangeProxy
   ): Promise<SerieCandlestickPattern> {
-    const from =
-      time - getTimeperiodIncrementInMs(this.settings.symbol.timeperiod) * 4;
+    const from = time - getTimeperiodIncrementInMs(this.symbol.timeperiod) * 4;
     const to = time;
 
-    const ohlcs = await exchange.getMarket(this.settings.symbol).getOHLCs({
+    const ohlcs = await exchange.getMarket(this.symbol).getOHLCs({
       from,
       to,
     });
@@ -112,6 +114,7 @@ export class ICTSilverBulletStrategy
     return new Trade({
       entryPrice,
       entryTime: serie.get(entry).closeTime,
+      tradingFees: this.settings.tradingFees,
       amount: balance / entryPrice,
       ...(long
         ? {

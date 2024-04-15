@@ -29,9 +29,9 @@ export const Pattern = ({ className }: { className?: string }) => (
         y2='0.5'
         gradientUnits='objectBoundingBox'
       >
-        <stop offset='0' stop-color='rgb(248 113 113)' />
-        <stop offset='0.5' stop-color='rgb(252 165 165)' />
-        <stop offset='1' stop-color='rgb(96 165 250)' />
+        <stop offset='0' stopColor='rgb(248 113 113)' />
+        <stop offset='0.5' stopColor='rgb(252 165 165)' />
+        <stop offset='1' stopColor='rgb(96 165 250)' />
       </linearGradient>
     </defs>
     <g

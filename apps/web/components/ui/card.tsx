@@ -12,7 +12,7 @@ const Card = React.forwardRef<
     ref={ref}
     className={cn(
       'sm:rounded-xl border sm:bg-card text-card-foreground shadow relative overflow-hidden',
-      'bg-card/60 backdrop-blur supports-[backdrop-filter]:bg-card/60',
+      ' sm:backdrop-blur-3xl backdrop-blur-none',
       noBorder ? 'border-0 sm:border-[1px] bg-transparent rounded-none' : '',
       className
     )}
@@ -27,7 +27,7 @@ const CardHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('flex flex-col space-y-1.5 p-4 sm:p-6', className)}
+    className={cn('flex flex-col space-y-1.5 p-4 sm:p-8', className)}
     {...props}
   />
 ));
@@ -64,7 +64,7 @@ const CardContent = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      'flex flex-col gap-8 p-4 sm:p-6 ',
+      'flex flex-col gap-8 p-4 sm:p-8 ',
       noHeader ? '' : 'sm:pt-0 pt-0',
       className
     )}

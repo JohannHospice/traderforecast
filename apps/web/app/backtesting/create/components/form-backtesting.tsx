@@ -4,27 +4,25 @@ import { ControlledInput } from '@/components/fields/controlled-input';
 import { ControlledSelect } from '@/components/fields/controlled-select';
 import { ControlledSlider } from '@/components/fields/controlled-slider';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { SelectSeparator } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
 import { CircleDollarSign, Loader, Rocket } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useMemo, useState } from 'react';
+import { UseFormHandleSubmit, useForm } from 'react-hook-form';
 import createBacktest from '../actions';
 import { STRATEGY_OPTION_PROPS, optionTimePeriod } from '../libs/constants';
 import {
   BacktestingSettingsSchemaType,
+  SilverBulletSettingSchemaType,
   backtestingSettingsSchema,
 } from '../libs/constants/schema';
-import { StrategyOption } from './strategy-option';
 import { runBacktest } from '../libs/runBacktest';
+import { ICTSilverBulletSettingsForm } from './ict-silver-bullet-strategy-form';
+import { StrategyOption } from './strategy-option';
 
 export function Backtesting({
   symbols,
@@ -36,7 +34,7 @@ export function Backtesting({
   const router = useRouter();
   const { toast } = useToast();
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, watch } = useForm({
     mode: 'onChange',
     resolver: yupResolver(backtestingSettingsSchema),
     defaultValues: {
@@ -56,11 +54,18 @@ export function Backtesting({
       ...(defaultValues as BacktestingSettingsSchemaType),
     },
   });
+  const strategyKey = watch('strategyKey');
 
   const { mutate, isPending } = useMutation({
     mutationKey: ['backtest', 'create'],
-    mutationFn: async (params: BacktestingSettingsSchemaType) => {
-      const backtester = await runBacktest(params);
+    mutationFn: async ({
+      backtest,
+      settings,
+    }: {
+      backtest: BacktestingSettingsSchemaType;
+      settings: SilverBulletSettingSchemaType;
+    }) => {
+      const backtester = await runBacktest(backtest, settings);
 
       return createBacktest(backtester.map());
     },
@@ -80,15 +85,37 @@ export function Backtesting({
     },
   });
 
-  const onSubmit = handleSubmit((data) => mutate(data));
+  const [settingHandleSubmit, setSettingHandleSubmit] = useState<
+    UseFormHandleSubmit<any, undefined>
+  >(() => async () => {});
+
+  const onSubmit = useMemo(
+    () =>
+      handleSubmit(async (backtest, e) =>
+        settingHandleSubmit((settings) =>
+          mutate({
+            backtest,
+            settings: {
+              ...settings,
+              startHour: settings.startHour.split(':')[0],
+              endHour: settings.endHour.split(':')[0],
+            },
+          })
+        )(e)
+      ),
+    [handleSubmit, settingHandleSubmit, mutate]
+  );
 
   return (
-    <div className='sm:mt-0 mt-8 md:flex-1 flex-none gap-4 flex flex-col divide-y-[1px] sm:divide-y-0'>
+    <div className='sm:mt-0 mt-8 md:flex-1 flex-none gap-8 flex flex-col divide-y-[1px] sm:divide-y-0'>
       <Card noBorder>
-        <CardHeader>
-          <CardTitle>Trading Behavior</CardTitle>
-        </CardHeader>
-        <CardContent>
+        <CardContent noHeader className='gap-12 flex flex-col'>
+          <div>
+            <h4 className='text-xl mb-2'>Create a backtest</h4>
+            <p className='text-gray-500'>
+              Create a backtest with the settings you want to test.
+            </p>
+          </div>
           <ControlledSelect
             name='strategyKey'
             control={control}
@@ -109,13 +136,55 @@ export function Backtesting({
               ),
             }))}
             required
+            description='The strategy to use for the backtest.'
+          />
+          <ControlledSelect
+            name='pair'
+            control={control}
+            title='Symbol'
+            placeholder='Select a symbol...'
+            options={symbols.map(({ slug, name }) => ({
+              value: slug,
+              label: name,
+            }))}
+            required
+            description='The symbol to use for the backtest.'
           />
           <ControlledSlider
             name='timePeriod'
             control={control}
             title='Initial time period'
             options={optionTimePeriod}
+            description='Targeted time period to take a trade.'
+            className='max-w-96'
           />
+          <div className='gap-4 flex flex-col'>
+            <div className='flex gap-3 flex-1'>
+              <ControlledInput
+                name='startDate'
+                control={control}
+                label='Start date'
+                type='datetime-local'
+                required
+                placeholder='2021-01-01'
+                description='Dates to backtest the strategy.'
+              />
+              <ControlledInput
+                name='endDate'
+                control={control}
+                label='End date'
+                type='datetime-local'
+                required
+              />
+            </div>
+          </div>
+          <SelectSeparator />
+          <div>
+            <h4 className='text-xl mb-2'>Wallet</h4>
+            <p className='text-gray-500'>
+              Set the amount of the wallet you want to use for the backtest.
+            </p>
+          </div>
           <ControlledInput
             name='walletAmount'
             control={control}
@@ -125,57 +194,33 @@ export function Backtesting({
             endAdornment={<CircleDollarSign className='size-5' />}
             required
           />
-        </CardContent>
-      </Card>
-      <Card noBorder>
-        <CardHeader>
-          <CardTitle>Market Target</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ControlledSelect
-            name='pair'
-            control={control}
-            title='Symbol pair'
-            placeholder='Select a symbol...'
-            options={symbols.map(({ slug, name }) => ({
-              value: slug,
-              label: name,
-            }))}
-            required
-          />
-          <ControlledInput
-            name='startDate'
-            control={control}
-            label='Start date'
-            type='datetime-local'
-            required
-            placeholder='2021-01-01'
-          />
-          <ControlledInput
-            name='endDate'
-            control={control}
-            label='End date'
-            type='datetime-local'
-            disabled
-            required
-          />
-        </CardContent>
-        <CardFooter>
-          <div className='flex justify-end items-center'>
-            <Button
-              size='lg'
-              onClick={onSubmit}
-              disabled={isPending}
-              className='gap-2'
-            >
-              Run
-              {isPending ? (
-                <Loader className='size-5 animate-spin' />
-              ) : (
-                <Rocket className='size-5' />
-              )}
-            </Button>
+          <SelectSeparator />
+          <div>
+            <h4 className='text-xl mb-2'>Advanced settings</h4>
+            <p className='text-gray-500'>
+              You can customize the strategy settings below.
+            </p>
           </div>
+          {strategyKey === 'ict-silver-bullet' && (
+            <ICTSilverBulletSettingsForm
+              setSettingHandleSubmit={setSettingHandleSubmit}
+            />
+          )}
+        </CardContent>
+        <CardFooter className='justify-end'>
+          <Button
+            size='lg'
+            onClick={onSubmit}
+            disabled={isPending}
+            className='gap-2'
+          >
+            Run
+            {isPending ? (
+              <Loader className='size-5 animate-spin' />
+            ) : (
+              <Rocket className='size-5' />
+            )}
+          </Button>
         </CardFooter>
       </Card>
     </div>

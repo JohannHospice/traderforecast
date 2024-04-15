@@ -3,6 +3,7 @@ import { Label } from '@/components/ui/label';
 import { format } from 'date-fns';
 import * as React from 'react';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
+import { DescriptionLabel } from '../description-label';
 
 export function ControlledInput<T extends FieldValues>({
   label,
@@ -13,6 +14,7 @@ export function ControlledInput<T extends FieldValues>({
   disabled,
   endAdornment,
   required,
+  description,
 }: {
   label: string;
   type: React.HTMLInputTypeAttribute;
@@ -22,6 +24,7 @@ export function ControlledInput<T extends FieldValues>({
   disabled?: boolean;
   endAdornment?: React.ReactNode;
   required?: boolean;
+  description?: string;
 }) {
   const formatterByType: Partial<
     Record<React.HTMLInputTypeAttribute, (value: string) => string>
@@ -29,6 +32,8 @@ export function ControlledInput<T extends FieldValues>({
     'datetime-local': (value?: string) =>
       value ? format(new Date(value), "yyyy-MM-dd'T'HH:mm") : '',
     text: (value?: string) => value || '',
+    number: (value?: string) => String(value),
+    time: (value?: string) => value || '',
   };
   const valueFormatter = formatterByType[
     type in formatterByType ? type : 'text'
@@ -38,8 +43,12 @@ export function ControlledInput<T extends FieldValues>({
     <Controller
       name={name}
       control={control}
-      render={({ field: { onChange, name, value }, fieldState: { error } }) => (
-        <div className='grid gap-3'>
+      render={({
+        field: { onChange, name, value },
+        fieldState: { error },
+        formState,
+      }) => (
+        <div className='flex flex-col flex-1 gap-3'>
           <Label htmlFor={label}>
             {label}
             {required && ' *'}
@@ -53,11 +62,14 @@ export function ControlledInput<T extends FieldValues>({
             value={valueFormatter(value)}
             onChange={onChange}
             endAdornment={endAdornment}
+            // defaultValue={
+            //   formState.defaultValues && formState.defaultValues[name]
+            // }
           />
-          {error && (
-            <p className='text-red-500 text-sm mt-1' data-description>
-              {error.message}
-            </p>
+          {(description || error) && (
+            <DescriptionLabel isError={!!error}>
+              {error?.message || description}
+            </DescriptionLabel>
           )}
         </div>
       )}

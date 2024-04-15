@@ -4,25 +4,25 @@ import { BacktestApiMarket } from '@/lib/modules/backtest/market/backtest-api-ma
 import { createStrategy } from './constants';
 import { BacktestingSettingsSchemaType } from './constants/schema';
 
-export async function runBacktest({
-  pair,
-  timePeriod,
-  startDate,
-  endDate,
-  strategyKey,
-  walletAmount,
-}: BacktestingSettingsSchemaType) {
-  const strategy = createStrategy(strategyKey, {
-    symbol: {
+export async function runBacktest(
+  {
+    pair,
+    timePeriod,
+    startDate,
+    endDate,
+    strategyKey,
+    walletAmount,
+  }: BacktestingSettingsSchemaType,
+  settings: any
+) {
+  const strategy = createStrategy(
+    strategyKey,
+    {
       key: pair,
       timeperiod: timePeriod as TimePeriod,
     },
-    startHour: 9,
-    endHour: 17,
-    takeProfitRatio: 2,
-    stopLossMargin: 0.01,
-    tradingFees: 0,
-  });
+    settings
+  );
 
   const backtester = new Backtester(strategy, BacktestApiMarket, walletAmount);
 
