@@ -1,6 +1,7 @@
 import { Container } from '@/components/container';
 import { Heading } from '@/components/heading';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { prisma } from '@traderforecast/database';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
@@ -24,6 +25,7 @@ export default async function Page() {
       strategy: {
         select: {
           id: true,
+          name: true,
         },
       },
       symbol: {
@@ -51,8 +53,11 @@ export default async function Page() {
           </div>
         </div>
       </Heading>
-      <Container fluid className='flex-1 gap-8'>
-        <BacktestDataTable backtests={backtests} />
+      <Container fluid className='flex-1'>
+        {/* className='bg-card flex-1 flex flex-col sm:mx-0 mx-4 sm:mt-0 mt-4' */}
+        <Card className='flex-1 flex'>
+          <BacktestDataTable backtests={backtests} />
+        </Card>
       </Container>
     </>
   );

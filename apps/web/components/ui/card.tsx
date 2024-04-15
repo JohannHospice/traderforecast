@@ -12,6 +12,7 @@ const Card = React.forwardRef<
     ref={ref}
     className={cn(
       'sm:rounded-xl border sm:bg-card text-card-foreground shadow relative overflow-hidden',
+      'bg-card/60 backdrop-blur supports-[backdrop-filter]:bg-card/60',
       noBorder ? 'border-0 sm:border-[1px] bg-transparent rounded-none' : '',
       className
     )}

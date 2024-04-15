@@ -1,7 +1,11 @@
 import { Container } from '@/components/container';
 import { Heading } from '@/components/heading';
 import { prisma } from '@traderforecast/database';
-import { format } from 'date-fns';
+import {
+  format,
+  formatDistanceStrict,
+  formatDistanceToNowStrict,
+} from 'date-fns';
 import { ArrowLeft } from 'lucide-react';
 import { PriceTitle } from '../../../components/price-title';
 import {
@@ -123,7 +127,9 @@ export default async function Page({
               <PriceTitle
                 vertical
                 title='Created at'
-                value={format(backtests.createdAt, 'yyyy-MM-dd HH:mm')}
+                value={formatDistanceToNowStrict(backtests.createdAt, {
+                  addSuffix: true,
+                })}
               />
             </CardContent>
           </Card>
@@ -141,6 +147,11 @@ export default async function Page({
                 value={backtests.strategy.name}
               />
               <PriceTitle title='Symbol' value={backtests.symbol.id} vertical />
+              <PriceTitle
+                vertical
+                title='Duration'
+                value={formatDistanceStrict(backtests.to, backtests.from)}
+              />
               <PriceTitle
                 vertical
                 title='From'

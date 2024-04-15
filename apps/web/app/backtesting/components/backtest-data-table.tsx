@@ -10,13 +10,13 @@ export function BacktestDataTable({ backtests }: { backtests: any[] }) {
   const router = useRouter();
   return (
     <DataTable
-      className='bg-card flex-1 flex flex-col sm:mx-0 mx-4 sm:mt-0 mt-4'
+      className='flex-1 border-0'
       onRowClick={({ original }) => router.push('backtesting/' + original.id)}
       columns={[
         {
           header: 'Strategy',
           accessorKey: 'strategy',
-          accessorFn: (row) => row.strategy.id,
+          accessorFn: (row) => row.strategy.name,
         },
         {
           header: 'Symbol',

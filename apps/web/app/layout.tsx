@@ -1,11 +1,11 @@
 import { Navigation } from '@/app/components/navigation';
-import { BackgroundBlob } from '@/components/background-blob';
+import { Pattern } from '@/components/icons';
 import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from '@/components/ui/toaster';
 import '@/styles/globals.css';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
-import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: 'Traderforecast',
@@ -44,16 +44,19 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning className='scroll-smooth'>
       <head />
-      <body className='flex flex-col min-h-[100vh]'>
+      <body>
         <ThemeProvider
           attribute='class'
           defaultTheme='system'
           enableSystem
           disableTransitionOnChange
         >
-          <Navigation />
-          <div className='flex flex-col flex-1 py-4'>{children}</div>
-          <BackgroundBlob />
+          <div className='relative overflow-hidden min-h-[100vh]'>
+            <Navigation />
+            <div className='flex flex-col flex-1 py-4'>{children}</div>
+            {/* https://www.hyperflow.co/ */}
+            <Pattern className='absolute -top-24 left-0 right-0 w-full -z-10 scale-[3] origin-top opacity-10 sm:opacity-100 blur-sm sm:blur-0' />
+          </div>
         </ThemeProvider>
         <Analytics />
         <SpeedInsights />
