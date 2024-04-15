@@ -23,7 +23,6 @@ export class Backtester {
     const increment = getTimeperiodIncrementInMs(this._symbol.timeperiod);
 
     const errorTimes = [];
-    const cleanTimes = [];
 
     const executionTimes = [];
     let id = 0;
@@ -34,7 +33,6 @@ export class Backtester {
         const t2 = performance.now();
         await this.updateWallet(time);
         const t3 = performance.now();
-        cleanTimes.push(time);
         executionTimes.push({
           id: id,
           time,
@@ -51,7 +49,7 @@ export class Backtester {
       }
     }
 
-    console.log({ errorTimes, cleanTimes, executionTimes });
+    console.log({ errorTimes, executionTimes });
   }
 
   async updateWallet(time: number): Promise<void> {
@@ -91,6 +89,7 @@ export class Backtester {
         status: trade.status,
         symbolId: this.symbol.key,
         type: trade.type,
+        amount: trade.config.amount,
       })),
       symbol: {
         id: this.symbol.key,

@@ -71,6 +71,7 @@ const tradeSchema = object().shape({
   symbolId: string().required(),
   status: mixed<TradeStatus>().oneOf(Object.values(TradeStatus)).required(),
   type: mixed<TradeType>().oneOf(Object.values(TradeType)).required(),
+  amount: number().required(),
 }) satisfies Schema<Prisma.TradeCreateWithoutSymbolInput>;
 
 const backtestSchema = object().shape({

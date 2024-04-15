@@ -21,7 +21,7 @@ export function ControlledSelect<T extends FieldValues>({
 }: {
   title: string;
   placeholder: string;
-  options: { value: string; label: React.ReactNode }[];
+  options: { value: string; label: React.ReactNode; disabled?: boolean }[];
   defaultValue?: string;
   name: Path<T>;
   control: Control<T>;
@@ -52,7 +52,11 @@ export function ControlledSelect<T extends FieldValues>({
             </SelectTrigger>
             <SelectContent>
               {options.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  disabled={option.disabled}
+                >
                   {option.label}
                 </SelectItem>
               ))}

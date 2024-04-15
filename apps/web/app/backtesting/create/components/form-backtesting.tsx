@@ -96,6 +96,10 @@ export function Backtesting({
             placeholder='Select a strategy...'
             options={Object.keys(STRATEGY_OPTION_PROPS).map((value) => ({
               value,
+              disabled:
+                STRATEGY_OPTION_PROPS[
+                  value as keyof typeof STRATEGY_OPTION_PROPS
+                ].disabled,
               label: (
                 <StrategyOption
                   {...STRATEGY_OPTION_PROPS[

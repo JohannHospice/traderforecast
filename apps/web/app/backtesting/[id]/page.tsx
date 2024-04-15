@@ -7,12 +7,12 @@ import { PriceTitle } from '../../../components/price-title';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '../../../components/ui/card';
 import { formatNumber } from '../../../lib/helpers/string';
-import { TradesTableCard } from './components/trades-table-card';
+import { ProfitLossTypography } from './components/profit-loss-typography';
+import { TradesDataTable } from './components/trades-data-table';
 
 export default async function Page({
   params: { id },
@@ -54,6 +54,7 @@ export default async function Page({
           entryTime: true,
           profitLoss: true,
           type: true,
+          amount: true,
         },
       },
     },
@@ -76,63 +77,93 @@ export default async function Page({
       />
       <Container fluid className='flex-1 gap-8'>
         <div className='grid grid-cols-[270px_1fr] grid-rows-[auto_1fr] gap-4 gap-y-0 sm:gap-y-4 flex-1'>
-          <Card className='col-span-2 md:col-span-1 md:flex-col'>
+          <Card noBorder className='col-span-2 md:col-span-1 md:flex-col'>
             <CardHeader>
               <CardTitle>Backtest</CardTitle>
             </CardHeader>
             <CardContent>
               <PriceTitle
+                vertical
                 title='Initial wallet amount'
                 value={formatNumber(backtests.initialWalletAmount, 'standard')}
-                vertical
               />
               <PriceTitle
+                vertical
                 title='Final wallet amount'
                 value={formatNumber(backtests.finalWalletAmount, 'standard')}
-                vertical
               />
               <PriceTitle
+                vertical
+                title='Profit/Loss'
+                value={
+                  <ProfitLossTypography
+                    value={
+                      backtests.finalWalletAmount -
+                      backtests.initialWalletAmount
+                    }
+                  />
+                }
+              />
+              <PriceTitle
+                vertical
+                title='Profit/Loss %'
+                value={
+                  <ProfitLossTypography
+                    value={
+                      (backtests.finalWalletAmount -
+                        backtests.initialWalletAmount) /
+                      backtests.initialWalletAmount
+                    }
+                    percentage
+                  />
+                }
+              />
+              <PriceTitle
+                vertical
                 title='From'
                 value={format(backtests.from, 'yyyy-MM-dd HH:mm')}
-                vertical
               />
               <PriceTitle
+                vertical
                 title='To'
                 value={format(backtests.to, 'yyyy-MM-dd HH:mm')}
-                vertical
               />
               <PriceTitle
+                vertical
                 title='Created at'
                 value={format(backtests.createdAt, 'yyyy-MM-dd HH:mm')}
-                vertical
               />
             </CardContent>
           </Card>
-          <Card className='row-start-2 row-end-3 flex-col md:flex'>
+          <Card
+            noBorder
+            className='row-start-2 row-end-1 sm:row-end-2 flex-col md:flex'
+          >
             <CardHeader>
               <CardTitle>Strategy settings</CardTitle>
             </CardHeader>
             <CardContent>
               <PriceTitle
+                vertical
                 title='Strategy ID'
                 value={backtests.strategy.id}
-                vertical
               />
               <PriceTitle
+                vertical
                 title='Time period'
                 value={backtests.timeperiod}
-                vertical
               />
               <PriceTitle title='Symbol' value={backtests.symbol.id} vertical />
             </CardContent>
           </Card>
-          <TradesTableCard
-            trades={backtests.trades}
-            className='md:row-start-1 row-start-2 md:col-start-2 col-start-1 row-end-3 col-end-3 flex sm:border-t-0 border-t-[1px]'
-          />
+          <Card
+            noBorder
+            className='md:row-start-1 row-start-2 md:col-start-2 col-start-1 row-end-3 col-end-3 '
+          >
+            <TradesDataTable trades={backtests.trades} />
+          </Card>
         </div>
       </Container>
     </>
   );
 }
-// row-span-2 col-start-2 row-start-1

@@ -26,7 +26,7 @@ export async function runBacktest({
     startHour: 9,
     endHour: 17,
     takeProfitRatio: 2,
-    stopLossMargin: 0.05,
+    stopLossMargin: 0.01,
   };
 
   const strategy = createStrategy(strategyKey, {

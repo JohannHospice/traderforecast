@@ -10,17 +10,32 @@ export class Trade {
       takeProfit: number;
       stopLoss: number;
       entryTime: number;
+      amount: number;
     }
   ) {
     if (
-      (config.takeProfit < config.entryPrice &&
-        config.stopLoss < config.entryPrice) ||
-      (config.takeProfit > config.entryPrice &&
-        config.stopLoss > config.entryPrice) ||
+      config.takeProfit < config.entryPrice &&
+      config.stopLoss < config.entryPrice
+    ) {
+      throw new Error(
+        'Entry price must not be greater than take profit and stop loss'
+      );
+    }
+    if (
+      config.takeProfit > config.entryPrice &&
+      config.stopLoss > config.entryPrice
+    ) {
+      throw new Error(
+        'Entry price must not be less than take profit and stop loss'
+      );
+    }
+    if (
       config.takeProfit === config.stopLoss ||
       config.entryPrice === config.takeProfit
     ) {
-      throw new Error('Invalid trade configuration');
+      throw new Error(
+        'Take profit, stop loss and entry price must be different'
+      );
     }
   }
 
@@ -52,15 +67,14 @@ export class Trade {
   }
 
   isActive(): boolean {
-    return this.isStatus(TradeStatus.OPEN, 'AWAIT');
+    return (
+      this.isStatus(TradeStatus.OPEN, TradeStatus.AWAIT) ||
+      (this.isStatus(TradeStatus.CANCELLED) && !this.ohlcClose)
+    );
   }
 
   isClosed(): boolean {
-    return this.isStatus(
-      TradeStatus.SUCCESS,
-      TradeStatus.FAILED,
-      TradeStatus.CANCELLED
-    );
+    return !this.isActive();
   }
 
   isStatus(...status: TradeStatus[]): boolean {
@@ -87,11 +101,31 @@ export class Trade {
     return ohlc.high >= this.config.stopLoss;
   }
 
-  public get profitLoss(): number {
-    if (this.isStatus(TradeStatus.SUCCESS))
-      return this.config.takeProfit - this.config.entryPrice;
-    if (this.isStatus(TradeStatus.FAILED))
-      return this.config.stopLoss - this.config.entryPrice;
+  public get profitLossRaw(): number {
+    if (this.isStatus(TradeStatus.SUCCESS)) {
+      return this.type === TradeType.LONG
+        ? this.config.takeProfit - this.config.entryPrice
+        : this.config.entryPrice - this.config.takeProfit;
+    }
+
+    if (this.isStatus(TradeStatus.FAILED)) {
+      return this.type === TradeType.LONG
+        ? this.config.stopLoss - this.config.entryPrice
+        : this.config.entryPrice - this.config.stopLoss;
+    }
+
+    if (this.isStatus(TradeStatus.CANCELLED) && !!this.ohlcClose) {
+      return this.config.entryPrice - this.ohlcClose.open;
+    }
+
     return 0;
+  }
+
+  public get profitLoss(): number {
+    return this.profitLossRaw * this.config.amount;
+  }
+
+  public get profitLossRatio(): number {
+    return this.profitLossRaw / this.config.entryPrice;
   }
 }

@@ -55,12 +55,14 @@ export const STRATEGY_OPTION_PROPS: Record<StrategyKeys, StrategyOptionProps> =
       title: 'Fair Value Gap',
       titleBold: 'In Fair Value Gap',
       description: 'Our first and most popular strategy.',
+      disabled: true,
     },
     'order-blocks': {
       icon: Droplets,
       title: 'Order ',
       titleBold: 'Blocks',
       description: 'Trade on bullish order blocks.',
+      disabled: true,
     },
     'ict-silver-bullet': {
       icon: Crosshair,

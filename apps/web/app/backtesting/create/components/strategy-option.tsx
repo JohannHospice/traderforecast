@@ -27,4 +27,5 @@ export interface StrategyOptionProps {
   titleBold: string;
   description: string;
   icon: React.ExoticComponent<any>;
+  disabled?: boolean;
 }

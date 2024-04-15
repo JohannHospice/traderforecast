@@ -55,7 +55,7 @@ export class ICTSilverBulletStrategy implements Strategy {
     }
 
     const serie = await this.createSerie(time, exchange);
-    const trade = this.trade(serie);
+    const trade = this.trade(serie, exchange.balance);
 
     if (!trade) {
       return;
@@ -85,7 +85,7 @@ export class ICTSilverBulletStrategy implements Strategy {
     return new SerieCandlestickPattern(ohlcs);
   }
 
-  trade(serie: SerieCandlestickPattern): Trade | undefined {
+  trade(serie: SerieCandlestickPattern, balance: number): Trade | undefined {
     const fvg = serie.length - 2;
 
     if (!serie.isFairValueGap(fvg)) {
@@ -94,26 +94,27 @@ export class ICTSilverBulletStrategy implements Strategy {
 
     const entry = serie.length - 1;
 
-    if (serie.isBullish(fvg)) {
-      return new Trade({
-        entryPrice: serie.get(entry).low,
-        takeProfit:
-          serie.get(entry).low +
-          Math.abs(serie.get(fvg).open - serie.get(fvg).low) *
-            this.config.takeProfitRatio,
-        stopLoss: serie.get(fvg).low * (1 - this.config.stopLossMargin),
-        entryTime: serie.get(entry).openTime,
-      });
-    }
+    const long = serie.isBullish(fvg);
+
+    const entryPrice = serie.get(entry).close;
 
     return new Trade({
-      entryPrice: serie.get(entry).high,
-      takeProfit:
-        serie.get(entry).high -
-        Math.abs(serie.get(fvg).high - serie.get(fvg).open) *
-          this.config.takeProfitRatio,
-      stopLoss: serie.get(fvg).high * (1 + this.config.stopLossMargin),
-      entryTime: serie.get(entry).openTime,
+      entryPrice,
+      entryTime: serie.get(entry).closeTime,
+      amount: balance / entryPrice,
+      ...(long
+        ? {
+            takeProfit:
+              entryPrice +
+              (entryPrice - serie.get(fvg).low) * this.config.takeProfitRatio,
+            stopLoss: serie.get(fvg).low * (1 - this.config.stopLossMargin),
+          }
+        : {
+            takeProfit:
+              entryPrice -
+              (serie.get(fvg).high - entryPrice) * this.config.takeProfitRatio,
+            stopLoss: serie.get(fvg).high * (1 + this.config.stopLossMargin),
+          }),
     });
   }
 }

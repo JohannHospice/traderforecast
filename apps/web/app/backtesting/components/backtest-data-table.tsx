@@ -3,9 +3,8 @@
 import { DataTable } from '@/components/data-table';
 import { formatNumber } from '@/lib/helpers/string';
 import { format } from 'date-fns';
-import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { cn } from '../../../lib/tailwind/utils';
+import { ProfitLossTypography } from '../[id]/components/profit-loss-typography';
 
 export function BacktestDataTable({ backtests }: { backtests: any[] }) {
   const router = useRouter();
@@ -43,24 +42,9 @@ export function BacktestDataTable({ backtests }: { backtests: any[] }) {
           header: 'Profit/Loss',
           accessorKey: 'profitLoss',
           accessorFn: (row) => row.finalWalletAmount - row.initialWalletAmount,
-          cell: ({ renderValue }) => {
-            const value = renderValue();
-            return (
-              <span
-                className={cn(
-                  'flex gap-1',
-                  value > 0 ? 'text-green-500' : 'text-red-500'
-                )}
-              >
-                {value > 0 ? (
-                  <ChevronUp className='h-4 w-4' />
-                ) : (
-                  <ChevronDown className='h-4 w-4' />
-                )}
-                {formatNumber(Math.abs(value), 'standard', 2)}
-              </span>
-            );
-          },
+          cell: ({ renderValue }) => (
+            <ProfitLossTypography value={renderValue()} />
+          ),
         },
         {
           header: 'Trades',

@@ -17,12 +17,15 @@ export function formatNumber(
   }).format(Number(number));
 }
 
-export function formatPercent(value: string | number | undefined) {
+export function formatPercent(
+  value: string | number | undefined,
+  signDisplay: 'auto' | 'always' | 'never' = 'always'
+) {
   return new Intl.NumberFormat('en-US', {
     style: 'percent',
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
-    signDisplay: 'always',
+    signDisplay,
   }).format(Number(value));
 }
 
