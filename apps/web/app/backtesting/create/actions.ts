@@ -55,6 +55,8 @@ export default async function createBacktest(data: CreateBacktestAction) {
 
 const strategySchema = object().shape({
   id: string().required(),
+  name: string().required(),
+  settings: mixed().required(),
 }) satisfies Schema<Prisma.StrategyCreateWithoutBacktestsInput>;
 
 const symbolSchema = object().shape({
@@ -80,6 +82,7 @@ const backtestSchema = object().shape({
   finalWalletAmount: number().required(),
   initialWalletAmount: number().required(),
   timeperiod: string().required(),
+  settings: mixed().required(),
 }) satisfies Schema<
   Omit<Prisma.BacktestCreateInput, 'strategy' | 'symbol' | 'trades'>
 >;

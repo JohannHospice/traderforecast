@@ -21,6 +21,7 @@ model Backtest {
   timeperiod          String
   initialWalletAmount Float
   finalWalletAmount   Float
+  settings            Json
   trades              Trade[]
   strategyId          String
   strategy            Strategy @relation(fields: [strategyId], references: [id])
@@ -32,6 +33,8 @@ model Backtest {
 
 model Strategy {
   id        String     @id @default(cuid())
+  name      String
+  settings  Json
   backtests Backtest[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt

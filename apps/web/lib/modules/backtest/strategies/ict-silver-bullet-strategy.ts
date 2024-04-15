@@ -1,8 +1,7 @@
 import { SerieCandlestickPattern } from '../../chart/patterns/serie-candlestick-pattern';
 import { getTimeperiodIncrementInMs } from '../helpers/timeperiod';
 import { ExchangeProxy } from '../exchange-proxy';
-import { Symbol } from '..';
-import { Strategy } from '.';
+import { Strategy, StrategySettings } from '.';
 import { Trade } from '../trade';
 
 /**
@@ -10,35 +9,45 @@ import { Trade } from '../trade';
  * trade on certain hours and enter directly on the first fair value gap
  * take profit is 2 times the fair value gap and stop loss is the fair value gap
  */
-export class ICTSilverBulletStrategy implements Strategy {
+export class ICTSilverBulletStrategy
+  implements Strategy<ICTSilverBulletStrategySettings>
+{
   private alreadyTraded = false;
+  public static _id = 'ict-silver-bullet';
 
-  constructor(
-    public name: string,
-    private symbol: Symbol,
-    private config: {
-      startHour: number;
-      endHour: number;
-      takeProfitRatio: number;
-      stopLossMargin: number;
-    }
-  ) {
-    if (this.config.startHour >= this.config.endHour) {
+  id = ICTSilverBulletStrategy._id;
+  name = 'ICT Silver Bullet Strategy';
+
+  constructor(public settings: ICTSilverBulletStrategySettings) {
+    if (this.settings.startHour >= this.settings.endHour) {
       throw new Error('startHour must be less than endHour');
     }
-    if (this.config.takeProfitRatio <= 0) {
+    if (this.settings.takeProfitRatio <= 0) {
       throw new Error('takeProfitRatio must be greater than 0');
     }
-    if (this.config.stopLossMargin <= 0) {
+    if (this.settings.stopLossMargin <= 0) {
       throw new Error('stopLossMargin must be greater than 0');
     }
     if (
       !['1s', '15s', '30s', '1m', '5m', '15m', '30m', '1h'].includes(
-        this.symbol.timeperiod
+        this.settings.symbol.timeperiod
       )
     ) {
       throw new Error('timeperiod not supported');
     }
+  }
+
+  getSettingsDefinition(): Record<
+    keyof ICTSilverBulletStrategySettings,
+    string
+  > {
+    return {
+      startHour: 'number',
+      endHour: 'number',
+      takeProfitRatio: 'number',
+      stopLossMargin: 'number',
+      symbol: 'Symbol',
+    };
   }
 
   async onTime(time: number, exchange: ExchangeProxy): Promise<void> {
@@ -68,17 +77,18 @@ export class ICTSilverBulletStrategy implements Strategy {
   isTradingHour(time: number): boolean {
     const date = new Date(time);
     const hour = date.getHours();
-    return hour >= this.config.startHour && hour < this.config.endHour;
+    return hour >= this.settings.startHour && hour < this.settings.endHour;
   }
 
   async createSerie(
     time: number,
     exchange: ExchangeProxy
   ): Promise<SerieCandlestickPattern> {
-    const from = time - getTimeperiodIncrementInMs(this.symbol.timeperiod) * 4;
+    const from =
+      time - getTimeperiodIncrementInMs(this.settings.symbol.timeperiod) * 4;
     const to = time;
 
-    const ohlcs = await exchange.getMarket(this.symbol).getOHLCs({
+    const ohlcs = await exchange.getMarket(this.settings.symbol).getOHLCs({
       from,
       to,
     });
@@ -106,15 +116,23 @@ export class ICTSilverBulletStrategy implements Strategy {
         ? {
             takeProfit:
               entryPrice +
-              (entryPrice - serie.get(fvg).low) * this.config.takeProfitRatio,
-            stopLoss: serie.get(fvg).low * (1 - this.config.stopLossMargin),
+              (entryPrice - serie.get(fvg).low) * this.settings.takeProfitRatio,
+            stopLoss: serie.get(fvg).low * (1 - this.settings.stopLossMargin),
           }
         : {
             takeProfit:
               entryPrice -
-              (serie.get(fvg).high - entryPrice) * this.config.takeProfitRatio,
-            stopLoss: serie.get(fvg).high * (1 + this.config.stopLossMargin),
+              (serie.get(fvg).high - entryPrice) *
+                this.settings.takeProfitRatio,
+            stopLoss: serie.get(fvg).high * (1 + this.settings.stopLossMargin),
           }),
     });
   }
+}
+
+export interface ICTSilverBulletStrategySettings extends StrategySettings {
+  startHour: number;
+  endHour: number;
+  takeProfitRatio: number;
+  stopLossMargin: number;
 }

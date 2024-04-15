@@ -31,6 +31,7 @@ export default async function Page({
       initialWalletAmount: true,
       finalWalletAmount: true,
       timeperiod: true,
+      settings: true,
       symbol: {
         select: {
           id: true,
@@ -40,6 +41,7 @@ export default async function Page({
       strategy: {
         select: {
           id: true,
+          name: true,
           createdAt: true,
         },
       },
@@ -135,13 +137,18 @@ export default async function Page({
             <CardContent>
               <PriceTitle
                 vertical
-                title='Strategy ID'
-                value={backtests.strategy.id}
+                title='Strategy name'
+                value={backtests.strategy.name}
               />
               <PriceTitle
                 vertical
                 title='Time period'
                 value={backtests.timeperiod}
+              />
+              <PriceTitle
+                vertical
+                title='Time period'
+                value={JSON.stringify(backtests.settings)}
               />
               <PriceTitle title='Symbol' value={backtests.symbol.id} vertical />
               <PriceTitle

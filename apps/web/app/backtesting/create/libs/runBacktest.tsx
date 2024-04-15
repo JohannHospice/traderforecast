@@ -23,23 +23,16 @@ export async function runBacktest({
   };
 
   const options = {
+    symbol,
     startHour: 9,
     endHour: 17,
     takeProfitRatio: 2,
     stopLossMargin: 0.01,
   };
 
-  const strategy = createStrategy(strategyKey, {
-    symbol,
-    options,
-  });
+  const strategy = createStrategy(strategyKey, options);
 
-  const backtester = new Backtester(
-    symbol,
-    strategy,
-    BacktestApiMarket,
-    walletAmount
-  );
+  const backtester = new Backtester(strategy, BacktestApiMarket, walletAmount);
 
   await backtester.run(timeframe);
 

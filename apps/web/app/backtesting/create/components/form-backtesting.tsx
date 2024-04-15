@@ -99,12 +99,12 @@ export function Backtesting({
               disabled:
                 STRATEGY_OPTION_PROPS[
                   value as keyof typeof STRATEGY_OPTION_PROPS
-                ].disabled,
+                ].optionProps.disabled,
               label: (
                 <StrategyOption
                   {...STRATEGY_OPTION_PROPS[
                     value as keyof typeof STRATEGY_OPTION_PROPS
-                  ]}
+                  ].optionProps}
                 />
               ),
             }))}

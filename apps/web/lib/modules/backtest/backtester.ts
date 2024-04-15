@@ -1,7 +1,7 @@
 import { Exchange } from './exchange';
 import { getTimeperiodIncrementInMs } from './helpers/timeperiod';
 import { Market } from './market';
-import { Strategy } from './strategies';
+import { Strategy, StrategySettings } from './strategies';
 import { Symbol, Timeframe } from '.';
 import { Wallet } from './wallet';
 import { CreateBacktestAction } from '../../../app/backtesting/create/actions';
@@ -10,7 +10,6 @@ export class Backtester {
   private exchange: Exchange;
   public timeframe?: Timeframe;
   constructor(
-    private _symbol: Symbol,
     public strategy: Strategy,
     Market: new (symbol: Symbol) => Market,
     initialBalance: number
@@ -20,7 +19,9 @@ export class Backtester {
 
   async run(timeframe: Timeframe): Promise<void> {
     this.timeframe = timeframe;
-    const increment = getTimeperiodIncrementInMs(this._symbol.timeperiod);
+    const increment = getTimeperiodIncrementInMs(
+      this.strategy.settings.symbol.timeperiod
+    );
 
     const errorTimes = [];
 
@@ -53,7 +54,9 @@ export class Backtester {
   }
 
   async updateWallet(time: number): Promise<void> {
-    const ohlc = await this.exchange.getMarket(this._symbol).getOHLC(time);
+    const ohlc = await this.exchange
+      .getMarket(this.strategy.settings.symbol)
+      .getOHLC(time);
 
     await this.exchange.updateTrades(ohlc);
   }
@@ -63,7 +66,7 @@ export class Backtester {
   }
 
   get symbol(): Symbol {
-    return this._symbol;
+    return this.strategy.settings.symbol;
   }
 
   map(): CreateBacktestAction {
@@ -76,6 +79,7 @@ export class Backtester {
         timeperiod: this.symbol.timeperiod,
         from: new Date(this.timeframe?.from || 0),
         to: new Date(this.timeframe?.to || 0),
+        settings: this.strategy.settings,
       },
       trades: this.getWallet().trades.map((trade) => ({
         entry: trade.config.entryPrice,
@@ -95,7 +99,9 @@ export class Backtester {
         id: this.symbol.key,
       },
       strategy: {
-        id: this.strategy.name,
+        id: this.strategy.id,
+        name: this.strategy.name,
+        settings: this.strategy.getSettingsDefinition(),
       },
     };
   }

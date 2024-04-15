@@ -1,8 +1,5 @@
-import { format } from 'date-fns';
 import { InferType, date, number, object, string } from 'yup';
-import { optionTimePeriod } from '.';
-import { getMinDateByTimePeriod } from '../helper/date';
-import { STRATEGY_KEYS } from '.';
+import { STRATEGY_KEYS, optionTimePeriod } from '.';
 
 export const backtestingSettingsSchema = object()
   .shape({

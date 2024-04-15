@@ -1,9 +1,11 @@
+import { Symbol } from '@/lib/modules/backtest';
+import { Strategy } from '@/lib/modules/backtest/strategies';
+import {
+  ICTSilverBulletStrategy,
+  ICTSilverBulletStrategySettings,
+} from '@/lib/modules/backtest/strategies/ict-silver-bullet-strategy';
 import { Crosshair, Droplets, Rabbit } from 'lucide-react';
 import { StrategyOptionProps } from '../../components/strategy-option';
-import { ICTSilverBulletStrategy } from '@/lib/modules/backtest/strategies/ict-silver-bullet-strategy';
-import { Strategy } from '@/lib/modules/backtest/strategies';
-import { Symbol } from '@/lib/modules/backtest';
-import { Symbol as BacktestSymbol } from '@/lib/modules/backtest';
 
 export const optionTimePeriod = [
   '1m',
@@ -16,59 +18,51 @@ export const optionTimePeriod = [
   '1w',
 ];
 
-export type StrategyKeys = 'fvg-in-fvg' | 'order-blocks' | 'ict-silver-bullet';
-
-export const STRATEGIES: Record<
-  StrategyKeys,
-  new (name: string, symbol: Symbol, config: any) => Strategy
-> = {
-  'fvg-in-fvg': ICTSilverBulletStrategy,
-  'order-blocks': ICTSilverBulletStrategy,
-  'ict-silver-bullet': ICTSilverBulletStrategy,
-};
-
-export function getStrategy(strategyKey: StrategyKeys) {
-  return STRATEGIES[strategyKey] as new (
-    name: string,
-    symbol: BacktestSymbol,
-    config: any
-  ) => ICTSilverBulletStrategy;
-}
-
 export function createStrategy(
-  strategyKey: StrategyKeys,
-  config: { symbol: Symbol; options: any }
+  strategyKey: string,
+  config: ICTSilverBulletStrategySettings
 ) {
-  return new STRATEGIES[strategyKey](
-    strategyKey,
-    config.symbol,
-    config.options
-  );
+  const Strategy = STRATEGY_OPTION_PROPS[strategyKey].strategy;
+  return new Strategy(config);
 }
 
-export const STRATEGY_KEYS = Object.keys(STRATEGIES) as StrategyKeys[];
-
-export const STRATEGY_OPTION_PROPS: Record<StrategyKeys, StrategyOptionProps> =
+export const STRATEGY_OPTION_PROPS: Record<
+  string,
   {
-    'fvg-in-fvg': {
+    optionProps: StrategyOptionProps;
+    strategy: new (config: ICTSilverBulletStrategySettings) => Strategy;
+  }
+> = {
+  'fvg-in-fvg': {
+    strategy: ICTSilverBulletStrategy,
+    optionProps: {
       icon: Rabbit,
       title: 'Fair Value Gap',
       titleBold: 'In Fair Value Gap',
       description: 'Our first and most popular strategy.',
       disabled: true,
     },
-    'order-blocks': {
+  },
+  'order-blocks': {
+    strategy: ICTSilverBulletStrategy,
+    optionProps: {
       icon: Droplets,
       title: 'Order ',
       titleBold: 'Blocks',
       description: 'Trade on bullish order blocks.',
       disabled: true,
     },
-    'ict-silver-bullet': {
+  },
+  [ICTSilverBulletStrategy._id]: {
+    strategy: ICTSilverBulletStrategy,
+    optionProps: {
       icon: Crosshair,
       title: 'ICT',
       titleBold: 'Silver Bullet',
       description:
         'Trade on certain hours and enter directly on the first fair value gap.',
     },
-  };
+  },
+};
+
+export const STRATEGY_KEYS = Object.keys(STRATEGY_OPTION_PROPS);
