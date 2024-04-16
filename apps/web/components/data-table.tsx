@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/table';
 import { useState } from 'react';
 import { Button } from './ui/button';
-import { cn } from '../lib/tailwind/utils';
+import { cn } from '../lib/helpers/tailwind-utils';
 
 export function DataTable<TData, TValue>({
   columns,

@@ -3,7 +3,7 @@ import { Slider } from '@/components/ui/slider';
 import * as React from 'react';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 import { DescriptionLabel } from '../description-label';
-import { cn } from '../../lib/tailwind/utils';
+import { cn } from '../../lib/helpers/tailwind-utils';
 
 export function ControlledSlider<T extends FieldValues>({
   title,

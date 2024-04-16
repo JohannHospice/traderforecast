@@ -15,7 +15,7 @@ import { TradeIndicator } from '@/lib/modules/chart/indicators/trade-indicator';
 import { Trade } from '@traderforecast/database';
 import { useCallback, useEffect, useState } from 'react';
 import { Chart } from '../../../market/[slug]/_components/chart';
-import { actionGetKlines } from '../../../../lib/actions/get-klines';
+import { actionGetKlines } from '../../../../lib/api/actions/get-klines';
 
 export function BacktestChartDialog({
   trades,

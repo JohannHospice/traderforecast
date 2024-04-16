@@ -15,7 +15,7 @@ import {
   CommandInput,
   CommandItem,
 } from '@/components/ui/command';
-import { cn } from '@/lib/tailwind/utils';
+import { cn } from '@/lib/helpers/tailwind-utils';
 
 export function Combobox<T extends string>({
   options: options = [],

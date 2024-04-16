@@ -9,7 +9,7 @@ import {
 import * as React from 'react';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 import { Combobox } from '../combobox';
-import { cn } from '../../lib/tailwind/utils';
+import { cn } from '../../lib/helpers/tailwind-utils';
 
 export function ControlledSelect<T extends FieldValues>({
   title,

@@ -1,7 +1,7 @@
 'use client';
 import { CommandItem } from '@/components/ui/command';
 import { CheckIcon } from '@radix-ui/react-icons';
-import { cn } from '@/lib/tailwind/utils';
+import { cn } from '@/lib/helpers/tailwind-utils';
 
 export function CommandItemCheck({
   label,

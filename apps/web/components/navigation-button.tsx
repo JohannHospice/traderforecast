@@ -5,7 +5,7 @@ import {
   NavigationMenuLink,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import { cn } from '@/lib/tailwind/utils';
+import { cn } from '@/lib/helpers/tailwind-utils';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 

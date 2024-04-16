@@ -2,7 +2,7 @@
 import { DataTable } from '@/components/data-table';
 import { Badge } from '@/components/ui/badge';
 import { formatNumber } from '@/lib/helpers/string';
-import { cn } from '@/lib/tailwind/utils';
+import { cn } from '@/lib/helpers/tailwind-utils';
 import { $Enums } from '@traderforecast/database';
 import { format } from 'date-fns';
 import { ProfitLossTypography } from './profit-loss-typography';

@@ -1,4 +1,4 @@
-import { cn } from '@/lib/tailwind/utils';
+import { cn } from '@/lib/helpers/tailwind-utils';
 
 export function Container({
   children,

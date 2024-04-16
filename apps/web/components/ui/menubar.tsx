@@ -8,7 +8,7 @@ import {
 } from '@radix-ui/react-icons';
 import * as MenubarPrimitive from '@radix-ui/react-menubar';
 
-import { cn } from '@/lib/tailwind/utils';
+import { cn } from '@/lib/helpers/tailwind-utils';
 
 const MenubarMenu = MenubarPrimitive.Menu;
 

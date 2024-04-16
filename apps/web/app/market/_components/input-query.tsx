@@ -1,6 +1,6 @@
 'use client';
 import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/tailwind/utils';
+import { cn } from '@/lib/helpers/tailwind-utils';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import { useEffect, useState } from 'react';
 

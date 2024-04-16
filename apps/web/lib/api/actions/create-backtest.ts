@@ -3,7 +3,7 @@ import { prisma } from '@traderforecast/database';
 import {
   CreateBacktestAction,
   createBacktestActionSchema,
-} from '../validation/backtest-database';
+} from '../../validation/backtest-database';
 
 export default async function createBacktest(data: CreateBacktestAction) {
   console.log('Validated backtest data:', data);

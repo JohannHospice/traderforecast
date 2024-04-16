@@ -1,4 +1,4 @@
-import { Navigation } from '@/app/_components/navigation';
+import { Navigation } from '@/components/navigation';
 import { Pattern } from '@/components/icons';
 import { ThemeProvider } from '@/lib/contexts/theme-provider';
 import { Toaster } from '@/components/ui/toaster';

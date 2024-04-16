@@ -1,7 +1,7 @@
 'use client';
 
 import { TraderforecastLogo } from '@/components/icons';
-import { cn } from '@/lib/tailwind/utils';
+import { cn } from '@/lib/helpers/tailwind-utils';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 
