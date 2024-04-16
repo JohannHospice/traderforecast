@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { prisma } from '@traderforecast/database';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
-import { BacktestDataTable } from './components/backtest-data-table';
+import { BacktestDataTable } from './_components/backtest-data-table';
 
 export default async function Page() {
   const backtests = await prisma.backtest.findMany({

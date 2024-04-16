@@ -1,8 +1,8 @@
 import { Symbol, TimePeriod } from '@/lib/modules/backtest';
 import { Backtester } from '@/lib/modules/backtest/backtester';
 import { BacktestApiMarket } from '@/lib/modules/backtest/market/backtest-api-market';
-import { createStrategy } from './constants';
-import { BacktestingSettingsSchemaType } from './constants/schema';
+import { createStrategy } from '../../../apps/web/lib/constants/strategy';
+import { BacktestingSettingsSchemaType } from '../../../apps/web/lib/validation/backtest-form';
 
 export async function runBacktest(
   {

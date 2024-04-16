@@ -11,9 +11,9 @@ import {
   formatDistanceToNowStrict,
 } from 'date-fns';
 import { ArrowLeft } from 'lucide-react';
-import { BacktestChartDialog } from './components/backtest-chart-dialog';
-import { ProfitLossTypography } from './components/profit-loss-typography';
-import { TradesDataTable } from './components/trades-data-table';
+import { BacktestChartDialog } from './_components/backtest-chart-dialog';
+import { ProfitLossTypography } from './_components/profit-loss-typography';
+import { TradesDataTable } from './_components/trades-data-table';
 
 export default async function Page({
   params: { id },

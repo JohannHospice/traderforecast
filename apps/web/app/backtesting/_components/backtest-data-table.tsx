@@ -4,7 +4,7 @@ import { DataTable } from '@/components/data-table';
 import { formatNumber } from '@/lib/helpers/string';
 import { differenceInDays, format } from 'date-fns';
 import { useRouter } from 'next/navigation';
-import { ProfitLossTypography } from '../[id]/components/profit-loss-typography';
+import { ProfitLossTypography } from '../[id]/_components/profit-loss-typography';
 
 export function BacktestDataTable({ backtests }: { backtests: any[] }) {
   const router = useRouter();

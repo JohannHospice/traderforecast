@@ -3,8 +3,8 @@ import { Heading } from '@/components/heading';
 import api from '@/lib/api';
 import { decodeSearchParamList } from '@/lib/helpers/string';
 import { SymbolPagination } from '@/lib/helpers/symbol-pagination';
-import { GridSymbols } from './components/grid-symbols';
-import { MarketNav } from './components/market-nav';
+import { GridSymbols } from './_components/grid-symbols';
+import { MarketNav } from './_components/market-nav';
 
 export default async function Page({
   searchParams: { page, slug, segments },

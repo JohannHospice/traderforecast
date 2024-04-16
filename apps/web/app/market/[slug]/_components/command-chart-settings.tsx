@@ -9,7 +9,7 @@ import {
   CommandSeparator,
 } from '@/components/ui/command';
 import { useChartSettings } from '@/lib/contexts/chart-settings-context';
-import { COMMAND_GROUP_INDICATORS } from '../constants/commands';
+import { COMMAND_GROUP_INDICATORS } from '../../../../lib/constants/indicator-commands';
 import { IndicatorCommandLabel } from './indicator-command-label';
 
 export function CommandChartSettings() {

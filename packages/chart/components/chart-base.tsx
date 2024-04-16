@@ -17,7 +17,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import { cn } from '../../lib/tailwind/utils';
 
 export const ChartBase = forwardRef(
   (
@@ -32,7 +31,7 @@ export const ChartBase = forwardRef(
     }, []);
 
     return (
-      <div className={cn('relative flex flex-1', props.className)}>
+      <div className={'relative flex flex-1' + props.className}>
         <div ref={handleRef} className='absolute top-0 left-0 right-0 bottom-0'>
           {container && (
             <ChartContainer {...props} ref={ref} container={container} />

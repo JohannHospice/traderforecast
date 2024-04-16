@@ -3,7 +3,7 @@ import CardSymbol from '@/components/card-symbol';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import { useRedirectParams } from '@/lib/hooks/use-redirect-params';
-import { useItemsOnScroll } from '@/lib/hooks/useItemsOnScroll';
+import { useItemsOnScroll } from '@/lib/hooks/use-items-on-scroll';
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
 import { useCallback } from 'react';

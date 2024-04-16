@@ -10,3 +10,7 @@ export function klineToCandlestick(kline: Kline): CandlestickData<Time> {
     close: kline.close,
   };
 }
+
+export function millisecondsToTime(milliseconds: number): Time {
+  return (milliseconds / 1000) as Time;
+}

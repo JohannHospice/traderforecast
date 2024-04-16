@@ -8,7 +8,7 @@ import { UseFormHandleSubmit, useForm } from 'react-hook-form';
 import {
   SilverBulletSettingSchemaType,
   silverBulletSettingSchema,
-} from '../libs/constants/schema';
+} from '../../../../lib/validation/backtest-form';
 
 const marketHours = {
   london_9_10: {

@@ -12,8 +12,8 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { Heading } from '@/components/heading';
 import { Button } from '@/components/ui/button';
-import CardChart from './components/card-chart';
-import { CommandChartSettings } from './components/command-chart-settings';
+import CardChart from './_components/card-chart';
+import { CommandChartSettings } from './_components/command-chart-settings';
 
 export default async function Page({
   params: { slug },

@@ -13,13 +13,16 @@ import { CircleDollarSign, Loader, Rocket } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { UseFormHandleSubmit, useForm } from 'react-hook-form';
-import createBacktest from '../actions';
-import { STRATEGY_OPTION_PROPS, optionTimePeriod } from '../libs/constants';
+import createBacktest from '../../../../lib/actions/create-backtest';
+import {
+  STRATEGY_OPTION_PROPS,
+  optionTimePeriod,
+} from '../../../../lib/constants/strategy';
 import {
   BacktestingSettingsSchemaType,
   SilverBulletSettingSchemaType,
   backtestingSettingsSchema,
-} from '../libs/constants/schema';
+} from '../../../../lib/validation/backtest-form';
 import { runBacktest } from '../libs/runBacktest';
 import { ICTSilverBulletSettingsForm } from './ict-silver-bullet-strategy-form';
 import { StrategyOption } from './strategy-option';

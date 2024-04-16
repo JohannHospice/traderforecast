@@ -5,7 +5,7 @@ import {
   ICTSilverBulletStrategySettings,
 } from '@/lib/modules/backtest/strategies/ict-silver-bullet-strategy';
 import { Crosshair, Droplets, Rabbit } from 'lucide-react';
-import { StrategyOptionProps } from '../../components/strategy-option';
+import { StrategyOptionProps } from '../../app/backtesting/create/_components/strategy-option';
 
 export const optionTimePeriod = [
   '1m',

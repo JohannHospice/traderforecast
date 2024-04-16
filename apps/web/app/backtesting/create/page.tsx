@@ -2,7 +2,7 @@ import { Container } from '@/components/container';
 import { Heading } from '@/components/heading';
 import api from '@/lib/api';
 import { ArrowLeft } from 'lucide-react';
-import { Backtesting } from './components/form-backtesting';
+import { Backtesting } from './_components/backtesting-form';
 
 export default async function Page({
   searchParams,

@@ -1,10 +1,5 @@
 'use server';
-import {
-  Prisma,
-  TradeStatus,
-  TradeType,
-  prisma,
-} from '@traderforecast/database';
+import { Prisma, TradeStatus, TradeType } from '@traderforecast/database';
 import {
   InferType,
   Schema,
@@ -16,53 +11,14 @@ import {
   string,
 } from 'yup';
 
-export default async function createBacktest(data: CreateBacktestAction) {
-  console.log('Validated backtest data:', data);
-
-  const { backtest, strategy, symbol, trades } =
-    await createBacktestActionSchema.validate(data);
-
-  console.log('Creating backtest');
-  console.log({ backtest, strategy, symbol, trades });
-
-  return await prisma.backtest.create({
-    data: {
-      ...backtest,
-      symbol: {
-        connectOrCreate: {
-          where: {
-            id: symbol.id,
-          },
-          create: symbol,
-        },
-      },
-      strategy: {
-        connectOrCreate: {
-          where: {
-            id: strategy.id,
-          },
-          create: strategy,
-        },
-      },
-      trades: {
-        createMany: {
-          data: trades,
-        },
-      },
-    },
-  });
-}
-
 const strategySchema = object().shape({
   id: string().required(),
   name: string().required(),
   settings: mixed().required(),
 }) satisfies Schema<Prisma.StrategyCreateWithoutBacktestsInput>;
-
 const symbolSchema = object().shape({
   id: string().required(),
 }) satisfies Schema<Prisma.SymbolCreateWithoutBacktestsInput>;
-
 const tradeSchema = object().shape({
   entry: number().required(),
   takeProfit: number().required(),
@@ -75,7 +31,6 @@ const tradeSchema = object().shape({
   type: mixed<TradeType>().oneOf(Object.values(TradeType)).required(),
   amount: number().required(),
 }) satisfies Schema<Prisma.TradeCreateWithoutSymbolInput>;
-
 const backtestSchema = object().shape({
   to: date().required(),
   from: date().required(),
@@ -86,8 +41,7 @@ const backtestSchema = object().shape({
 }) satisfies Schema<
   Omit<Prisma.BacktestCreateInput, 'strategy' | 'symbol' | 'trades'>
 >;
-
-const createBacktestActionSchema = object().shape({
+export const createBacktestActionSchema = object().shape({
   backtest: backtestSchema,
   symbol: symbolSchema,
   strategy: strategySchema,

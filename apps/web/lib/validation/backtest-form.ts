@@ -1,6 +1,6 @@
 import { isBefore, parse } from 'date-fns';
 import { InferType, date, number, object, string } from 'yup';
-import { STRATEGY_KEYS, optionTimePeriod } from '.';
+import { STRATEGY_KEYS, optionTimePeriod } from '../constants/strategy';
 import { ICTSilverBulletStrategy } from '@/lib/modules/backtest/strategies/ict-silver-bullet-strategy';
 
 export const backtestingSettingsSchema = object()
