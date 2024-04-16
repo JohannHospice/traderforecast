@@ -1,4 +1,4 @@
-import { ReactQueryProvider } from '@/lib/contexts/react-query-provider';
+import { ReactQueryProvider } from '@/components/contexts/react-query-provider';
 
 export default function RootLayout({
   children,

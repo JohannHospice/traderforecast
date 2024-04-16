@@ -1,6 +1,6 @@
 import { Navigation } from '@/components/navigation';
 import { Pattern } from '@/components/icons';
-import { ThemeProvider } from '@/lib/contexts/theme-provider';
+import { ThemeProvider } from '@/components/contexts/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import '@/styles/globals.css';
 import { Analytics } from '@vercel/analytics/react';
