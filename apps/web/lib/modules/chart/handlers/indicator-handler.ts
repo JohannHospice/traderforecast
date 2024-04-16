@@ -34,12 +34,14 @@ export class IndicatorHandler {
   apply(
     klines: Kline[],
     indicators: (new () => Indicator)[],
+    customIndicators: Indicator[],
     isLight: boolean
   ) {
     Promise.all(
-      indicators.map((Indicator) => {
-        const indicator = new Indicator();
-
+      [
+        ...indicators.map((Indicator) => new Indicator()),
+        ...customIndicators,
+      ].map((indicator) => {
         if (indicator.setTheme) {
           indicator.setTheme(isLight);
         }

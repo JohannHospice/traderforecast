@@ -2,7 +2,7 @@
 
 import { DataTable } from '@/components/data-table';
 import { formatNumber } from '@/lib/helpers/string';
-import { format } from 'date-fns';
+import { differenceInDays, format } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { ProfitLossTypography } from '../[id]/components/profit-loss-typography';
 
@@ -44,6 +44,18 @@ export function BacktestDataTable({ backtests }: { backtests: any[] }) {
           accessorFn: (row) => row.finalWalletAmount - row.initialWalletAmount,
           cell: ({ renderValue }) => (
             <ProfitLossTypography value={renderValue()} />
+          ),
+        },
+        {
+          header: 'Avg Profit/Loss per day %',
+          accessorKey: 'profitLoss',
+          id: 'avgProfitLossPerDay',
+          accessorFn: (row) =>
+            (row.finalWalletAmount - row.initialWalletAmount) /
+            row.initialWalletAmount /
+            differenceInDays(row.to, row.from),
+          cell: ({ renderValue }) => (
+            <ProfitLossTypography value={renderValue()} percentage />
           ),
         },
         {

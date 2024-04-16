@@ -11,21 +11,17 @@ import {
 } from '../libs/constants/schema';
 
 const marketHours = {
-  london: {
-    startHour: '07:00',
-    endHour: '16:00',
+  london_9_10: {
+    startHour: '09:00',
+    endHour: '10:00',
   },
-  new_york: {
-    startHour: '12:00',
+  new_york_16_17: {
+    startHour: '16:00',
+    endHour: '17:00',
+  },
+  new_york_20_21: {
+    startHour: '20:00',
     endHour: '21:00',
-  },
-  tokyo: {
-    startHour: '00:00',
-    endHour: '09:00',
-  },
-  sydney: {
-    startHour: '21:00',
-    endHour: '06:00',
   },
 };
 const marketHoursOptions = [
@@ -34,22 +30,19 @@ const marketHoursOptions = [
     label: 'Custom timezone',
   },
   {
-    value: 'london',
-    label: 'London',
+    value: 'london_9_10',
+    label: 'London 9h-10h',
   },
   {
-    value: 'new_york',
-    label: 'New York',
+    value: 'new_york_16_17',
+    label: 'New York AM 16h-17h',
   },
   {
-    value: 'tokyo',
-    label: 'Tokyo',
-  },
-  {
-    value: 'sydney',
-    label: 'Sydney',
+    value: 'new_york_20_21',
+    label: 'New York PM 20h-21h',
   },
 ];
+const defaultMarketHour = marketHoursOptions[0].value;
 export function ICTSilverBulletSettingsForm({
   setSettingHandleSubmit,
 }: {
@@ -64,7 +57,7 @@ export function ICTSilverBulletSettingsForm({
       takeProfitRatio: 2,
       stopLossMargin: 0.01,
       tradingFees: 0,
-      timezone: 'london',
+      timezone: defaultMarketHour,
     },
   });
   const timezone = watch('timezone');

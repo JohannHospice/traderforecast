@@ -26,7 +26,11 @@ import {
 import { useTheme } from 'next-themes';
 import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
 
-const REALTIME_INTERVAL_DELAY: Record<IntervalKeys, number> = {
+const REALTIME_INTERVAL_DELAY: Record<IntervalKeys | string, number> = {
+  '1m': 1000 * 60,
+  '5m': 1000 * 60 * 5,
+  '15m': 1000 * 60 * 15,
+  '30m': 1000 * 60 * 30,
   '1h': 1000 * 60 * 60,
   '4h': 1000 * 60 * 60 * 4,
   '1d': 1000 * 60 * 60 * 24,
@@ -45,17 +49,23 @@ const DARK_OPTIONS = {
 };
 
 export function Chart({
-  slug,
   klines,
   interval = '1d',
+  onGetMoreData,
+  startUtc = '',
+  getLatestKline,
+  className,
 }: {
-  slug?: string;
   klines: Kline[];
   interval?: IntervalKeys;
+  getLatestKline?: () => Promise<Kline>;
+  onGetMoreData?: (start: string) => void;
+  startUtc?: string;
+  className?: string;
 }) {
-  const { indicators, live, lock, setLock } = useChartSettings();
+  const { indicators, customIndicators, live, lock, setLock } =
+    useChartSettings();
   const { theme } = useTheme();
-  const { redirectParams, searchParams } = useRedirectParams();
 
   const { chartOptions, seriesOptions } = useMemo(
     () => (theme === 'light' ? LIGHT_OPTIONS : DARK_OPTIONS),
@@ -73,12 +83,15 @@ export function Chart({
 
   // update klines on interval
   const realtime = useCallback(() => {
-    if (!slug || !live) {
+    if (!getLatestKline) {
       return () => {};
     }
 
     const intervalId = setInterval(async () => {
-      const hotKline = await api.realtimeMarket.getLatestKline(slug, interval);
+      if (!getLatestKline) {
+        return;
+      }
+      const hotKline = await getLatestKline();
 
       try {
         series.current?.update(klineToCandlestick(hotKline));
@@ -88,7 +101,7 @@ export function Chart({
     }, REALTIME_INTERVAL_DELAY[interval] || REALTIME_INTERVAL_DELAY['1d']);
 
     return () => clearInterval(intervalId);
-  }, [slug, live, interval]);
+  }, [getLatestKline, interval]);
 
   // update candlestick channels
   const updateCandlestickChannels = useCallback(() => {
@@ -103,6 +116,16 @@ export function Chart({
   // on time range change
   const onTimeRangeChange = useCallback(
     ({ from }: Range<Time>) => {
+      if (!onGetMoreData) {
+        return;
+      }
+      console.log(
+        waitingTimeRangeUpdate.current === null ||
+          !candelstickChannels.current[interval] ||
+          !series.current ||
+          !live
+      );
+
       if (
         waitingTimeRangeUpdate.current === null ||
         !candelstickChannels.current[interval] ||
@@ -117,8 +140,6 @@ export function Chart({
         return;
       }
 
-      const startUtc = searchParams.get(SEARCH_PARAMS.START_TIME) || '';
-
       const match = /utc_now-(\d+)(\w)/.exec(startUtc);
 
       if (!match) {
@@ -129,22 +150,15 @@ export function Chart({
       const newStart = `utc_now-${parseInt(number) + getNumberOfKlinesResponsive()}${unit}`;
 
       waitingTimeRangeUpdate.current = null;
-      redirectParams(
-        {
-          [SEARCH_PARAMS.START_TIME]: newStart,
-        },
-        {
-          scroll: false,
-        }
-      );
+      onGetMoreData(newStart);
     },
-    [interval, live, redirectParams, searchParams]
+    [interval, live, onGetMoreData, startUtc]
   );
 
   // reset waiting time range update
   useLayoutEffect(() => {
-    waitingTimeRangeUpdate.current = searchParams.get(SEARCH_PARAMS.START_TIME);
-  }, [searchParams]);
+    waitingTimeRangeUpdate.current = startUtc;
+  }, [startUtc]);
 
   // on mount
   useLayoutEffect(() => {
@@ -167,13 +181,14 @@ export function Chart({
     instance.apply(
       klines,
       indicators.map((indicator) => IndicatorValues[indicator]),
+      customIndicators,
       theme === 'light'
     );
 
     return () => {
       instance.clear();
     };
-  }, [indicators, interval, klines, theme]);
+  }, [indicators, interval, klines, customIndicators, theme]);
 
   // on lock
   useLayoutEffect(() => {
@@ -200,6 +215,7 @@ export function Chart({
       ref={chart}
       options={chartOptions}
       onTimeRangeChange={onTimeRangeChange}
+      className={className}
     >
       <Series
         type='Candlestick'

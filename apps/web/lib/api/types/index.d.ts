@@ -23,4 +23,4 @@ interface Symbol {
   market_segments?: string[];
 }
 
-type IntervalKeys = '1h' | '4h' | '1d' | '1w' | '2w';
+type IntervalKeys = '5m' | '1h' | '4h' | '1d' | '1w' | '2w';

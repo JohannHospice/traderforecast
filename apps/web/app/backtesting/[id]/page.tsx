@@ -1,20 +1,17 @@
 import { Container } from '@/components/container';
 import { Heading } from '@/components/heading';
+import { PriceTitle } from '@/components/price-title';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatNumber } from '@/lib/helpers/string';
 import { prisma } from '@traderforecast/database';
 import {
+  differenceInWeeks,
   format,
   formatDistanceStrict,
   formatDistanceToNowStrict,
 } from 'date-fns';
 import { ArrowLeft } from 'lucide-react';
-import { PriceTitle } from '../../../components/price-title';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '../../../components/ui/card';
-import { formatNumber } from '../../../lib/helpers/string';
+import { BacktestChartDialog } from './components/backtest-chart-dialog';
 import { ProfitLossTypography } from './components/profit-loss-typography';
 import { TradesDataTable } from './components/trades-data-table';
 
@@ -60,6 +57,7 @@ export default async function Page({
           entryTime: true,
           profitLoss: true,
           type: true,
+
           amount: true,
         },
       },
@@ -80,7 +78,17 @@ export default async function Page({
             title: backtests.id,
           },
         ]}
-      />
+      >
+        <div className='flex justify-end flex-1'>
+          <div>
+            <BacktestChartDialog
+              trades={backtests.trades as any}
+              interval={backtests.timeperiod}
+              slug={backtests.symbol.id}
+            />
+          </div>
+        </div>
+      </Heading>
       <Container fluid className='flex-1 gap-8'>
         <div className='grid grid-cols-[270px_1fr] grid-rows-[auto_1fr] gap-4 gap-y-0 sm:gap-y-4 flex-1'>
           <Card noBorder className='col-span-2 md:col-span-1 md:flex-col'>
@@ -115,12 +123,42 @@ export default async function Page({
                 title='Profit/Loss %'
                 value={
                   <ProfitLossTypography
+                    percentage
                     value={
                       (backtests.finalWalletAmount -
                         backtests.initialWalletAmount) /
                       backtests.initialWalletAmount
                     }
+                  />
+                }
+              />
+              <PriceTitle
+                vertical
+                title='Avg Profit/Loss per trade %'
+                value={
+                  <ProfitLossTypography
                     percentage
+                    value={
+                      (backtests.finalWalletAmount -
+                        backtests.initialWalletAmount) /
+                      backtests.initialWalletAmount /
+                      backtests.trades.length
+                    }
+                  />
+                }
+              />
+              <PriceTitle
+                vertical
+                title='Avg Profit/Loss per week %'
+                value={
+                  <ProfitLossTypography
+                    percentage
+                    value={
+                      (backtests.finalWalletAmount -
+                        backtests.initialWalletAmount) /
+                      backtests.initialWalletAmount /
+                      differenceInWeeks(backtests.to, backtests.from)
+                    }
                   />
                 }
               />
@@ -166,7 +204,7 @@ export default async function Page({
                 vertical
                 title='Parameters'
                 value={
-                  <pre className='text-sm bg-muted text-muted-foreground p-2 rounded-md'>
+                  <pre className='text-sm bg-muted text-muted-foreground p-2 rounded-md text-wrap'>
                     {JSON.stringify(backtests.settings, null, 2)}
                   </pre>
                 }

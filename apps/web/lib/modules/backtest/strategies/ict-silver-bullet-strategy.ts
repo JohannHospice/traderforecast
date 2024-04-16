@@ -108,29 +108,51 @@ export class ICTSilverBulletStrategy
     const entry = serie.length - 1;
 
     const long = serie.isBullish(fvg);
+    const stopLoss = serie.get(fvg).open;
 
-    const entryPrice = serie.get(entry).close;
+    if (long) {
+      const entryPrice = serie.get(entry).low;
+      return new Trade({
+        entryPrice,
+        tradingFees: this.settings.tradingFees,
+        stopLoss: ICTSilverBulletStrategy.addMargin(
+          stopLoss,
+          -this.settings.stopLossMargin
+        ),
+        amount: ICTSilverBulletStrategy.buyAmount(balance, entryPrice),
+        takeProfit:
+          entryPrice +
+          ICTSilverBulletStrategy.distance(entryPrice, stopLoss) *
+            this.settings.takeProfitRatio,
+      });
+    }
 
+    const entryPrice = serie.get(entry).high;
     return new Trade({
       entryPrice,
-      entryTime: serie.get(entry).closeTime,
       tradingFees: this.settings.tradingFees,
-      amount: balance / entryPrice,
-      ...(long
-        ? {
-            takeProfit:
-              entryPrice +
-              (entryPrice - serie.get(fvg).low) * this.settings.takeProfitRatio,
-            stopLoss: serie.get(fvg).low * (1 - this.settings.stopLossMargin),
-          }
-        : {
-            takeProfit:
-              entryPrice -
-              (serie.get(fvg).high - entryPrice) *
-                this.settings.takeProfitRatio,
-            stopLoss: serie.get(fvg).high * (1 + this.settings.stopLossMargin),
-          }),
+      stopLoss: ICTSilverBulletStrategy.addMargin(
+        stopLoss,
+        this.settings.stopLossMargin
+      ),
+      amount: ICTSilverBulletStrategy.buyAmount(balance, entryPrice),
+      takeProfit:
+        entryPrice -
+        ICTSilverBulletStrategy.distance(stopLoss, entryPrice) *
+          this.settings.takeProfitRatio,
     });
+  }
+
+  static distance(x: number, y: number): number {
+    return Math.abs(x - y);
+  }
+
+  static buyAmount(balance: number, price: number): number {
+    return balance / price;
+  }
+
+  static addMargin(price: number, margin: number): number {
+    return price * (1 + margin);
   }
 }
 

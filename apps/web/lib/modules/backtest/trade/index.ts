@@ -3,13 +3,13 @@ import { OHLC } from '..';
 
 export class Trade {
   public ohlcClose?: OHLC;
-  public status: TradeStatus = TradeStatus.OPEN;
+  public status: TradeStatus = TradeStatus.AWAIT;
   constructor(
     public config: {
       entryPrice: number;
       takeProfit: number;
       stopLoss: number;
-      entryTime: number;
+      entryTime?: number;
       amount: number;
       tradingFees?: number;
     }
@@ -38,9 +38,19 @@ export class Trade {
         'Take profit, stop loss and entry price must be different'
       );
     }
+
+    if (this.config.entryTime) {
+      this.status = TradeStatus.OPEN;
+    }
   }
 
   update(ohlc: OHLC): void {
+    if (this.isStatus(TradeStatus.AWAIT) && this.hitEntryPrice(ohlc)) {
+      this.status = TradeStatus.OPEN;
+      this.config.entryTime = ohlc.openTime;
+      return;
+    }
+
     if (this.isStatus(TradeStatus.OPEN)) {
       if (this.hitTakeProfit(ohlc)) {
         this.status = TradeStatus.SUCCESS;
@@ -86,6 +96,12 @@ export class Trade {
     return this.config.entryPrice > this.config.takeProfit
       ? TradeType.SHORT
       : TradeType.LONG;
+  }
+
+  public hitEntryPrice(ohlc: OHLC): boolean {
+    return (
+      ohlc.high >= this.config.entryPrice && ohlc.low <= this.config.entryPrice
+    );
   }
 
   public hitTakeProfit(ohlc: OHLC): boolean {

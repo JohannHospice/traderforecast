@@ -7,6 +7,20 @@ import { $Enums } from '@traderforecast/database';
 import { format } from 'date-fns';
 import { ProfitLossTypography } from './profit-loss-typography';
 
+const colors = {
+  [$Enums.TradeStatus.AWAIT]:
+    'bg-blue-500 hover:bg-bg-blue-500 text-primary-foreground',
+  [$Enums.TradeStatus.OPEN]:
+    'bg-yellow-500 hover:bg-yellow-500 text-foreground',
+  [$Enums.TradeStatus.SUCCESS]:
+    'bg-green-500 hover:bg-green-500 text-primary-foreground',
+  [$Enums.TradeStatus.FAILED]:
+    'bg-red-500 hover:bg-red-500 text-primary-foreground',
+  [$Enums.TradeStatus.CANCELLED]:
+    'bg-muted hover:bg-muted text-muted-foreground',
+  undefined: 'bg-gray-500 hover:bg-gray-500 text-foreground',
+};
+
 export function TradesDataTable({
   trades,
   className,
@@ -25,19 +39,6 @@ export function TradesDataTable({
   }[];
   className?: string;
 }) {
-  const colors = {
-    [$Enums.TradeStatus.AWAIT]:
-      'bg-blue-500 hover:bg-bg-blue-500 text-primary-foreground',
-    [$Enums.TradeStatus.OPEN]:
-      'bg-yellow-500 hover:bg-yellow-500 text-foreground',
-    [$Enums.TradeStatus.SUCCESS]:
-      'bg-green-500 hover:bg-green-500 text-primary-foreground',
-    [$Enums.TradeStatus.FAILED]:
-      'bg-red-500 hover:bg-red-500 text-primary-foreground',
-    [$Enums.TradeStatus.CANCELLED]:
-      'bg-muted hover:bg-muted text-muted-foreground',
-    undefined: 'bg-gray-500 hover:bg-gray-500 text-foreground',
-  };
   return (
     <DataTable
       className={cn('flex-1 border-0', className)}
