@@ -171,46 +171,57 @@ export default async function Page({
               />
             </CardContent>
           </Card>
-          <Card
-            noBorder
-            className='row-start-2 row-end-1 sm:row-end-2 flex-col md:flex'
-          >
-            <CardHeader>
-              <CardTitle>Strategy settings</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <PriceTitle
-                vertical
-                title='Strategy'
-                value={backtests.strategy.name}
-              />
-              <PriceTitle title='Symbol' value={backtests.symbol.id} vertical />
-              <PriceTitle
-                vertical
-                title='Duration'
-                value={formatDistanceStrict(backtests.to, backtests.from)}
-              />
-              <PriceTitle
-                vertical
-                title='From'
-                value={format(backtests.from, 'yyyy-MM-dd HH:mm')}
-              />
-              <PriceTitle
-                vertical
-                title='To'
-                value={format(backtests.to, 'yyyy-MM-dd HH:mm')}
-              />
-              <PriceTitle
-                vertical
-                title='Parameters'
-                value={
-                  <pre className='text-sm bg-muted text-muted-foreground p-2 rounded-md text-wrap'>
-                    {JSON.stringify(backtests.settings, null, 2)}
-                  </pre>
-                }
-              />
-            </CardContent>
-          </Card>
+          <div>
+            <Card
+              noBorder
+              className='row-start-2 row-end-1 sm:row-end-2 flex-col md:flex'
+            >
+              <CardHeader>
+                <CardTitle>Strategy settings</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PriceTitle
+                  vertical
+                  title='Strategy'
+                  value={backtests.strategy.name}
+                />
+                <PriceTitle
+                  title='Symbol'
+                  value={backtests.symbol.id}
+                  vertical
+                />
+                <PriceTitle
+                  vertical
+                  title='Time period'
+                  value={backtests.timeperiod}
+                />
+                <PriceTitle
+                  vertical
+                  title='Duration'
+                  value={formatDistanceStrict(backtests.to, backtests.from)}
+                />
+                <PriceTitle
+                  vertical
+                  title='From'
+                  value={format(backtests.from, 'yyyy-MM-dd HH:mm')}
+                />
+                <PriceTitle
+                  vertical
+                  title='To'
+                  value={format(backtests.to, 'yyyy-MM-dd HH:mm')}
+                />
+                <PriceTitle
+                  vertical
+                  title='Parameters'
+                  value={
+                    <pre className='text-sm bg-muted text-muted-foreground p-2 rounded-md text-wrap'>
+                      {JSON.stringify(backtests.settings, null, 2)}
+                    </pre>
+                  }
+                />
+              </CardContent>
+            </Card>
+          </div>
           <Card
             noBorder
             className='md:row-start-1 row-start-2 md:col-start-2 col-start-1 row-end-3 col-end-3 '

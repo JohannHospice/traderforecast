@@ -26,7 +26,7 @@ export class ICTSilverBulletStrategy
     if (this.settings.takeProfitRatio <= 0) {
       throw new Error('takeProfitRatio must be greater than 0');
     }
-    if (this.settings.stopLossMargin <= 0) {
+    if (this.settings.stopLossMargin < 0) {
       throw new Error('stopLossMargin must be greater than 0');
     }
     if (
@@ -115,15 +115,11 @@ export class ICTSilverBulletStrategy
       return new Trade({
         entryPrice,
         tradingFees: this.settings.tradingFees,
-        stopLoss: ICTSilverBulletStrategy.addMargin(
-          stopLoss,
-          -this.settings.stopLossMargin
-        ),
-        amount: ICTSilverBulletStrategy.buyAmount(balance, entryPrice),
+        amount: Trade.buyAmount(balance, entryPrice),
+        stopLoss: Trade.addMargin(stopLoss, -this.settings.stopLossMargin),
         takeProfit:
           entryPrice +
-          ICTSilverBulletStrategy.distance(entryPrice, stopLoss) *
-            this.settings.takeProfitRatio,
+          Trade.distance(entryPrice, stopLoss) * this.settings.takeProfitRatio,
       });
     }
 
@@ -131,28 +127,12 @@ export class ICTSilverBulletStrategy
     return new Trade({
       entryPrice,
       tradingFees: this.settings.tradingFees,
-      stopLoss: ICTSilverBulletStrategy.addMargin(
-        stopLoss,
-        this.settings.stopLossMargin
-      ),
-      amount: ICTSilverBulletStrategy.buyAmount(balance, entryPrice),
+      amount: Trade.buyAmount(balance, entryPrice),
+      stopLoss: Trade.addMargin(stopLoss, this.settings.stopLossMargin),
       takeProfit:
         entryPrice -
-        ICTSilverBulletStrategy.distance(stopLoss, entryPrice) *
-          this.settings.takeProfitRatio,
+        Trade.distance(stopLoss, entryPrice) * this.settings.takeProfitRatio,
     });
-  }
-
-  static distance(x: number, y: number): number {
-    return Math.abs(x - y);
-  }
-
-  static buyAmount(balance: number, price: number): number {
-    return balance / price;
-  }
-
-  static addMargin(price: number, margin: number): number {
-    return price * (1 + margin);
   }
 }
 

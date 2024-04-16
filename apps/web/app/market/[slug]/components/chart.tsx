@@ -119,12 +119,6 @@ export function Chart({
       if (!onGetMoreData) {
         return;
       }
-      console.log(
-        waitingTimeRangeUpdate.current === null ||
-          !candelstickChannels.current[interval] ||
-          !series.current ||
-          !live
-      );
 
       if (
         waitingTimeRangeUpdate.current === null ||

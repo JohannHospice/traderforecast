@@ -62,9 +62,6 @@ export function ControlledInput<T extends FieldValues>({
             value={valueFormatter(value)}
             onChange={onChange}
             endAdornment={endAdornment}
-            // defaultValue={
-            //   formState.defaultValues && formState.defaultValues[name]
-            // }
           />
           {(description || error) && (
             <DescriptionLabel isError={!!error}>

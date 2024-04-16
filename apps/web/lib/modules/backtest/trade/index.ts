@@ -149,4 +149,16 @@ export class Trade {
   public get profitLossRatio(): number {
     return this.profitLossRaw / this.config.entryPrice;
   }
+
+  static distance(x: number, y: number): number {
+    return Math.abs(x - y);
+  }
+
+  static buyAmount(balance: number, price: number): number {
+    return balance / price;
+  }
+
+  static addMargin(price: number, margin: number): number {
+    return price * (1 + margin);
+  }
 }

@@ -55,7 +55,7 @@ export function ICTSilverBulletSettingsForm({
     resolver: yupResolver(silverBulletSettingSchema),
     defaultValues: {
       takeProfitRatio: 2,
-      stopLossMargin: 0.01,
+      stopLossMargin: 0,
       tradingFees: 0,
       timezone: defaultMarketHour,
     },
@@ -131,6 +131,7 @@ export function ICTSilverBulletSettingsForm({
         endAdornment={<Divide className='size-5' />}
         required
         description='The margin to stop loss on a trade (e.g. 0.01 = 1%).'
+        disabled
       />
       <ControlledInput
         name='tradingFees'
