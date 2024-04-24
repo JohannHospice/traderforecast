@@ -33,18 +33,18 @@ export function Chart({
   klines,
   interval = '1d',
   startUtc = '',
-  onGetMoreData,
-  getLatestKline,
-  getNumberOfKlinesResponsive,
+  onChangeStartDate,
+  onRealtimeKline,
+  offsetKlines,
 }: {
   klines: Kline[];
   interval?: string;
   theme?: string;
   startUtc?: string;
   className?: string;
-  getNumberOfKlinesResponsive: () => number;
-  getLatestKline?: () => Promise<Kline>;
-  onGetMoreData?: (start: string) => void;
+  offsetKlines: number;
+  onRealtimeKline?: () => Promise<Kline>;
+  onChangeStartDate?: (start: string) => void;
 }) {
   const { indicators, customIndicators, live, lock, setLock } =
     useChartSettings();
@@ -65,7 +65,7 @@ export function Chart({
 
   // update klines on interval
   const realtime = useCallback(() => {
-    if (!getLatestKline) {
+    if (!onRealtimeKline) {
       return () => {};
     }
 
@@ -73,10 +73,10 @@ export function Chart({
       REALTIME_INTERVAL_DELAY[interval] || REALTIME_INTERVAL_DELAY['1d'];
 
     const intervalId = setInterval(async () => {
-      if (!getLatestKline) {
+      if (!onRealtimeKline) {
         return;
       }
-      const hotKline = await getLatestKline();
+      const hotKline = await onRealtimeKline();
 
       try {
         series.current?.update(klineToCandlestick(hotKline));
@@ -86,7 +86,7 @@ export function Chart({
     }, timeout);
 
     return () => clearInterval(intervalId);
-  }, [getLatestKline, interval]);
+  }, [onRealtimeKline, interval]);
 
   // update candlestick channels
   const updateCandlestickChannels = useCallback(() => {
@@ -102,7 +102,7 @@ export function Chart({
   // on time range change
   const onTimeRangeChange = useCallback(
     ({ from }: Range<Time>) => {
-      if (!onGetMoreData) {
+      if (!onChangeStartDate) {
         return;
       }
 
@@ -126,13 +126,13 @@ export function Chart({
         return;
       }
 
-      const [_, number, unit] = match;
-      const newStart = `utc_now-${parseInt(number) + getNumberOfKlinesResponsive()}${unit}`;
+      const [_, amount, unit] = match;
+      const newStart = `utc_now-${parseInt(amount) + offsetKlines}${unit}`;
 
       waitingTimeRangeUpdate.current = null;
-      onGetMoreData(newStart);
+      onChangeStartDate(newStart);
     },
-    [interval, live, onGetMoreData, startUtc]
+    [interval, live, onChangeStartDate, startUtc]
   );
 
   // reset waiting time range update

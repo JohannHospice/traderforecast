@@ -69,8 +69,8 @@ export function BacktestChartDialog({
               klines={klines}
               interval={interval}
               startUtc={startTime}
-              onGetMoreData={(newDate) => setStartUtc(newDate)}
-              getNumberOfKlinesResponsive={getNumberOfKlinesResponsive}
+              onChangeStartDate={(newDate) => setStartUtc(newDate)}
+              offsetKlines={getNumberOfKlinesResponsive()}
               theme={theme}
             />
           </div>

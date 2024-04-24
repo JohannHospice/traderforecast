@@ -33,12 +33,12 @@ export default function CardChart({
       </CardHeader>
       <CardContent className='flex flex-1 min-h-[calc(100vh-84px-53px)] sm:min-h-[calc(100vh-224px)] md:min-h-[480px]'>
         <Chart
-          getNumberOfKlinesResponsive={getNumberOfKlinesResponsive}
+          offsetKlines={getNumberOfKlinesResponsive()}
           klines={klines}
           interval={interval}
           theme={theme}
           startUtc={searchParams.get(SEARCH_PARAMS.START_TIME) || ''}
-          onGetMoreData={(newStart) => {
+          onChangeStartDate={(newStart) => {
             redirectParams(
               {
                 [SEARCH_PARAMS.START_TIME]: newStart,
@@ -48,7 +48,7 @@ export default function CardChart({
               }
             );
           }}
-          getLatestKline={
+          onRealtimeKline={
             slug && interval
               ? () => api.realtimeMarket.getLatestKline(slug, interval)
               : undefined
