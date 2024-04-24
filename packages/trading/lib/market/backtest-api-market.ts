@@ -1,4 +1,3 @@
-import api from '../../../api';
 import { OHLC, Symbol, Timeframe } from '..';
 import { Market } from '.';
 import { getTimeperiodIncrementInMs } from '../helpers/timeperiod';
@@ -9,8 +8,19 @@ export class BacktestApiMarket implements Market {
   private periodInterval: number;
   private loadTimeOffset = 5000;
 
-  constructor(private symbol: Symbol) {
-    this.periodInterval = getTimeperiodIncrementInMs(symbol.timeperiod) - 1;
+  constructor(
+    private options: {
+      symbol: Symbol;
+      getOHLCs: (options: {
+        startTime: number;
+        endTime: number;
+        interval: string;
+        slug: string;
+      }) => Promise<OHLC[]>;
+    }
+  ) {
+    this.periodInterval =
+      getTimeperiodIncrementInMs(this.options.symbol.timeperiod) - 1;
   }
 
   async getOHLC(time: number): Promise<OHLC> {
@@ -54,11 +64,11 @@ export class BacktestApiMarket implements Market {
   async load(timeframe: Timeframe): Promise<void> {
     // TODO: to optimize the loading, we load a little more data than requested
     const extraTimeLoaded = this.loadTimeOffset * this.periodInterval;
-    const ohlcs = await api.realtimeMarket.getOHLCs({
+    const ohlcs = await this.options.getOHLCs({
       startTime: timeframe.from - extraTimeLoaded,
       endTime: timeframe.to + extraTimeLoaded,
-      interval: this.symbol.timeperiod as IntervalKeys,
-      slug: this.symbol.key,
+      interval: this.options.symbol.timeperiod,
+      slug: this.options.symbol.key,
     });
 
     const concatOhlcs = this.ohlcs.concat(ohlcs);

@@ -1,4 +1,5 @@
-import { ChartSettingsProvider } from '@/lib/contexts/chart-settings-context';
+'use client';
+import { ChartSettingsProvider } from '@traderforecast/ui-chart';
 
 export default function RootLayout({
   children,

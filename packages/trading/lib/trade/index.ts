@@ -1,4 +1,4 @@
-import { TradeStatus, TradeType } from '@prisma/client';
+import { TradeStatus, TradeType } from '@traderforecast/database';
 import { OHLC } from '..';
 
 export class Trade {

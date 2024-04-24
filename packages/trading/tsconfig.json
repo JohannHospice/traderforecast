@@ -1,0 +1,8 @@
+{
+  "extends": "@traderforecast/typescript-config/react-library.json",
+  "include": ["./**/*.ts", "./**/*.tsx"],
+  "exclude": ["dist", "build", "node_modules", "./**/*.test.ts"],
+  "compilerOptions": {
+    "paths": {}
+  }
+}

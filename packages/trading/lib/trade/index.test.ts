@@ -18,6 +18,7 @@ describe('Trade class', () => {
       takeProfit: 150,
       stopLoss: 50,
       entryTime: 100,
+      amount: 1,
     });
 
     test('shouldSucceed', () => {

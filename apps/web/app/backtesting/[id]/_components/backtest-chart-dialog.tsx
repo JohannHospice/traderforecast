@@ -10,12 +10,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { useChartSettings } from '@/lib/contexts/chart-settings-context';
-import { TradeIndicator } from '@/lib/modules/chart/indicators/trade-indicator';
 import { Trade } from '@traderforecast/database';
+import { Chart, useChartSettings } from '@traderforecast/ui-chart';
+import { TradeIndicator } from '@traderforecast/ui-chart/lib/indicators';
 import { useCallback, useEffect, useState } from 'react';
-import { Chart } from '../../../market/[slug]/_components/chart';
 import { actionGetKlines } from '../../../../lib/api/actions/get-klines';
+import { getNumberOfKlinesResponsive } from '../../../../lib/helpers/klines';
 
 export function BacktestChartDialog({
   trades,
@@ -71,6 +71,7 @@ export function BacktestChartDialog({
               interval={interval as IntervalKeys}
               startUtc={startTime}
               onGetMoreData={getKlines}
+              getNumberOfKlinesResponsive={getNumberOfKlinesResponsive}
             />
           </div>
           <DialogFooter className='sm:justify-start'>

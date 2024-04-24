@@ -1,11 +1,12 @@
 'use client';
 
 import { Combobox } from '@/components/combobox';
-import { encodeSearchParamList } from '@/lib/helpers/string';
+import { encodeSearchParamList } from '@traderforecast/utils';
 import { useRedirectParams } from '@/lib/hooks/use-redirect-params';
 import { useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { InputQuery } from './input-query';
+import { SEARCH_PARAM_ARRAY_SEPARATOR } from '../../../lib/constants/navigation';
 
 export function MarketNav({
   selectedSegments,
@@ -28,7 +29,8 @@ export function MarketNav({
       const segmentParamsUpdated = encodeSearchParamList(
         selectedSegments.includes(value)
           ? selectedSegments.filter((detector) => detector !== value)
-          : [...selectedSegments, value]
+          : [...selectedSegments, value],
+        SEARCH_PARAM_ARRAY_SEPARATOR
       );
 
       redirectParams({

@@ -9,7 +9,8 @@ export class Exchange implements MarketHandler {
 
   constructor(
     private wallet: Wallet,
-    private Market: new (symbol: Symbol) => Market
+    private Market: new (options: any) => Market,
+    private marketOptions: any
   ) {}
 
   getWallet(): Wallet {
@@ -23,10 +24,7 @@ export class Exchange implements MarketHandler {
   getMarket(symbol: Symbol): Market {
     const key = this.createMarketKey(symbol);
     if (!this.markets[key]) {
-      this.markets[key] = new this.Market({
-        key: symbol.key,
-        timeperiod: symbol.timeperiod as TimePeriod,
-      });
+      this.markets[key] = new this.Market({ symbol, ...this.marketOptions });
     }
 
     return this.markets[key];

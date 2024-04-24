@@ -1,19 +1,15 @@
 {
-  "name": "@traderforecast/backtest",
+  "name": "@traderforecast/trading",
   "version": "0.0.0",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
   "private": true,
   "type": "module",
-  "exports": {
-    "./*": "./compiled/*.js"
-  },
   "scripts": {
     "prebuild": "tsc",
-    "test": "vitest"
+    "test": "vitest",
+    "type-check": "tsc --noEmit"
   },
-  "dependencies": {},
   "devDependencies": {
+    "@traderforecast/typescript-config": "workspace:*",
     "typescript": "^5.3.3"
   },
   "peerDependencies": {

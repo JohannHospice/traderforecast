@@ -15,7 +15,13 @@ describe.skip('Wallet class', () => {
       open: 100,
     };
 
-    const mockTrade = new Trade(100, 150);
+    const mockTrade = new Trade({
+      entryPrice: 100,
+      takeProfit: 150,
+      stopLoss: 50,
+      entryTime: 100,
+      amount: 1,
+    });
     const updateSpy = vi.spyOn(mockTrade, 'update');
 
     const wallet = new Wallet(1000);
@@ -39,12 +45,14 @@ describe.skip('Wallet class', () => {
       takeProfit: 150,
       stopLoss: 50,
       entryTime: 100,
+      amount: 0,
     });
     const activeTrade = new Trade({
       entryPrice: 100,
       takeProfit: 150,
       stopLoss: 50,
       entryTime: 100,
+      amount: 0,
     });
     wallet.addTrade(cancelTrade);
     wallet.addTrade(activeTrade);
@@ -82,7 +90,14 @@ describe.skip('Wallet class', () => {
 
     test('should increase balance by 100', () => {
       const wallet = new Wallet(1000);
-      wallet.addTrade(new Trade(100, 200));
+      wallet.addTrade(
+        new Trade({
+          entryPrice: 100,
+          takeProfit: 200,
+          amount: 1,
+          stopLoss: 100,
+        })
+      );
       wallet.updateTrades({
         open: 100,
         high: 200,
@@ -96,7 +111,14 @@ describe.skip('Wallet class', () => {
 
     test('should decrease balance by 200', () => {
       const wallet = new Wallet(1000);
-      wallet.addTrade(new Trade(300, 400, 100));
+      wallet.addTrade(
+        new Trade({
+          entryPrice: 300,
+          takeProfit: 400,
+          amount: 1,
+          stopLoss: 100,
+        })
+      );
       wallet.updateTrades({
         open: 300,
         high: 350,
@@ -110,7 +132,14 @@ describe.skip('Wallet class', () => {
 
     test('should have balance of 2000 after two trades', () => {
       const wallet = new Wallet(1000);
-      wallet.addTrade(new Trade(1000, 2000));
+      wallet.addTrade(
+        new Trade({
+          entryPrice: 1000,
+          takeProfit: 2000,
+          amount: 1,
+          stopLoss: 500,
+        })
+      );
       wallet.updateTrades({
         open: 100,
         high: 3000,
@@ -120,7 +149,14 @@ describe.skip('Wallet class', () => {
         closeTime: 200,
       });
 
-      wallet.addTrade(new Trade(2000, 3000));
+      wallet.addTrade(
+        new Trade({
+          entryPrice: 2000,
+          takeProfit: 3000,
+          amount: 1,
+          stopLoss: 1000,
+        })
+      );
       wallet.updateTrades({
         open: 300,
         high: 3500,
@@ -142,7 +178,14 @@ describe.skip('Wallet class', () => {
 
     it('should have profitLoss of 100', () => {
       const wallet = new Wallet(1000);
-      wallet.addTrade(new Trade(68412.1245, 69412.1245));
+      wallet.addTrade(
+        new Trade({
+          entryPrice: 68412.1245,
+          takeProfit: 69412.1245,
+          amount: 1,
+          stopLoss: 67412.1245,
+        })
+      );
       wallet.updateTrades({
         open: 100000,
         high: 100000,

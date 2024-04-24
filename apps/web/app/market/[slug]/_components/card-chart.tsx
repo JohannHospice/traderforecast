@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { CardChartHeader } from './card-chart-header';
-import { Chart } from './chart';
+import { Chart } from '@traderforecast/ui-chart';
 import { useRedirectParams } from '../../../../lib/hooks/use-redirect-params';
 import { SEARCH_PARAMS } from '../../../../lib/constants/navigation';
 import api from '../../../../lib/api';
@@ -30,6 +30,7 @@ export default function CardChart({
       </CardHeader>
       <CardContent className='flex flex-1 min-h-[calc(100vh-84px-53px)] sm:min-h-[calc(100vh-224px)] md:min-h-[480px]'>
         <Chart
+          getNumberOfKlinesResponsive={() => 100}
           klines={klines}
           interval={interval}
           startUtc={searchParams.get(SEARCH_PARAMS.START_TIME) || ''}

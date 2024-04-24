@@ -1,4 +1,4 @@
-import { IndicatorKeys } from '@/lib/constants/indicator';
+import { IndicatorKeys } from '@traderforecast/ui-chart/lib/constants/indicator';
 
 export const COMMAND_GROUP_INDICATORS: {
   heading: React.ReactNode;

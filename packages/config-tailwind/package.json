@@ -1,0 +1,13 @@
+{
+  "name": "@traderforecast/tailwind-config",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./tailwind.config.ts"
+  },
+  "devDependencies": {
+    "@traderforecast/typescript-config": "workspace:*",
+    "tailwindcss": "^3.4.1",
+    "prettier-plugin-tailwindcss": "^0.5.11"
+  }
+}

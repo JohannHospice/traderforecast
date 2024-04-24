@@ -5,10 +5,10 @@ import {
   createSortButton,
 } from '@/components/template-data-table';
 import { SEARCH_PARAMS } from '@/lib/constants/navigation';
-import { formatNumber, formatPercent } from '@/lib/helpers/string';
 import { useRedirectParams } from '@/lib/hooks/use-redirect-params';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { ColumnDef } from '@tanstack/react-table';
+import { formatNumber, formatPercent } from '@traderforecast/utils';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 

@@ -3,7 +3,7 @@ import { GroupButton } from '@/components/group-button';
 import { Button } from '@/components/ui/button';
 import { CommandDialog } from '@/components/ui/command';
 import { SEARCH_PARAMS } from '@/lib/constants/navigation';
-import { useChartSettings } from '@/lib/contexts/chart-settings-context';
+import { useChartSettings } from '@traderforecast/ui-chart';
 import { getNumberOfKlinesResponsive } from '@/lib/helpers/klines';
 import { formatInterval } from '@/lib/helpers/utc';
 import { useRedirectParams } from '@/lib/hooks/use-redirect-params';

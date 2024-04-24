@@ -2,7 +2,6 @@ import { Container } from '@/components/container';
 import { Heading } from '@/components/heading';
 import { PriceTitle } from '@/components/price-title';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { formatNumber } from '@/lib/helpers/string';
 import { prisma } from '@traderforecast/database';
 import {
   differenceInWeeks,
@@ -14,6 +13,7 @@ import { ArrowLeft } from 'lucide-react';
 import { BacktestChartDialog } from './_components/backtest-chart-dialog';
 import { ProfitLossTypography } from './_components/profit-loss-typography';
 import { TradesDataTable } from './_components/trades-data-table';
+import { formatNumber } from '@traderforecast/utils';
 
 export default async function Page({
   params: { id },

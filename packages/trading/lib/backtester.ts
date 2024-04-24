@@ -1,20 +1,25 @@
+import { Symbol, Timeframe } from '.';
 import { Exchange } from './exchange';
 import { getTimeperiodIncrementInMs } from './helpers/timeperiod';
 import { Market } from './market';
-import { Strategy, StrategySettings } from './strategies';
-import { Symbol, Timeframe } from '.';
+import { Strategy } from './strategies';
 import { Wallet } from './wallet';
-import { CreateBacktestAction } from '../../../app/backtesting/create/actions';
 
 export class Backtester {
   private exchange: Exchange;
   public timeframe?: Timeframe;
+
   constructor(
     public strategy: Strategy,
-    Market: new (symbol: Symbol) => Market,
-    initialBalance: number
+    Market: new (options: any) => Market,
+    initialBalance: number,
+    marketOptions: any
   ) {
-    this.exchange = new Exchange(new Wallet(initialBalance), Market);
+    this.exchange = new Exchange(
+      new Wallet(initialBalance),
+      Market,
+      marketOptions
+    );
   }
 
   async run(timeframe: Timeframe): Promise<void> {
@@ -67,42 +72,5 @@ export class Backtester {
 
   get symbol(): Symbol {
     return this.strategy.symbol;
-  }
-
-  map(): CreateBacktestAction {
-    const wallet = this.getWallet();
-
-    return {
-      backtest: {
-        finalWalletAmount: wallet.balance,
-        initialWalletAmount: wallet.initialBalance,
-        timeperiod: this.symbol.timeperiod,
-        from: new Date(this.timeframe?.from || 0),
-        to: new Date(this.timeframe?.to || 0),
-        settings: this.strategy.settings,
-      },
-      trades: this.getWallet().trades.map((trade) => ({
-        entry: trade.config.entryPrice,
-        stopLoss: trade.config.stopLoss,
-        takeProfit: trade.config.takeProfit,
-        profitLoss: trade.profitLoss,
-        entryTime: new Date(trade.config.entryTime),
-        exitTime: trade.ohlcClose?.closeTime
-          ? new Date(trade.ohlcClose?.closeTime)
-          : undefined,
-        status: trade.status,
-        symbolId: this.symbol.key,
-        type: trade.type,
-        amount: trade.config.amount,
-      })),
-      symbol: {
-        id: this.symbol.key,
-      },
-      strategy: {
-        id: this.strategy.id,
-        name: this.strategy.name,
-        settings: this.strategy.getSettingsDefinition(),
-      },
-    };
   }
 }

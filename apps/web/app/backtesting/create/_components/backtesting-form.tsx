@@ -9,6 +9,8 @@ import { SelectSeparator } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
+import { Backtester, BacktestApiMarket } from '@traderforecast/trading';
+import { TimePeriod } from '@traderforecast/trading/lib';
 import { CircleDollarSign, Loader, Rocket } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
@@ -23,9 +25,10 @@ import {
   SilverBulletSettingSchemaType,
   backtestingSettingsSchema,
 } from '../../../../lib/validation/backtest-form';
-import { runBacktest } from '../libs/runBacktest';
 import { ICTSilverBulletSettingsForm } from './ict-silver-bullet-strategy-form';
 import { StrategyOption } from './strategy-option';
+import api from '../../../../lib/api';
+import { CreateBacktestAction } from '../../../../lib/validation/backtest-database';
 
 export function Backtesting({
   symbols,
@@ -67,11 +70,7 @@ export function Backtesting({
     }: {
       backtest: BacktestingSettingsSchemaType;
       settings: SilverBulletSettingSchemaType;
-    }) => {
-      const backtester = await runBacktest(backtest, settings);
-
-      return createBacktest(backtester.map());
-    },
+    }) => runBacktest(backtest, settings),
     onSuccess: (backtest) => {
       toast({
         description: 'Your backtest has been created successfully.',
@@ -228,4 +227,75 @@ export function Backtesting({
       </Card>
     </div>
   );
+}
+
+export async function runBacktest(
+  {
+    pair,
+    timePeriod,
+    startDate,
+    endDate,
+    strategyKey,
+    walletAmount,
+  }: BacktestingSettingsSchemaType,
+  settings: any
+) {
+  const Strategy = STRATEGY_OPTION_PROPS[strategyKey].strategy;
+  const strategy = new Strategy(
+    {
+      key: pair,
+      timeperiod: timePeriod as TimePeriod,
+    },
+    settings
+  );
+
+  const backtester = new Backtester(strategy, BacktestApiMarket, walletAmount, {
+    getOHLCs: api.market.getOHLCs,
+  });
+
+  await backtester.run({
+    from: new Date(startDate).getTime(),
+    to: new Date(endDate).getTime(),
+  });
+
+  return createBacktest(mapToBacktestAction(backtester));
+}
+
+function mapToBacktestAction(backtester: Backtester): CreateBacktestAction {
+  const wallet = backtester.getWallet();
+
+  return {
+    backtest: {
+      finalWalletAmount: wallet.balance,
+      initialWalletAmount: wallet.initialBalance,
+      timeperiod: backtester.symbol.timeperiod,
+      from: new Date(backtester.timeframe?.from || 0),
+      to: new Date(backtester.timeframe?.to || 0),
+      settings: backtester.strategy.settings,
+    },
+    trades: backtester.getWallet().trades.map((trade) => ({
+      entry: trade.config.entryPrice,
+      stopLoss: trade.config.stopLoss,
+      takeProfit: trade.config.takeProfit,
+      profitLoss: trade.profitLoss,
+      entryTime: trade.config.entryTime
+        ? new Date(trade.config.entryTime)
+        : undefined,
+      exitTime: trade.ohlcClose?.closeTime
+        ? new Date(trade.ohlcClose?.closeTime)
+        : undefined,
+      status: trade.status,
+      symbolId: backtester.symbol.key,
+      type: trade.type,
+      amount: trade.config.amount,
+    })),
+    symbol: {
+      id: backtester.symbol.key,
+    },
+    strategy: {
+      id: backtester.strategy.id,
+      name: backtester.strategy.name,
+      settings: backtester.strategy.getSettingsDefinition(),
+    },
+  };
 }

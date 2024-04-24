@@ -1,9 +1,9 @@
-import { SerieCandlestickPattern } from '../../chart/patterns/serie-candlestick-pattern';
 import { getTimeperiodIncrementInMs } from '../helpers/timeperiod';
 import { ExchangeProxy } from '../exchange-proxy';
 import { Strategy, StrategySettings } from '.';
 import { Trade } from '../trade';
 import { Symbol } from '..';
+import { SerieCandlestickPattern } from '../serie-candlestick-pattern';
 
 /**
  * ICT Silver Bullet Strategy

@@ -1,9 +1,9 @@
-import { Symbol } from '@/lib/modules/backtest';
-import { Strategy } from '@/lib/modules/backtest/strategies';
+import { Symbol } from '@traderforecast/trading';
+import { Strategy } from '@traderforecast/trading/lib/strategies';
 import {
   ICTSilverBulletStrategy,
   ICTSilverBulletStrategySettings,
-} from '@/lib/modules/backtest/strategies/ict-silver-bullet-strategy';
+} from '@traderforecast/trading/lib/strategies/ict-silver-bullet-strategy';
 import { Crosshair, Droplets, Rabbit } from 'lucide-react';
 import { StrategyOptionProps } from '../../app/backtesting/create/_components/strategy-option';
 
@@ -17,15 +17,6 @@ export const optionTimePeriod = [
   '1d',
   '1w',
 ];
-
-export function createStrategy(
-  strategyKey: string,
-  symbol: Symbol,
-  config: ICTSilverBulletStrategySettings
-) {
-  const Strategy = STRATEGY_OPTION_PROPS[strategyKey].strategy;
-  return new Strategy(symbol, config);
-}
 
 export const STRATEGY_OPTION_PROPS: Record<
   string,
