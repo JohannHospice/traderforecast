@@ -13,9 +13,11 @@ import {
 import { Trade } from '@traderforecast/database';
 import { Chart, useChartSettings } from '@traderforecast/ui-chart';
 import { TradeIndicator } from '@traderforecast/ui-chart/lib/indicators';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { actionGetKlines } from '../../../../lib/api/actions/get-klines';
 import { getNumberOfKlinesResponsive } from '../../../../lib/helpers/klines';
+import { useTheme } from 'next-themes';
+import { useQuery } from '@tanstack/react-query';
 
 export function BacktestChartDialog({
   trades,
@@ -26,19 +28,16 @@ export function BacktestChartDialog({
   slug: string;
   interval: string;
 }) {
+  const { theme } = useTheme();
   const { setLive, setCustomIndicators } = useChartSettings();
   const [startTime, setStartUtc] = useState<string>('');
-  const [klines, setKlines] = useState<Kline[]>([]);
 
-  const getKlines = useCallback(
-    async (newStart: string) => {
-      setStartUtc(newStart);
-      setKlines(await actionGetKlines({ slug, interval, startTime: newStart }));
-    },
-    [slug, interval]
-  );
-
-  useEffect(() => {}, [setLive, getKlines]);
+  const { data: klines } = useQuery({
+    queryKey: ['klines', { slug, interval, startTime }],
+    queryFn: () => actionGetKlines({ slug, interval, startTime }),
+    initialData: [],
+    enabled: startTime !== '',
+  });
 
   useEffect(() => {
     setCustomIndicators([new TradeIndicator(trades)]);
@@ -54,7 +53,7 @@ export function BacktestChartDialog({
           className='sm:max-w-4xl'
           onOpenAutoFocus={() => {
             setLive(true);
-            getKlines('utc_now-1h');
+            setStartUtc('utc_now-1h');
           }}
         >
           <DialogHeader>
@@ -68,10 +67,11 @@ export function BacktestChartDialog({
           <div className='flex flex-col h-[50vh] w-full relative'>
             <Chart
               klines={klines}
-              interval={interval as IntervalKeys}
+              interval={interval}
               startUtc={startTime}
-              onGetMoreData={getKlines}
+              onGetMoreData={(newDate) => setStartUtc(newDate)}
               getNumberOfKlinesResponsive={getNumberOfKlinesResponsive}
+              theme={theme}
             />
           </div>
           <DialogFooter className='sm:justify-start'>

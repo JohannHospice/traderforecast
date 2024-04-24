@@ -3,6 +3,6 @@ import {
   ChartSettingsProvider,
   ChartSettingsContext,
   useChartSettings,
-} from './lib/contexts/chart-settings-context';
+} from './components/contexts/chart-settings-provider';
 
 export { Chart, ChartSettingsProvider, ChartSettingsContext, useChartSettings };

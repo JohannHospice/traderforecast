@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useState } from 'react';
-import { Indicator } from '../indicators';
-import { IndicatorKeys } from '../constants/indicator';
+import { Indicator } from '../../lib/indicators';
+import { IndicatorKeys } from '../../lib/constants/indicator';
 
 const LIVE_BY_DEFAULT = process.env.NODE_ENV === 'production';
 

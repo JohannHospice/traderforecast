@@ -1,14 +1,3 @@
-import { ChartBase } from './chart-base';
-import { SeriesProvider } from './contexts/series-provider';
-import { IndicatorValues } from '../lib/constants/indicator';
-import { useChartSettings } from '../lib/contexts/chart-settings-context';
-import { klineToCandlestick } from '../lib/helpers/lightweight-charts';
-import {
-  CANDLESTICK_DARK_OPTIONS,
-  CANDLESTICK_LIGHT_OPTIONS,
-  OPTIONS_DARK,
-  OPTIONS_LIGHT,
-} from '../styles/lightweight-charts-options';
 import {
   CandlestickData,
   IChartApi,
@@ -17,9 +6,14 @@ import {
   SeriesType,
   Time,
 } from 'lightweight-charts';
-import { useTheme } from 'next-themes';
 import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
+import { IndicatorValues } from '../lib/constants/indicator';
 import { IndicatorHandler } from '../lib/handlers/indicator-handler';
+import { klineToCandlestick } from '../lib/helpers/lightweight-charts';
+import { THEME_DARK, THEME_LIGHT } from '../styles/theme';
+import { ChartBase } from './chart-base';
+import { useChartSettings } from './contexts/chart-settings-provider';
+import { SeriesProvider } from './contexts/series-provider';
 
 const REALTIME_INTERVAL_DELAY: Record<IntervalKeys | string, number> = {
   '1m': 1000 * 60,
@@ -33,39 +27,30 @@ const REALTIME_INTERVAL_DELAY: Record<IntervalKeys | string, number> = {
   '2w': 1000 * 60 * 60 * 24 * 14,
 };
 
-const LIGHT_OPTIONS = {
-  chartOptions: OPTIONS_LIGHT,
-  seriesOptions: CANDLESTICK_LIGHT_OPTIONS,
-};
-
-const DARK_OPTIONS = {
-  chartOptions: OPTIONS_DARK,
-  seriesOptions: CANDLESTICK_DARK_OPTIONS,
-};
-
 export function Chart({
+  theme,
+  className,
   klines,
   interval = '1d',
-  onGetMoreData,
   startUtc = '',
+  onGetMoreData,
   getLatestKline,
-  className,
   getNumberOfKlinesResponsive,
 }: {
   klines: Kline[];
-  interval?: IntervalKeys;
-  getLatestKline?: () => Promise<Kline>;
-  onGetMoreData?: (start: string) => void;
+  interval?: string;
+  theme?: string;
   startUtc?: string;
   className?: string;
   getNumberOfKlinesResponsive: () => number;
+  getLatestKline?: () => Promise<Kline>;
+  onGetMoreData?: (start: string) => void;
 }) {
   const { indicators, customIndicators, live, lock, setLock } =
     useChartSettings();
-  const { theme } = useTheme();
 
   const { chartOptions, seriesOptions } = useMemo(
-    () => (theme === 'light' ? LIGHT_OPTIONS : DARK_OPTIONS),
+    () => (theme === 'light' ? THEME_LIGHT : THEME_DARK),
     [theme]
   );
 
@@ -84,6 +69,9 @@ export function Chart({
       return () => {};
     }
 
+    const timeout =
+      REALTIME_INTERVAL_DELAY[interval] || REALTIME_INTERVAL_DELAY['1d'];
+
     const intervalId = setInterval(async () => {
       if (!getLatestKline) {
         return;
@@ -95,7 +83,7 @@ export function Chart({
       } catch (error) {
         console.error(error);
       }
-    }, REALTIME_INTERVAL_DELAY[interval] || REALTIME_INTERVAL_DELAY['1d']);
+    }, timeout);
 
     return () => clearInterval(intervalId);
   }, [getLatestKline, interval]);
@@ -106,6 +94,7 @@ export function Chart({
 
     klineChannels.current[interval] = klines;
     candelstickChannels.current[interval] = updatedCandlesticks;
+    console.log(updatedCandlesticks);
 
     series.current?.setData(updatedCandlesticks);
   }, [interval, klines]);

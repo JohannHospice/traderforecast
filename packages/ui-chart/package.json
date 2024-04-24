@@ -1,16 +1,11 @@
 {
   "name": "@traderforecast/ui-chart",
   "version": "0.0.0",
-  "sideEffects": [
-    "**/*.css"
-  ],
   "private": true,
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "build": "tailwindcss -i ./styles/styles.css -o ./dist/index.css",
     "lint": "eslint ./",
-    "dev": "tailwindcss -i ./styles/styles.css -o ./dist/index.css --watch",
     "type-check": "tsc --noEmit",
     "test": "vitest"
   },

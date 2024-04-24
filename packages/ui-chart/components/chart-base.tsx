@@ -15,7 +15,7 @@ export const ChartBase = forwardRef(
     }, []);
 
     return (
-      <div className={'relative flex flex-1' + props.className}>
+      <div className={'relative flex flex-1 ' + props.className}>
         <div ref={handleRef} className='absolute top-0 left-0 right-0 bottom-0'>
           {container && (
             <ChartProvider {...props} ref={ref} container={container} />

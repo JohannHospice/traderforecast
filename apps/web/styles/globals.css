@@ -55,14 +55,13 @@
 
 @layer base {
   * {
-    /* TODO ENABLE */
-    /* @apply border-border; */
+    @apply border-border;
   }
   body {
-    /* @apply bg-background text-foreground;
-    background-color: hsl(var(--body-background)); */
-    /* font-feature-settings:
+    @apply bg-background text-foreground;
+    background-color: hsl(var(--body-background));
+    font-feature-settings:
       'rlig' 1,
-      'calt' 1; */
+      'calt' 1;
   }
 }
