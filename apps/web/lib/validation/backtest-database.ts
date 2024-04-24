@@ -1,4 +1,3 @@
-'use server';
 import { Prisma, TradeStatus, TradeType } from '@traderforecast/database';
 import {
   InferType,

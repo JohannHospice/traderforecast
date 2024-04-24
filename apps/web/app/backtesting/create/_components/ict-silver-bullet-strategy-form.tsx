@@ -1,14 +1,14 @@
 'use client';
 import { ControlledInput } from '@/components/fields/controlled-input';
 import { ControlledSelect } from '@/components/fields/controlled-select';
+import {
+  SilverBulletSettingSchemaType,
+  silverBulletSettingSchema,
+} from '@/lib/validation/backtest-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Divide } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { UseFormHandleSubmit, useForm } from 'react-hook-form';
-import {
-  SilverBulletSettingSchemaType,
-  silverBulletSettingSchema,
-} from '../../../../lib/validation/backtest-form';
 
 const marketHours = {
   london_9_10: {
@@ -43,6 +43,7 @@ const marketHoursOptions = [
   },
 ];
 const defaultMarketHour = marketHoursOptions[0].value;
+
 export function ICTSilverBulletSettingsForm({
   setSettingHandleSubmit,
 }: {

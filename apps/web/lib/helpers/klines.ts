@@ -1,4 +1,7 @@
 export function getNumberOfKlinesResponsive(): number {
+  if (typeof window === 'undefined') {
+    return 0;
+  }
   if (window.innerWidth < 768) {
     return 50;
   }

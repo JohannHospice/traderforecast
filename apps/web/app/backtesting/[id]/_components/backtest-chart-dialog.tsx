@@ -10,14 +10,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { actionGetKlines } from '@/lib/api/actions/get-klines';
+import { getNumberOfKlinesResponsive } from '@/lib/helpers/klines';
+import { useQuery } from '@tanstack/react-query';
 import { Trade } from '@traderforecast/database';
 import { Chart, useChartSettings } from '@traderforecast/ui-chart';
 import { TradeIndicator } from '@traderforecast/ui-chart/lib/indicators';
-import { useEffect, useState } from 'react';
-import { actionGetKlines } from '../../../../lib/api/actions/get-klines';
-import { getNumberOfKlinesResponsive } from '../../../../lib/helpers/klines';
 import { useTheme } from 'next-themes';
-import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 
 export function BacktestChartDialog({
   trades,

@@ -26,7 +26,7 @@ export interface GetKlinesAndSymbolParams {
 }
 export interface GetOHLCParams {
   slug: string;
-  interval: IntervalKeys;
+  interval: string;
   startTime?: number;
   endTime?: number;
 }

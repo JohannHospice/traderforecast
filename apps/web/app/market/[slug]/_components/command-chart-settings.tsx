@@ -8,9 +8,9 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command';
-import { COMMAND_GROUP_INDICATORS } from '../../../../lib/constants/indicator-commands';
-import { IndicatorCommandLabel } from './indicator-command-label';
+import { COMMAND_GROUP_INDICATORS } from '@/lib/constants/indicator-commands';
 import { useChartSettings } from '@traderforecast/ui-chart';
+import { IndicatorCommandLabel } from './indicator-command-label';
 
 export function CommandChartSettings() {
   const { indicators, live, setLive, toggleIndicator } = useChartSettings();

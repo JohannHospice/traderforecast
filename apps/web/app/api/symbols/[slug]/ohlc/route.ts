@@ -1,6 +1,6 @@
-import { ValidationError } from 'yup';
 import api from '@/lib/api';
-import { schemaOHLC } from '../../../../../lib/validation/ohlc-api';
+import { schemaOHLC } from '@/lib/validation/ohlc-api';
+import { ValidationError } from 'yup';
 
 export const dynamic = 'force-dynamic'; // defaults to auto
 

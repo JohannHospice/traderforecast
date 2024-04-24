@@ -7,28 +7,28 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { SelectSeparator } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
+import createBacktest from '@/lib/api/actions/create-backtest';
+import { actionGetOHLCs } from '@/lib/api/actions/get-ohlcs';
+import {
+  STRATEGY_OPTION_PROPS,
+  optionTimePeriod,
+} from '@/lib/constants/strategy';
+import { CreateBacktestAction } from '@/lib/validation/backtest-database';
+import {
+  BacktestingSettingsSchemaType,
+  SilverBulletSettingSchemaType,
+  backtestingSettingsSchema,
+} from '@/lib/validation/backtest-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
-import { Backtester, BacktestApiMarket } from '@traderforecast/trading';
+import { BacktestApiMarket, Backtester } from '@traderforecast/trading';
 import { TimePeriod } from '@traderforecast/trading/lib';
 import { CircleDollarSign, Loader, Rocket } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { UseFormHandleSubmit, useForm } from 'react-hook-form';
-import createBacktest from '../../../../lib/api/actions/create-backtest';
-import {
-  STRATEGY_OPTION_PROPS,
-  optionTimePeriod,
-} from '../../../../lib/constants/strategy';
-import {
-  BacktestingSettingsSchemaType,
-  SilverBulletSettingSchemaType,
-  backtestingSettingsSchema,
-} from '../../../../lib/validation/backtest-form';
 import { ICTSilverBulletSettingsForm } from './ict-silver-bullet-strategy-form';
 import { StrategyOption } from './strategy-option';
-import api from '../../../../lib/api';
-import { CreateBacktestAction } from '../../../../lib/validation/backtest-database';
 
 export function Backtesting({
   symbols,
@@ -70,7 +70,7 @@ export function Backtesting({
     }: {
       backtest: BacktestingSettingsSchemaType;
       settings: SilverBulletSettingSchemaType;
-    }) => runBacktest(backtest, settings),
+    }) => onBacktest(backtest, settings),
     onSuccess: (backtest) => {
       toast({
         description: 'Your backtest has been created successfully.',
@@ -229,7 +229,7 @@ export function Backtesting({
   );
 }
 
-export async function runBacktest(
+export async function onBacktest(
   {
     pair,
     timePeriod,
@@ -238,7 +238,7 @@ export async function runBacktest(
     strategyKey,
     walletAmount,
   }: BacktestingSettingsSchemaType,
-  settings: any
+  strategySettings: any
 ) {
   const Strategy = STRATEGY_OPTION_PROPS[strategyKey].strategy;
   const strategy = new Strategy(
@@ -246,11 +246,11 @@ export async function runBacktest(
       key: pair,
       timeperiod: timePeriod as TimePeriod,
     },
-    settings
+    strategySettings
   );
 
   const backtester = new Backtester(strategy, BacktestApiMarket, walletAmount, {
-    getOHLCs: api.market.getOHLCs,
+    getOHLCs: actionGetOHLCs,
   });
 
   await backtester.run({
