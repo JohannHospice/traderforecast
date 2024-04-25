@@ -33,7 +33,7 @@ export interface GetOHLCParams {
 
 export interface GetLatestKlineParams {
   slug: string;
-  interval: IntervalKeys;
+  interval: IntervalKeys | string;
 }
 
 export type GetAllSymbolResponse = {

@@ -21,7 +21,9 @@ export class SantimentMarketRepository<T> implements MarketRepository {
     interval: string;
   }): Promise<Kline> {
     const {
-      data: { ohlc },
+      data: {
+        getMetric: { timeseriesData },
+      },
     } = await this.client.query({
       context: {
         log: 'DATA',
@@ -30,24 +32,46 @@ export class SantimentMarketRepository<T> implements MarketRepository {
         query getLatestKline(
           $slug: String!
           $from: DateTime!
+          $to: DateTime!
           $interval: interval!
         ) {
-          ohlc(slug: $slug, interval: $interval, from: $from, to: "utc_now") {
-            lowPriceUsd
-            highPriceUsd
-            openPriceUsd
-            closePriceUsd
-            datetime
+          getMetric(metric: "price_usd") {
+            timeseriesData(
+              selector: { slug: $slug, source: "cryptocompare" }
+              from: $from
+              to: $to
+              interval: $interval
+              aggregation: OHLC
+              cachingParams: { baseTtl: 1, maxTtlOffset: 1 }
+            ) {
+              datetime
+              valueOhlc {
+                close
+                high
+                low
+                open
+              }
+            }
           }
         }
       `,
       variables: {
         slug: params.slug,
         interval: params.interval,
+        to: 'utc_now',
         from: 'utc_now-' + 1 + params.interval.slice(-1),
       },
     });
-    return mapOhlcToKline(ohlc[0]);
+
+    const [{ valueOhlc, datetime }] = timeseriesData;
+    return {
+      close: parseFloat(valueOhlc.close),
+      high: parseFloat(valueOhlc.high),
+      low: parseFloat(valueOhlc.low),
+      open: parseFloat(valueOhlc.open),
+      closeTime: new Date(datetime).getTime(),
+      openTime: new Date(datetime).getTime(),
+    };
   }
 
   async getOHLCs({

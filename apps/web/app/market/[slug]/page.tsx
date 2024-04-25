@@ -90,8 +90,8 @@ export default async function Page({
             <CardSymbol symbol={symbol} className='min-w-[270px]' />
           </div>
           <div className='row-start-2 row-end-3 flex-col hidden md:flex'>
-            <Card noBorder className='flex-1 py-4'>
-              <Command className='rounded-xl overflow-hidden'>
+            <Card noBorder className='py-4'>
+              <Command className='bg-transparent'>
                 <CommandChartSettings />
               </Command>
             </Card>

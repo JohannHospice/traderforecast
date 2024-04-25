@@ -1,13 +1,13 @@
 'use client';
 
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import api from '@/lib/api';
+import { actionGetLastOHLC } from '@/lib/api/actions/get-last-ohlcs';
 import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import { getNumberOfKlinesResponsive } from '@/lib/helpers/klines';
 import { useRedirectParams } from '@/lib/hooks/use-redirect-params';
 import { Chart } from '@traderforecast/ui-chart';
-import { CardChartHeader } from './card-chart-header';
 import { useTheme } from 'next-themes';
+import { CardChartHeader } from './card-chart-header';
 
 // TODO: refactor and separate the header from the chart
 // also create a easy tuning chart component to add or remove feature
@@ -50,7 +50,11 @@ export default function CardChart({
           }}
           onRealtimeKline={
             slug && interval
-              ? () => api.realtimeMarket.getLatestKline(slug, interval)
+              ? () =>
+                  actionGetLastOHLC({
+                    interval,
+                    slug,
+                  })
               : undefined
           }
         />

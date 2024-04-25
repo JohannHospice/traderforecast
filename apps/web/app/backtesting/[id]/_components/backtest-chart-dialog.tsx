@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { actionGetKlines } from '@/lib/api/actions/get-klines';
+import { actionGetLastOHLC } from '@/lib/api/actions/get-last-ohlcs';
 import { getNumberOfKlinesResponsive } from '@/lib/helpers/klines';
 import { useQuery } from '@tanstack/react-query';
 import { Trade } from '@traderforecast/database';
@@ -72,6 +73,12 @@ export function BacktestChartDialog({
               onChangeStartDate={(newDate) => setStartUtc(newDate)}
               offsetKlines={getNumberOfKlinesResponsive()}
               theme={theme}
+              onRealtimeKline={() =>
+                actionGetLastOHLC({
+                  interval,
+                  slug,
+                })
+              }
             />
           </div>
           <DialogFooter className='sm:justify-start'>

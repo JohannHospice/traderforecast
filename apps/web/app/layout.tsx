@@ -51,7 +51,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className='relative overflow-hidden min-h-[100vh]'>
+          <div className='relative overflow-hidden min-h-[100vh] flex flex-col'>
             <Navigation />
             <div className='flex flex-col flex-1 py-4'>{children}</div>
             {/* https://www.hyperflow.co/ */}
