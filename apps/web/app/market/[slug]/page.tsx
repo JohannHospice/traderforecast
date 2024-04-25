@@ -39,7 +39,7 @@ export default async function Page({
 
   const startTime = searchParams[SEARCH_PARAMS.START_TIME];
 
-  const intervals = api.market.intervals;
+  const intervals = ['5m', '15m', '30m', '1h', '4h', '1d', '1w', '2w'];
 
   const { symbol, klines } = await new GetKlinesAndSymbolUsecase(api.market)
     .execute({

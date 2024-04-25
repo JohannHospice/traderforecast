@@ -20,9 +20,9 @@ export default function CardChart({
 }: {
   slug?: string;
   klines: Kline[];
-  intervals?: IntervalKeys[];
+  intervals?: string[];
   className?: string;
-  interval?: IntervalKeys;
+  interval?: string;
 }) {
   const { theme } = useTheme();
   const { redirectParams, searchParams } = useRedirectParams();
