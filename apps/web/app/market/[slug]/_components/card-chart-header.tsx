@@ -22,9 +22,10 @@ export function CardChartHeader({ intervals = [] }: { intervals?: string[] }) {
   const { lock, setLock } = useChartSettings();
   return (
     <>
-      <div className='flex gap-4 flex-wrap justify-between'>
-        <div className='flex gap-4'>
+      <div className='flex gap-4 justify-between flex-nowrap'>
+        <div className='flex gap-4 flex-nowrap'>
           <GroupButton
+            className='flex-wrap overflow-hidden'
             defaultValue={searchParams.get(SEARCH_PARAMS.INTERVAL)}
             tabs={intervals.map((interval, i) => ({
               value: interval,
