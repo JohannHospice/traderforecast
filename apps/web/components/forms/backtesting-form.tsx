@@ -7,28 +7,23 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { SelectSeparator } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
-import createBacktest from '@/lib/api/actions/create-backtest';
-import { actionGetOHLCs } from '@/lib/api/actions/get-ohlcs';
 import {
   STRATEGY_OPTION_PROPS,
-  optionTimePeriod,
+  TIME_PERIOD_OPTIONS,
 } from '@/lib/constants/strategy';
-import { CreateBacktestAction } from '@/lib/validation/backtest-database';
 import {
   BacktestingSettingsSchemaType,
-  SilverBulletSettingSchemaType,
   backtestingSettingsSchema,
-} from '@/lib/validation/backtest-form';
+} from '@/lib/validation/backtest-setting-form';
+import { StrategySetting } from '@/lib/validation/silver-bullet-setting-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
-import { BacktestApiMarket, Backtester } from '@traderforecast/trading';
-import { TimePeriod } from '@traderforecast/trading/lib';
 import { CircleDollarSign, Loader, Rocket } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef } from 'react';
 import { UseFormHandleSubmit, useForm } from 'react-hook-form';
-import { ICTSilverBulletSettingsForm } from './ict-silver-bullet-strategy-form';
-import { StrategyOption } from './strategy-option';
+import { onBacktest } from '../../lib/helpers/backtest';
+import { StrategyOption } from '../strategy-option';
 
 export function Backtesting({
   symbols,
@@ -50,7 +45,7 @@ export function Backtesting({
             timePeriod: '5m',
             walletAmount: 1000,
             pair: symbols[0].slug,
-            strategyKey: 'ict-silver-bullet' as any,
+            strategyKey: 'ict-silver-bullet',
             startDate: new Date(Date.now() - 24 * 60 * 60 * 1000),
           }
         : {
@@ -69,7 +64,7 @@ export function Backtesting({
       settings,
     }: {
       backtest: BacktestingSettingsSchemaType;
-      settings: SilverBulletSettingSchemaType;
+      settings: StrategySetting;
     }) => onBacktest(backtest, settings),
     onSuccess: (backtest) => {
       toast({
@@ -87,25 +82,28 @@ export function Backtesting({
     },
   });
 
-  const [settingHandleSubmit, setSettingHandleSubmit] = useState<
-    UseFormHandleSubmit<any, undefined>
+  const strategySettingHandleSubmit = useRef<
+    UseFormHandleSubmit<StrategySetting>
   >(() => async () => {});
 
   const onSubmit = useMemo(
     () =>
-      handleSubmit(async (backtest, e) =>
-        settingHandleSubmit((settings) =>
+      handleSubmit((backtest, event) => {
+        const submit = strategySettingHandleSubmit.current((settings) =>
           mutate({
             backtest,
-            settings: {
-              ...settings,
-              startHour: settings.startHour.split(':')[0],
-              endHour: settings.endHour.split(':')[0],
-            },
+            settings,
           })
-        )(e)
-      ),
-    [handleSubmit, settingHandleSubmit, mutate]
+        );
+
+        return submit(event);
+      }),
+    [handleSubmit, strategySettingHandleSubmit, mutate]
+  );
+
+  const StrategyForm = useMemo(
+    () => STRATEGY_OPTION_PROPS[strategyKey]?.settingsForm,
+    [strategyKey]
   );
 
   return (
@@ -125,16 +123,9 @@ export function Backtesting({
             placeholder='Select a strategy...'
             options={Object.keys(STRATEGY_OPTION_PROPS).map((value) => ({
               value,
-              disabled:
-                STRATEGY_OPTION_PROPS[
-                  value as keyof typeof STRATEGY_OPTION_PROPS
-                ].optionProps.disabled,
+              disabled: STRATEGY_OPTION_PROPS[value].strategy === undefined,
               label: (
-                <StrategyOption
-                  {...STRATEGY_OPTION_PROPS[
-                    value as keyof typeof STRATEGY_OPTION_PROPS
-                  ].optionProps}
-                />
+                <StrategyOption {...STRATEGY_OPTION_PROPS[value].optionProps} />
               ),
             }))}
             required
@@ -156,7 +147,7 @@ export function Backtesting({
             name='timePeriod'
             control={control}
             title='Initial time period'
-            options={optionTimePeriod}
+            options={TIME_PERIOD_OPTIONS}
             description='Targeted time period to take a trade.'
             className='max-w-96'
           />
@@ -196,17 +187,17 @@ export function Backtesting({
             endAdornment={<CircleDollarSign className='size-5' />}
             required
           />
-          <SelectSeparator />
-          <div>
-            <h4 className='text-xl mb-2'>Advanced settings</h4>
-            <p className='text-gray-500'>
-              You can customize the strategy settings below.
-            </p>
-          </div>
-          {strategyKey === 'ict-silver-bullet' && (
-            <ICTSilverBulletSettingsForm
-              setSettingHandleSubmit={setSettingHandleSubmit}
-            />
+          {StrategyForm && (
+            <>
+              <SelectSeparator />
+              <div>
+                <h4 className='text-xl mb-2'>Advanced settings</h4>
+                <p className='text-gray-500'>
+                  You can customize the strategy settings below.
+                </p>
+              </div>
+              <StrategyForm ref={strategySettingHandleSubmit} />
+            </>
           )}
         </CardContent>
         <CardFooter className='justify-end'>
@@ -227,75 +218,4 @@ export function Backtesting({
       </Card>
     </div>
   );
-}
-
-export async function onBacktest(
-  {
-    pair,
-    timePeriod,
-    startDate,
-    endDate,
-    strategyKey,
-    walletAmount,
-  }: BacktestingSettingsSchemaType,
-  strategySettings: any
-) {
-  const Strategy = STRATEGY_OPTION_PROPS[strategyKey].strategy;
-  const strategy = new Strategy(
-    {
-      key: pair,
-      timeperiod: timePeriod as TimePeriod,
-    },
-    strategySettings
-  );
-
-  const backtester = new Backtester(strategy, BacktestApiMarket, walletAmount, {
-    getOHLCs: actionGetOHLCs,
-  });
-
-  await backtester.run({
-    from: new Date(startDate).getTime(),
-    to: new Date(endDate).getTime(),
-  });
-
-  return createBacktest(mapToBacktestAction(backtester));
-}
-
-function mapToBacktestAction(backtester: Backtester): CreateBacktestAction {
-  const wallet = backtester.getWallet();
-
-  return {
-    backtest: {
-      finalWalletAmount: wallet.balance,
-      initialWalletAmount: wallet.initialBalance,
-      timeperiod: backtester.symbol.timeperiod,
-      from: new Date(backtester.timeframe?.from || 0),
-      to: new Date(backtester.timeframe?.to || 0),
-      settings: backtester.strategy.settings,
-    },
-    trades: backtester.getWallet().trades.map((trade) => ({
-      entry: trade.config.entryPrice,
-      stopLoss: trade.config.stopLoss,
-      takeProfit: trade.config.takeProfit,
-      profitLoss: trade.profitLoss,
-      entryTime: trade.config.entryTime
-        ? new Date(trade.config.entryTime)
-        : undefined,
-      exitTime: trade.ohlcClose?.closeTime
-        ? new Date(trade.ohlcClose?.closeTime)
-        : undefined,
-      status: trade.status,
-      symbolId: backtester.symbol.key,
-      type: trade.type,
-      amount: trade.config.amount,
-    })),
-    symbol: {
-      id: backtester.symbol.key,
-    },
-    strategy: {
-      id: backtester.strategy.id,
-      name: backtester.strategy.name,
-      settings: backtester.strategy.getSettingsDefinition(),
-    },
-  };
 }

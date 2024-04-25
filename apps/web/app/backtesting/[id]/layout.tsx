@@ -1,6 +1,5 @@
-'use client';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ChartSettingsProvider } from '@traderforecast/ui-chart';
+import { ClientChartSettingsProvider } from '@/components/contexts/client-chart-settings-provider';
+import { ReactQueryProvider } from '@/components/contexts/react-query-provider';
 
 export default function RootLayout({
   children,
@@ -8,10 +7,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ChartSettingsProvider>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </ChartSettingsProvider>
+    <ClientChartSettingsProvider>
+      <ReactQueryProvider>{children}</ReactQueryProvider>;
+    </ClientChartSettingsProvider>
   );
 }
-
-const queryClient = new QueryClient();

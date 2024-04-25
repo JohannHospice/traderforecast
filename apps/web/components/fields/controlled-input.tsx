@@ -15,6 +15,7 @@ export function ControlledInput<T extends FieldValues>({
   endAdornment,
   required,
   description,
+  formatter,
 }: {
   label: string;
   type: React.HTMLInputTypeAttribute;
@@ -25,6 +26,7 @@ export function ControlledInput<T extends FieldValues>({
   endAdornment?: React.ReactNode;
   required?: boolean;
   description?: string;
+  formatter?: (value?: string) => string;
 }) {
   const formatterByType: Partial<
     Record<React.HTMLInputTypeAttribute, (value: string) => string>
@@ -35,19 +37,17 @@ export function ControlledInput<T extends FieldValues>({
     number: (value?: string) => String(value),
     time: (value?: string) => value || '',
   };
-  const valueFormatter = formatterByType[
-    type in formatterByType ? type : 'text'
-  ] as (value: string) => string;
+  const valueFormatter =
+    formatter ||
+    (formatterByType[type in formatterByType ? type : 'text'] as (
+      value: string
+    ) => string);
 
   return (
     <Controller
       name={name}
       control={control}
-      render={({
-        field: { onChange, name, value },
-        fieldState: { error },
-        formState,
-      }) => (
+      render={({ field: { onChange, name, value }, fieldState: { error } }) => (
         <div className='flex flex-col flex-1 gap-3'>
           <Label htmlFor={label}>
             {label}

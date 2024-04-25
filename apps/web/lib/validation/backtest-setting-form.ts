@@ -1,7 +1,5 @@
-import { ICTSilverBulletStrategy } from '@traderforecast/trading/lib/strategies/ict-silver-bullet-strategy';
-import { parse } from 'date-fns';
 import { InferType, date, number, object, string } from 'yup';
-import { STRATEGY_KEYS, optionTimePeriod } from '../constants/strategy';
+import { STRATEGY_KEYS, TIME_PERIOD_OPTIONS } from '../constants/strategy';
 
 export const backtestingSettingsSchema = object()
   .shape({
@@ -14,7 +12,7 @@ export const backtestingSettingsSchema = object()
       .required("Wallet amount can't be empty."),
     pair: string().required("Pair can't be empty."),
     timePeriod: string()
-      .oneOf(optionTimePeriod)
+      .oneOf(TIME_PERIOD_OPTIONS)
       .required("Time period can't be empty."),
     endDate: date()
       .test(
@@ -42,33 +40,3 @@ export const backtestingSettingsSchema = object()
 export type BacktestingSettingsSchemaType = InferType<
   typeof backtestingSettingsSchema
 >;
-
-export const silverBulletSettingSchema = object()
-  .shape({
-    startHour: string()
-      .test('not empty', 'Start time cant be empty', function (value) {
-        return !!value;
-      })
-      .required(),
-    endHour: string()
-      .test('is_time', 'End time must be a valid time', function (value) {
-        return (
-          !!value &&
-          parse(value, 'HH:mm', new Date()).toString() !== 'Invalid Date'
-        );
-      })
-      .required(),
-    takeProfitRatio: number().min(0).required(),
-    stopLossMargin: number().min(0).required(),
-    tradingFees: number().min(0).required(),
-    timezone: string(),
-  })
-  .required();
-
-export type SilverBulletSettingSchemaType = InferType<
-  typeof silverBulletSettingSchema
->;
-
-export const settingSchemas = {
-  [ICTSilverBulletStrategy._id]: silverBulletSettingSchema,
-};

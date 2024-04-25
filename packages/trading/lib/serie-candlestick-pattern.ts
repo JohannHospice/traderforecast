@@ -1,5 +1,6 @@
 import { OHLC } from '.';
 
+// duplication depuis ui-chart
 export class SerieCandlestickPattern {
   constructor(public serie: OHLC[]) {}
 

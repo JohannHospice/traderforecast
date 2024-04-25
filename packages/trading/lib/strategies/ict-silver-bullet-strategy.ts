@@ -78,10 +78,15 @@ export class ICTSilverBulletStrategy
   isTradingHour(time: number): boolean {
     const date = new Date(time);
     const hour = date.getHours();
-    if (this.settings.startHour < this.settings.endHour) {
-      return hour >= this.settings.startHour && hour < this.settings.endHour;
+    const minutes = date.getMinutes();
+    // of format HH:MM
+    const { startHour, endHour } = this.settings;
+    const [startHourHour, startHourMinutes] = startHour.split(':').map(Number);
+    const [endHourHour, endHourMinutes] = endHour.split(':').map(Number);
+    if (startHourHour < endHourHour) {
+      return hour >= startHourHour && hour < endHourHour;
     }
-    return hour >= this.settings.startHour || hour < this.settings.endHour;
+    return hour >= startHourHour || hour < endHourHour;
   }
 
   async createSerie(
@@ -137,8 +142,8 @@ export class ICTSilverBulletStrategy
 }
 
 export interface ICTSilverBulletStrategySettings extends StrategySettings {
-  startHour: number;
-  endHour: number;
+  startHour: string;
+  endHour: string;
   takeProfitRatio: number;
   stopLossMargin: number;
 }
