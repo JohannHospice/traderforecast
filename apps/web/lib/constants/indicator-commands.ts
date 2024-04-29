@@ -57,6 +57,11 @@ export const COMMAND_GROUP_INDICATORS: {
         title: 'Order Block',
         short: 'OB',
       },
+      {
+        value: 'breakerblock',
+        title: 'Breaker Block',
+        short: 'BB',
+      },
     ],
   },
 ];

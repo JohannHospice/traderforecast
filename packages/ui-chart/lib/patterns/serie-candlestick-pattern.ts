@@ -34,6 +34,44 @@ export class SerieCandlestickPattern {
     return range.high > this.get(index).low && range.low < this.get(index).high;
   }
 
+  findLastBullishBreakerBlock(from: number, to: number): number {
+    let higherSwingHigh = Number.NEGATIVE_INFINITY;
+    let lowerSwingLow = Number.POSITIVE_INFINITY;
+    let swingHigh = Number.NEGATIVE_INFINITY;
+    let swingLow = Number.POSITIVE_INFINITY;
+
+    for (let i = to; i > from; i--) {
+      if (this.get(i).high > higherSwingHigh) {
+        higherSwingHigh = this.get(i).high;
+        continue;
+      }
+      if (
+        this.get(i).low < lowerSwingLow &&
+        this.get(i).high < higherSwingHigh
+      ) {
+        lowerSwingLow = this.get(i).low;
+        continue;
+      }
+      if (
+        this.get(i).high > swingHigh &&
+        this.get(i).low > lowerSwingLow &&
+        this.get(i).high < higherSwingHigh
+      ) {
+        swingHigh = this.get(i).high;
+        continue;
+      }
+      if (
+        this.get(i).low < swingLow &&
+        this.get(i).low > lowerSwingLow &&
+        this.get(i).high < swingHigh
+      ) {
+        swingLow = this.get(i).low;
+        return swingHigh;
+      }
+    }
+    return -1;
+  }
+
   findFairValueGap(from: number, to: number) {
     for (let i = to; i > from; i--) {
       if (

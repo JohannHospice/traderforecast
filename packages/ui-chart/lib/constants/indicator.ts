@@ -1,3 +1,4 @@
+import { BreakerBlockIndicator } from '../indicators/breaker-block-indicator';
 import { EngulfingCandlestickMarkersIndicator } from '../indicators/engulfing-candlestick-indicator';
 import { FairValueGapIndicator } from '../indicators/fair-value-gap-indicator';
 import { GapIndicator } from '../indicators/gap-indicator';
@@ -22,4 +23,5 @@ export const IndicatorValues = {
   orderblock: OrderBlockIndicator,
   unmitigatedfairvaluegap: UnmitigatedFairValueGapIndicator,
   imbalance: ImbalanceIndicator,
+  breakerblock: BreakerBlockIndicator,
 };
