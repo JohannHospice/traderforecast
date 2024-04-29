@@ -1,5 +1,5 @@
 import { Container } from '@/components/container';
-import { Backtesting } from '@/components/forms/backtesting-form';
+import { BacktestingForm } from '@/components/forms/backtesting-form';
 import { Heading } from '@/components/heading';
 import api from '@/lib/api';
 import { ArrowLeft } from 'lucide-react';
@@ -26,7 +26,7 @@ export default async function Page({
         ]}
       />
       <Container fluid className='flex-1'>
-        <Backtesting
+        <BacktestingForm
           symbols={symbols}
           defaultValues={{
             pair: searchParams.symbol,

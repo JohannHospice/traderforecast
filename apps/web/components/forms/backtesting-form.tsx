@@ -25,7 +25,7 @@ import { UseFormHandleSubmit, useForm } from 'react-hook-form';
 import { onBacktest } from '../../lib/helpers/backtest';
 import { StrategyOption } from '../strategy-option';
 
-export function Backtesting({
+export function BacktestingForm({
   symbols,
   defaultValues,
 }: {
