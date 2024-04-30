@@ -72,20 +72,29 @@ export class Trade {
       return;
     }
 
-    if (this.isStatus(TradeStatus.CANCELLED) && !this.ohlcClose) {
+    if (
+      this.isStatus(TradeStatus.OPEN_CANCELLED, TradeStatus.AWAIT_CANCELLED) &&
+      !this.ohlcClose
+    ) {
       this.ohlcClose = ohlc;
       return;
     }
   }
 
   cancel(): void {
-    this.status = TradeStatus.CANCELLED;
+    if (this.isStatus(TradeStatus.OPEN)) {
+      this.status = TradeStatus.OPEN_CANCELLED;
+    }
+    if (this.isStatus(TradeStatus.AWAIT)) {
+      this.status = TradeStatus.AWAIT_CANCELLED;
+    }
   }
 
   isActive(): boolean {
     return (
       this.isStatus(TradeStatus.OPEN, TradeStatus.AWAIT) ||
-      (this.isStatus(TradeStatus.CANCELLED) && !this.ohlcClose)
+      (this.isStatus(TradeStatus.OPEN_CANCELLED, TradeStatus.AWAIT_CANCELLED) &&
+        !this.ohlcClose)
     );
   }
 
@@ -136,7 +145,7 @@ export class Trade {
         : this.config.entryPrice - this.config.stopLoss;
     }
 
-    if (this.isStatus(TradeStatus.CANCELLED) && !!this.ohlcClose) {
+    if (this.isStatus(TradeStatus.OPEN_CANCELLED) && !!this.ohlcClose) {
       return this.config.entryPrice - this.ohlcClose.open;
     }
 

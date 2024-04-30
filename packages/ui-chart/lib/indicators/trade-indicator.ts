@@ -9,27 +9,20 @@ export class TradeIndicator implements Indicator {
     const rectangles: Rectangle[] = [];
     const markers: Marker[] = [];
     this.trades.forEach((trade) => {
-      if (!trade.entryTime || !trade.exitTime) {
-        console.log('Trade has no entry or exit time', trade);
-        return;
-      }
-      const entryTime = trade.entryTime
-        ? trade.entryTime.getTime()
-        : trade.exitTime.getTime();
-      const exitTime = trade.exitTime.getTime();
+      const entryTime =
+        (trade.entryTime || trade.exitTime || trade.creationTime)?.getTime() ||
+        NaN;
+      const exitTime = (trade.exitTime || trade.creationTime)?.getTime() || NaN;
+
+      console.log(entryTime);
 
       markers.push({
         time: entryTime,
         shape: 'circle',
         position: 'inBar',
-        kline: klines.find((kline) => kline.openTime === entryTime),
         color: this.isLight ? 'black' : 'white',
         text: trade.type + '[' + trade.status + ']',
       });
-
-      if (trade.status === TradeStatus.CANCELLED) {
-        return;
-      }
 
       rectangles.push({
         openTime: entryTime,

@@ -9,6 +9,9 @@ import { BacktestDataTable } from './_components/backtest-data-table';
 
 export default async function Page() {
   const backtests = await prisma.backtest.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
     select: {
       id: true,
       createdAt: true,

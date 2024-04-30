@@ -3,7 +3,6 @@ import { Strategy, StrategySettings } from '.';
 import { Trade } from '../trade';
 import { Symbol } from '..';
 import { SerieCandlestickPattern } from '@traderforecast/utils/serie-candlestick-pattern';
-import { createSerie } from '../helpers/strategy';
 import { getTimeperiodIncrementInMs } from '../helpers/timeperiod';
 
 export class ICTUnicornModelStrategy
@@ -18,9 +17,12 @@ export class ICTUnicornModelStrategy
   ) {}
 
   async onTime(time: number, exchange: ExchangeProxy): Promise<void> {
-    if (exchange.activeTrades.filter((trade) => trade!.isStatus('AWAIT'))) {
+    if (
+      exchange.activeTrades.filter((trade) => trade.isStatus('OPEN')).length > 0
+    ) {
       return;
     }
+
     const from = time - getTimeperiodIncrementInMs(this.symbol.timeperiod) * 50;
     const to = time;
 
@@ -35,24 +37,34 @@ export class ICTUnicornModelStrategy
       return;
     }
 
-    if (exchange.activeTrades.length > 0) {
-      exchange.trades
-        .filter((trade) => trade.isStatus('AWAIT'))
-        .forEach((trade) => exchange.cancelTrade(trade));
-    }
+    exchange.activeTrades
+      .filter((trade) => trade.isStatus('AWAIT'))
+      .forEach((trade) => exchange.cancelTrade(trade));
 
     exchange.addTrade(trade);
   }
 
-  private seenBreakerBlock: Record<number, boolean> = {};
+  private lastBreakerBlockSeenTime: number = NaN;
 
   trade(serie: SerieCandlestickPattern, balance: number): Trade | undefined {
-    const breakerBlock = serie.findLastBreakerBlock(0, serie.length - 1);
-    if (!breakerBlock || this.seenBreakerBlock[breakerBlock.breakerBlock]) {
+    const lastBreakerBlockIndex = serie.getIndexByTime(
+      this.lastBreakerBlockSeenTime
+    );
+    const breakerBlock = serie.findLastBreakerBlock(
+      lastBreakerBlockIndex >= 0 ? lastBreakerBlockIndex : 0,
+      serie.length - 1
+    );
+    if (
+      !breakerBlock ||
+      this.lastBreakerBlockSeenTime ===
+        serie.get(breakerBlock.breakerBlock).closeTime
+    ) {
       return undefined;
     }
 
-    this.seenBreakerBlock[breakerBlock.breakerBlock] = true;
+    this.lastBreakerBlockSeenTime = serie.get(
+      breakerBlock.breakerBlock
+    ).closeTime;
 
     if (breakerBlock.isBullish) {
       const entryPrice = serie.get(breakerBlock.breakerBlock).close;
@@ -61,7 +73,7 @@ export class ICTUnicornModelStrategy
         amount: Trade.buyAmount(balance, entryPrice),
         stopLoss: Trade.addMargin(
           serie.get(breakerBlock.breakerBlock).low,
-          0.0001
+          -0.0001
         ),
         takeProfit: serie.getPreviousHigherSwing(
           breakerBlock.breakerBlock,

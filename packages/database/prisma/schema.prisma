@@ -41,22 +41,23 @@ model Strategy {
 }
 
 model Trade {
-  id         String      @id @default(cuid())
-  type       TradeType
-  entry      Float
-  stopLoss   Float?
-  takeProfit Float
-  profitLoss Float?
-  amount     Float
-  entryTime  DateTime?
-  exitTime   DateTime?
-  status     TradeStatus
-  symbolId   String
-  symbol     Symbol      @relation(fields: [symbolId], references: [id])
-  backtestId String?
-  backtest   Backtest?   @relation(fields: [backtestId], references: [id])
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  id           String      @id @default(cuid())
+  type         TradeType
+  entry        Float
+  stopLoss     Float?
+  takeProfit   Float
+  profitLoss   Float?
+  amount       Float
+  creationTime DateTime?
+  entryTime    DateTime?
+  exitTime     DateTime?
+  status       TradeStatus
+  symbolId     String
+  symbol       Symbol      @relation(fields: [symbolId], references: [id])
+  backtestId   String?
+  backtest     Backtest?   @relation(fields: [backtestId], references: [id])
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 }
 
 enum TradeStatus {
@@ -64,7 +65,8 @@ enum TradeStatus {
   OPEN
   SUCCESS
   FAILED
-  CANCELLED
+  OPEN_CANCELLED
+  AWAIT_CANCELLED
 }
 
 enum TradeType {

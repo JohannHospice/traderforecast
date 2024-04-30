@@ -60,6 +60,9 @@ function mapToBacktestAction(backtester: Backtester): CreateBacktestAction {
       stopLoss: trade.config.stopLoss,
       takeProfit: trade.config.takeProfit,
       profitLoss: trade.profitLoss,
+      creationTime: trade.config.createdTime
+        ? new Date(trade.config.createdTime)
+        : undefined,
       entryTime: trade.config.entryTime
         ? new Date(trade.config.entryTime)
         : undefined,

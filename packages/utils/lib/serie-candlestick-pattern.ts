@@ -234,6 +234,10 @@ export class SerieCandlestickPattern {
     return this.get(swingLowIndex);
   }
 
+  getIndexByTime(time: number): number {
+    return this.serie.findIndex((candle) => candle.closeTime === time);
+  }
+
   // getPreviousLowerSwing
   get(index: number): OHLC {
     return this.serie[index];

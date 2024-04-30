@@ -6,7 +6,7 @@ export class BacktestApiMarket implements Market {
   private ohlcs: OHLC[] = [];
   private loadCount = 0;
   private periodInterval: number;
-  private loadTimeOffset = 5000;
+  private loadTimeOffset = 13500;
 
   constructor(
     private options: {

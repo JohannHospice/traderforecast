@@ -16,7 +16,9 @@ const colors = {
     'bg-green-500 hover:bg-green-500 text-primary-foreground',
   [$Enums.TradeStatus.FAILED]:
     'bg-red-500 hover:bg-red-500 text-primary-foreground',
-  [$Enums.TradeStatus.CANCELLED]:
+  [$Enums.TradeStatus.OPEN_CANCELLED]:
+    'bg-muted hover:bg-muted text-muted-foreground',
+  [$Enums.TradeStatus.AWAIT_CANCELLED]:
     'bg-muted hover:bg-muted text-muted-foreground',
   undefined: 'bg-gray-500 hover:bg-gray-500 text-foreground',
 };
@@ -32,6 +34,7 @@ export function TradesDataTable({
     takeProfit: number;
     entryTime: Date | null;
     exitTime: Date | null;
+    creationTime: Date | null;
     status: $Enums.TradeStatus;
     type: $Enums.TradeType;
     profitLoss: number | null;
@@ -92,6 +95,14 @@ export function TradesDataTable({
           cell: ({ getValue }) => (
             <ProfitLossTypography value={getValue()} percentage />
           ),
+        },
+        {
+          header: 'Creation Time',
+          accessorKey: 'creationTime',
+          accessorFn: (row) =>
+            row.creationTime
+              ? format(row.creationTime, 'yyyy-MM-dd HH:mm')
+              : 'N/A',
         },
         {
           header: 'Entry Time',
