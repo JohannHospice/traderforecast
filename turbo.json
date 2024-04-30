@@ -9,12 +9,14 @@
         "^db:migrate"
       ],
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": ["REDIS_REST_URL", "REDIS_PASSWORD"]
     },
     "build": {
       "outputMode": "new-only",
       "dependsOn": ["^build", "^db:generate", "^db:push"],
-      "outputs": ["compiled/**", "dist/**", ".next/**", "!.next/cache/**"]
+      "outputs": ["compiled/**", "dist/**", ".next/**", "!.next/cache/**"],
+      "env": ["REDIS_REST_URL", "REDIS_PASSWORD"]
     },
     "test": {
       "cache": false,

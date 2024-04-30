@@ -8,8 +8,7 @@ import {
 import { loadDevMessages, loadErrorMessages } from '@apollo/client/dev';
 import { MarketRepository } from './repositories/market';
 import { SantimentMarketRepository } from './repositories/market/santiment-market';
-import { RealtimeMarket } from './repositories/realtime-market';
-import { ApiRealtimeMarket } from './repositories/realtime-market/api-realtime-market';
+import { CachedSantimentMarketRepository } from './repositories/market/cached-santiment-market';
 
 if (process.env.NODE_ENV !== 'production') {
   loadDevMessages();
@@ -59,9 +58,9 @@ const appoloClient = new ApolloClient({
 });
 
 export default {
+  cachedMarket: new CachedSantimentMarketRepository(appoloClient),
   market: new SantimentMarketRepository(appoloClient),
-  realtimeMarket: new ApiRealtimeMarket(),
 } as {
+  cachedMarket: MarketRepository;
   market: MarketRepository;
-  realtimeMarket: RealtimeMarket;
 };

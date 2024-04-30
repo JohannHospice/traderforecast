@@ -8,7 +8,7 @@ export async function actionGetOHLCs(options: {
   startTime?: number;
   endTime?: number;
 }) {
-  const klines = await api.market.getOHLCs(options);
+  const klines = await api.cachedMarket.getOHLCs(options);
 
   return klines;
 }
