@@ -6,12 +6,7 @@ import {
   NavigationMenu,
   NavigationMenuList,
 } from '@/components/ui/navigation-menu';
-import dynamic from 'next/dynamic';
-
-// FIXME: This is a workaround to fix hydration and incoherence between client and server
-const NavigationLogo = dynamic(() => import('./navigation-logo'), {
-  ssr: false,
-});
+import NavigationLogo from './navigation-logo';
 
 export function Navigation() {
   return (

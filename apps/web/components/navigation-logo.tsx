@@ -4,10 +4,15 @@ import { TraderforecastLogo } from '@/components/icons';
 import { cn } from '@/lib/helpers/tailwind-utils';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 export default function NavigationLogo() {
   const { theme } = useTheme();
-  const isDark = theme === 'dark';
+  // FIXME To fix hydration mismatch https://nextjs.org/docs/messages/react-hydration-error
+  const [isDark, setIsDark] = useState(false);
+  useEffect(() => {
+    setIsDark(theme === 'dark');
+  }, [theme]);
 
   return (
     <Link href='/' passHref>
