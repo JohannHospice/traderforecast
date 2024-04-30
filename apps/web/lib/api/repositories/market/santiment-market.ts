@@ -25,9 +25,6 @@ export class SantimentMarketRepository<T> implements MarketRepository {
         getMetric: { timeseriesData },
       },
     } = await this.client.query({
-      context: {
-        log: 'DATA',
-      },
       query: gql`
         query getLatestKline(
           $slug: String!

@@ -6,13 +6,13 @@ import {
 } from '../../validation/backtest-database';
 
 export default async function createBacktest(data: CreateBacktestAction) {
-  console.log('Validated backtest data:', data);
+  console.log('Validated backtest data');
 
   const { backtest, strategy, symbol, trades } =
     await createBacktestActionSchema.validate(data);
 
   console.log('Creating backtest');
-  console.log({ backtest, strategy, symbol, trades });
+  console.log({ backtest, strategy, symbol, trades: trades.length });
 
   return await prisma.backtest.create({
     data: {
