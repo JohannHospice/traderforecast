@@ -30,6 +30,19 @@ const appoloClient = new ApolloClient({
     }),
     new HttpLink({
       uri: 'https://api.santiment.net/graphiql',
+      fetch: (uri, options) => {
+        return fetch(uri, options)
+          .then((response) => {
+            if (response.status >= 500) {
+              console.error(response);
+              return Promise.reject(response.status);
+            }
+            return response;
+          })
+          .catch((error) => {
+            return Promise.reject(error);
+          });
+      },
     }),
   ]),
 });

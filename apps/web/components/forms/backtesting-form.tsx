@@ -64,7 +64,7 @@ export function BacktestingForm({
       settings,
     }: {
       backtest: BacktestingSettingsSchemaType;
-      settings: StrategySetting;
+      settings?: StrategySetting;
     }) => onBacktest(backtest, settings),
     onSuccess: (backtest) => {
       toast({
@@ -89,13 +89,17 @@ export function BacktestingForm({
   const onSubmit = useMemo(
     () =>
       handleSubmit((backtest, event) => {
+        if (!strategySettingHandleSubmit.current) {
+          return mutate({
+            backtest,
+          });
+        }
         const submit = strategySettingHandleSubmit.current((settings) =>
           mutate({
             backtest,
             settings,
           })
         );
-
         return submit(event);
       }),
     [handleSubmit, strategySettingHandleSubmit, mutate]

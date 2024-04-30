@@ -17,6 +17,9 @@ export class Wallet implements WalletClient {
   }
 
   addTrade(trade: Trade): void {
+    if (this.balance < trade.balance) {
+      throw new Error('Insufficient balance');
+    }
     this._trades.push(trade);
     this._mutex = true;
   }

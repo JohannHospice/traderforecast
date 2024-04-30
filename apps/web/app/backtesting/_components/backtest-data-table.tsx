@@ -4,14 +4,14 @@ import { DataTable } from '@/components/data-table';
 import { differenceInDays, format } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { ProfitLossTypography } from '../[id]/_components/profit-loss-typography';
-import { formatNumber } from '@traderforecast/utils';
+import { formatNumber } from '@traderforecast/utils/string';
 
 export function BacktestDataTable({ backtests }: { backtests: any[] }) {
-  const router = useRouter();
   return (
     <DataTable
       className='flex-1 border-0'
-      onRowClick={({ original }) => router.push('backtesting/' + original.id)}
+      getHref={({ original }) => 'backtesting/' + original.id}
+      onRowClick={({ original }) => 'backtesting/' + original.id}
       columns={[
         {
           header: 'Strategy',

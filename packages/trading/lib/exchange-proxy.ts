@@ -14,6 +14,10 @@ export class ExchangeProxy implements WalletClient, MarketHandler {
     this.exchange.getWallet().cancelTrade(trade);
   }
 
+  get trades(): Trade[] {
+    return this.exchange.getWallet().trades;
+  }
+
   get activeTrades(): Trade[] {
     return this.exchange.getWallet().activeTrades;
   }

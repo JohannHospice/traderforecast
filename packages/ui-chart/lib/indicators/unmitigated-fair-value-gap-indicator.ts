@@ -1,6 +1,6 @@
 import { Indicator, IndicatorResult, Marker, Rectangle, Trendline } from '.';
 import { Color, getColor } from '../constants/colors';
-import { SerieCandlestickPattern } from '../patterns/serie-candlestick-pattern';
+import { SerieCandlestickPattern } from '@traderforecast/utils/serie-candlestick-pattern';
 
 export class UnmitigatedFairValueGapIndicator implements Indicator {
   isLight: boolean = false;

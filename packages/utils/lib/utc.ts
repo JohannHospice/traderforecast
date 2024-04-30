@@ -12,5 +12,14 @@ export function splitInterval(interval: string): [number, string] {
     throw new Error('Invalid interval format');
   }
   const [_, amount, unit] = match;
-  return [Number(amount), unit];
+  return [parseInt(amount), unit];
+}
+
+export function splitFromUtcInterval(date: string): [number, string] {
+  const match = /utc_now-(\d+)(\w)/.exec(date);
+  if (!match) {
+    throw new Error('Invalid interval format');
+  }
+  const [_, amount, unit] = match;
+  return [parseInt(amount), unit];
 }

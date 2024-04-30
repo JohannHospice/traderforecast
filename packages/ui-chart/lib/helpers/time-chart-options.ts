@@ -1,5 +1,5 @@
 import { ColorType, DeepPartial, TimeChartOptions } from 'lightweight-charts';
-import { formatNumber } from '@traderforecast/utils';
+import { formatNumber } from '@traderforecast/utils/string';
 
 export function createTimeChartOptions({
   bgColor,

@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./lib/string.ts"
+    "./*": "./lib/*.ts"
   },
   "scripts": {
     "prebuild": "tsc",

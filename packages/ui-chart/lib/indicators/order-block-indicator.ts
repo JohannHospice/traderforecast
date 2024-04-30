@@ -1,5 +1,5 @@
 import { Indicator, IndicatorResult, Marker, Rectangle, Trendline } from '.';
-import { SerieCandlestickPattern } from '../patterns/serie-candlestick-pattern';
+import { SerieCandlestickPattern } from '@traderforecast/utils/serie-candlestick-pattern';
 
 export class OrderBlockIndicator implements Indicator {
   isLight: boolean = false;

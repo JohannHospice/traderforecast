@@ -13,13 +13,16 @@ export class TradeIndicator implements Indicator {
         console.log('Trade has no entry or exit time', trade);
         return;
       }
-      const openTime = trade.entryTime.getTime();
+      const entryTime = trade.entryTime
+        ? trade.entryTime.getTime()
+        : trade.exitTime.getTime();
+      const exitTime = trade.exitTime.getTime();
 
       markers.push({
-        time: openTime,
+        time: entryTime,
         shape: 'circle',
         position: 'inBar',
-        kline: klines.find((kline) => kline.openTime === openTime),
+        kline: klines.find((kline) => kline.openTime === entryTime),
         color: this.isLight ? 'black' : 'white',
         text: trade.type + '[' + trade.status + ']',
       });
@@ -29,9 +32,9 @@ export class TradeIndicator implements Indicator {
       }
 
       rectangles.push({
-        openTime: openTime,
+        openTime: entryTime,
         open: trade.entry,
-        closeTime: trade.exitTime.getTime(),
+        closeTime: exitTime,
         close: trade.takeProfit,
         color: 'green',
       });
@@ -41,9 +44,9 @@ export class TradeIndicator implements Indicator {
         return;
       }
       rectangles.push({
-        openTime: openTime,
+        openTime: entryTime,
         open: trade.entry,
-        closeTime: trade.exitTime.getTime(),
+        closeTime: exitTime,
         close: trade.stopLoss,
         color: 'red',
       });

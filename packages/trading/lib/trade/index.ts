@@ -12,6 +12,7 @@ export class Trade {
       entryTime?: number;
       amount: number;
       tradingFees?: number;
+      createdTime?: number;
     }
   ) {
     if (
@@ -45,6 +46,10 @@ export class Trade {
   }
 
   update(ohlc: OHLC): void {
+    if (!this.config.createdTime) {
+      this.config.createdTime = ohlc.openTime;
+    }
+
     if (this.isStatus(TradeStatus.AWAIT) && this.hitEntryPrice(ohlc)) {
       this.status = TradeStatus.OPEN;
       this.config.entryTime = ohlc.openTime;
@@ -148,6 +153,10 @@ export class Trade {
 
   public get profitLossRatio(): number {
     return this.profitLossRaw / this.config.entryPrice;
+  }
+
+  public get balance(): number {
+    return this.config.amount * this.config.entryPrice;
   }
 
   static distance(x: number, y: number): number {

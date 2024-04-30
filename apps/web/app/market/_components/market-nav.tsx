@@ -1,7 +1,7 @@
 'use client';
 
 import { Combobox } from '@/components/combobox';
-import { encodeSearchParamList } from '@traderforecast/utils';
+import { encodeSearchParamList } from '@traderforecast/utils/string';
 import { useRedirectParams } from '@/lib/hooks/use-redirect-params';
 import { useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';

@@ -1,5 +1,5 @@
 import { Indicator, IndicatorResult } from '.';
-import { SerieCandlestickPattern } from '../patterns/serie-candlestick-pattern';
+import { SerieCandlestickPattern } from '@traderforecast/utils/serie-candlestick-pattern';
 import { SeriePattern } from '../patterns/serie-pattern';
 
 export class ImbalanceIndicator implements Indicator {

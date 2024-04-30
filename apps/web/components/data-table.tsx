@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  CellContext,
   ColumnDef,
   ColumnFiltersState,
   Row,
@@ -25,6 +26,7 @@ import {
 import { useState } from 'react';
 import { Button } from './ui/button';
 import { cn } from '../lib/helpers/tailwind-utils';
+import Link from 'next/link';
 
 export function DataTable<TData, TValue>({
   columns,
@@ -33,9 +35,11 @@ export function DataTable<TData, TValue>({
   pagination,
   setPagination,
   className,
+  getHref,
 }: {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  getHref?: (row: Row<TData>) => string;
   onRowClick?: (row: Row<TData>) => void;
   pagination?: {
     pageIndex: number;
@@ -100,25 +104,36 @@ export function DataTable<TData, TValue>({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  onClick={onRowClick && (() => onRowClick(row))}
-                  className={cn(
-                    onRowClick ? 'cursor-pointer hover:bg-muted' : ''
-                  )}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className='py-4'>
-                      {flexRender(
+              table.getRowModel().rows.map((row) => {
+                return (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                    onClick={onRowClick && (() => onRowClick(row))}
+                    className={cn(
+                      onRowClick ? 'cursor-pointer hover:bg-muted' : ''
+                    )}
+                  >
+                    {row.getVisibleCells().map((cell) => {
+                      const component = flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+                      );
+                      return (
+                        <TableCell key={cell.id} className='py-4'>
+                          {getHref ? (
+                            <Link key={row.id} href={getHref(row)}>
+                              {component}
+                            </Link>
+                          ) : (
+                            component
+                          )}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })
             ) : (
               <TableRow>
                 <TableCell

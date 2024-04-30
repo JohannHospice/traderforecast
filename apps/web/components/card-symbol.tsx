@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { formatNumber, formatPercent } from '@traderforecast/utils';
+import { formatNumber, formatPercent } from '@traderforecast/utils/string';
 import { PriceTitle } from './price-title';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Badge } from './ui/badge';

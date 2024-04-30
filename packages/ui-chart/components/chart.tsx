@@ -14,6 +14,7 @@ import { THEME_DARK, THEME_LIGHT } from '../styles/theme';
 import { ChartBase } from './chart-base';
 import { useChartSettings } from './contexts/chart-settings-provider';
 import { SeriesProvider } from './contexts/series-provider';
+import { splitFromUtcInterval, splitInterval } from '@traderforecast/utils/utc';
 
 const REALTIME_INTERVAL_DELAY: Record<IntervalKeys | string, number> = {
   '1m': 1000 * 60,
@@ -94,7 +95,6 @@ export function Chart({
 
     klineChannels.current[interval] = klines;
     candelstickChannels.current[interval] = updatedCandlesticks;
-    console.log(updatedCandlesticks);
 
     series.current?.setData(updatedCandlesticks);
   }, [interval, klines]);
@@ -119,15 +119,9 @@ export function Chart({
       if (!serieFrom || +from - +serieFrom > 0) {
         return;
       }
-
-      const match = /utc_now-(\d+)(\w)/.exec(startUtc);
-
-      if (!match) {
-        return;
-      }
-
-      const [_, amount, unit] = match;
-      const newStart = `utc_now-${parseInt(amount) + offsetKlines}${unit}`;
+      const [intervalAmount] = splitInterval(interval);
+      const [prevAmount, unit] = splitFromUtcInterval(startUtc);
+      const newStart = `utc_now-${Number(prevAmount) + Number(offsetKlines) * Number(intervalAmount)}${unit}`;
 
       waitingTimeRangeUpdate.current = null;
       onChangeStartDate(newStart);

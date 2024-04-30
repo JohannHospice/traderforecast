@@ -1,6 +1,10 @@
 {
   "extends": "@traderforecast/typescript-config/base.json",
-  "include": ["./**/*.ts", "./**/*.tsx"],
+  "include": [
+    "./**/*.ts",
+    "./**/*.tsx",
+    "../utils/lib/serie-candlestick-pattern.ts"
+  ],
   "exclude": ["dist", "build", "node_modules", "./**/*.test.ts"],
   "compilerOptions": {
     "paths": {}

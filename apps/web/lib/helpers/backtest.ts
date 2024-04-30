@@ -17,7 +17,7 @@ export async function onBacktest(
     strategyKey,
     walletAmount,
   }: BacktestingSettingsSchemaType,
-  strategySettings: StrategySetting
+  strategySettings?: StrategySetting
 ) {
   const Strategy = STRATEGY_OPTION_PROPS[strategyKey].strategy;
 

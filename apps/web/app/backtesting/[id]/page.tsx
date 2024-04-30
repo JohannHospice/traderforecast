@@ -13,7 +13,7 @@ import { ArrowLeft } from 'lucide-react';
 import { BacktestChartDialog } from './_components/backtest-chart-dialog';
 import { ProfitLossTypography } from './_components/profit-loss-typography';
 import { TradesDataTable } from './_components/trades-data-table';
-import { formatNumber } from '@traderforecast/utils';
+import { formatNumber } from '@traderforecast/utils/string';
 
 export default async function Page({
   params: { id },

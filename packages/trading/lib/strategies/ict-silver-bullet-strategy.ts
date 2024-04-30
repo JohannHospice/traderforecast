@@ -2,7 +2,7 @@ import { ExchangeProxy } from '../exchange-proxy';
 import { Strategy, StrategySettings } from '.';
 import { Trade } from '../trade';
 import { Symbol } from '..';
-import { SerieCandlestickPattern } from '../serie-candlestick-pattern';
+import { SerieCandlestickPattern } from '../../../utils/lib/serie-candlestick-pattern';
 import { isTradingHour, createSerie } from '../helpers/strategy';
 
 /**
@@ -112,6 +112,7 @@ export class ICTSilverBulletStrategy
 }
 
 export interface ICTSilverBulletStrategySettings extends StrategySettings {
+  tradingFees: number;
   startHour: string;
   endHour: string;
   takeProfitRatio: number;

@@ -1,6 +1,6 @@
 'use client';
 import { cn } from '@/lib/helpers/tailwind-utils';
-import { formatNumber, formatPercent } from '@traderforecast/utils';
+import { formatNumber, formatPercent } from '@traderforecast/utils/string';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 export function ProfitLossTypography({

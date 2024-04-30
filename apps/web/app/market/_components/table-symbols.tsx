@@ -8,7 +8,7 @@ import { SEARCH_PARAMS } from '@/lib/constants/navigation';
 import { useRedirectParams } from '@/lib/hooks/use-redirect-params';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { ColumnDef } from '@tanstack/react-table';
-import { formatNumber, formatPercent } from '@traderforecast/utils';
+import { formatNumber, formatPercent } from '@traderforecast/utils/string';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 

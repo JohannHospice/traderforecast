@@ -1,7 +1,7 @@
 import { getTimeperiodIncrementInMs } from './timeperiod';
 import { ExchangeProxy } from '../exchange-proxy';
 import { Symbol } from '..';
-import { SerieCandlestickPattern } from '../serie-candlestick-pattern';
+import { SerieCandlestickPattern } from '../../../utils/lib/serie-candlestick-pattern';
 
 export function isTradingHour(
   time: number,

@@ -5,7 +5,7 @@ import { cn } from '@/lib/helpers/tailwind-utils';
 import { $Enums } from '@traderforecast/database';
 import { format } from 'date-fns';
 import { ProfitLossTypography } from './profit-loss-typography';
-import { formatNumber } from '@traderforecast/utils';
+import { formatNumber } from '@traderforecast/utils/string';
 
 const colors = {
   [$Enums.TradeStatus.AWAIT]:

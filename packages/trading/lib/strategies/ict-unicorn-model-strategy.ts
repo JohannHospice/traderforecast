@@ -1,80 +1,87 @@
-import { getTimeperiodIncrementInMs } from '../helpers/timeperiod';
 import { ExchangeProxy } from '../exchange-proxy';
 import { Strategy, StrategySettings } from '.';
 import { Trade } from '../trade';
 import { Symbol } from '..';
-import { SerieCandlestickPattern } from '../serie-candlestick-pattern';
+import { SerieCandlestickPattern } from '@traderforecast/utils/serie-candlestick-pattern';
 import { createSerie } from '../helpers/strategy';
+import { getTimeperiodIncrementInMs } from '../helpers/timeperiod';
 
 export class ICTUnicornModelStrategy
   implements Strategy<ICTUnicornModelStrategySettings>
 {
-  private alreadyTraded = false;
-
-  readonly id = 'ict-silver-bullet';
-  readonly name = 'ICT Silver Bullet Strategy';
+  readonly id = 'ict-unicon-model-strategy';
+  readonly name = 'ICT Unicorn Model Strategy';
 
   constructor(
     public symbol: Symbol,
-    public settings: ICTUnicornModelStrategySettings
-  ) {
-    if (this.settings.takeProfitRatio <= 0) {
-      throw new Error('takeProfitRatio must be greater than 0');
-    }
-    if (this.settings.stopLossMargin < 0) {
-      throw new Error('stopLossMargin must be greater than 0');
-    }
-    // if (!['1m', '5m', '15m', '30m', '1h'].includes(this.symbol.timeperiod)) {
-    //   throw new Error('timeperiod not supported');
-    // }
-  }
+    public settings: ICTUnicornModelStrategySettings = {}
+  ) {}
 
   async onTime(time: number, exchange: ExchangeProxy): Promise<void> {
-    const serie = await createSerie(time, exchange, this.symbol);
+    if (exchange.activeTrades.filter((trade) => trade!.isStatus('AWAIT'))) {
+      return;
+    }
+    const from = time - getTimeperiodIncrementInMs(this.symbol.timeperiod) * 50;
+    const to = time;
+
+    const ohlcs = await exchange.getMarket(this.symbol).getOHLCs({
+      from,
+      to,
+    });
+    const serie = new SerieCandlestickPattern(ohlcs);
     const trade = this.trade(serie, exchange.balance);
 
     if (!trade) {
       return;
     }
 
+    if (exchange.activeTrades.length > 0) {
+      exchange.trades
+        .filter((trade) => trade.isStatus('AWAIT'))
+        .forEach((trade) => exchange.cancelTrade(trade));
+    }
+
     exchange.addTrade(trade);
-    this.alreadyTraded = true;
   }
 
-  trade(serie: SerieCandlestickPattern, balance: number): Trade | undefined {
-    const fvg = serie.length - 2;
+  private seenBreakerBlock: Record<number, boolean> = {};
 
-    if (!serie.isFairValueGap(fvg)) {
+  trade(serie: SerieCandlestickPattern, balance: number): Trade | undefined {
+    const breakerBlock = serie.findLastBreakerBlock(0, serie.length - 1);
+    if (!breakerBlock || this.seenBreakerBlock[breakerBlock.breakerBlock]) {
       return undefined;
     }
 
-    const entry = serie.length - 1;
+    this.seenBreakerBlock[breakerBlock.breakerBlock] = true;
 
-    const long = serie.isBullish(fvg);
-    const stopLoss = serie.get(fvg).open;
-
-    if (long) {
-      const entryPrice = serie.get(entry).low;
+    if (breakerBlock.isBullish) {
+      const entryPrice = serie.get(breakerBlock.breakerBlock).close;
       return new Trade({
         entryPrice,
-        tradingFees: this.settings.tradingFees,
         amount: Trade.buyAmount(balance, entryPrice),
-        stopLoss: Trade.addMargin(stopLoss, -this.settings.stopLossMargin),
-        takeProfit:
-          entryPrice +
-          Trade.distance(entryPrice, stopLoss) * this.settings.takeProfitRatio,
+        stopLoss: Trade.addMargin(
+          serie.get(breakerBlock.breakerBlock).low,
+          0.0001
+        ),
+        takeProfit: serie.getPreviousHigherSwing(
+          breakerBlock.breakerBlock,
+          breakerBlock.higherSwingHigh
+        ).high,
       });
     }
 
-    const entryPrice = serie.get(entry).high;
+    const entryPrice = serie.get(breakerBlock.breakerBlock).close;
     return new Trade({
       entryPrice,
-      tradingFees: this.settings.tradingFees,
       amount: Trade.buyAmount(balance, entryPrice),
-      stopLoss: Trade.addMargin(stopLoss, this.settings.stopLossMargin),
-      takeProfit:
-        entryPrice -
-        Trade.distance(stopLoss, entryPrice) * this.settings.takeProfitRatio,
+      stopLoss: Trade.addMargin(
+        serie.get(breakerBlock.breakerBlock).high,
+        0.0001
+      ),
+      takeProfit: serie.getPreviousLowerSwing(
+        breakerBlock.breakerBlock,
+        breakerBlock.lowerSwingLow
+      ).low,
     });
   }
 
@@ -82,15 +89,8 @@ export class ICTUnicornModelStrategy
     keyof ICTUnicornModelStrategySettings,
     string
   > {
-    return {
-      takeProfitRatio: 'number',
-      stopLossMargin: 'number',
-      tradingFees: 'number',
-    };
+    return {};
   }
 }
 
-export interface ICTUnicornModelStrategySettings extends StrategySettings {
-  takeProfitRatio: number;
-  stopLossMargin: number;
-}
+export interface ICTUnicornModelStrategySettings extends StrategySettings {}

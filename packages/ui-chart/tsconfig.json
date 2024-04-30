@@ -1,5 +1,5 @@
 {
   "extends": "@traderforecast/typescript-config/react-library.json",
-  "include": ["."],
+  "include": [".", "../utils/lib/serie-candlestick-pattern.ts"],
   "exclude": ["dist", "build", "node_modules"]
 }

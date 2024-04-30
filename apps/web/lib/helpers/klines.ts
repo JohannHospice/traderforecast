@@ -11,11 +11,17 @@ export function getNumberOfKlinesResponsive(): number {
   if (window.innerWidth < 1440) {
     return 150;
   }
-  return 365;
+  return 50;
 }
 
-export function getDefaultNumberOfKlines(interval: IntervalKeys): number {
+export function getDefaultNumberOfKlines(interval: string): number {
   switch (interval) {
+    case '1m':
+      return 200;
+    case '5m':
+      return 200;
+    case '15m':
+      return 200;
     case '4h':
       return 90;
     case '1h':
