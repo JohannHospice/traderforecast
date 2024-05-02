@@ -1,21 +1,18 @@
 import {
   ApolloClient,
-  ApolloLink,
-  HttpLink,
   InMemoryCache,
   from,
+  ApolloLink,
+  HttpLink,
 } from '@apollo/client';
 import { loadDevMessages, loadErrorMessages } from '@apollo/client/dev';
-import { MarketRepository } from './repositories/market';
-import { SantimentMarketRepository } from './repositories/market/santiment-market';
-import { CachedSantimentMarketRepository } from './repositories/market/cached-santiment-market';
 
 if (process.env.NODE_ENV !== 'production') {
   loadDevMessages();
   loadErrorMessages();
 }
 
-const appoloClient = new ApolloClient({
+export const appoloSantiment = new ApolloClient({
   ssrMode: typeof window === 'undefined',
   cache: new InMemoryCache(),
   link: from([
@@ -56,11 +53,3 @@ const appoloClient = new ApolloClient({
     }),
   ]),
 });
-
-export default {
-  cachedMarket: new CachedSantimentMarketRepository(appoloClient),
-  market: new SantimentMarketRepository(appoloClient),
-} as {
-  cachedMarket: MarketRepository;
-  market: MarketRepository;
-};

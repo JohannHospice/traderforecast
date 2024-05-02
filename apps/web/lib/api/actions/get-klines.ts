@@ -1,6 +1,6 @@
 'use server';
-import api from '@/lib/api';
-import { GetKlinesAndSymbolUsecase } from '@/lib/api/usecases/get-klines-and-symbol-usecase';
+import api from '@/lib/api/dependancies';
+import { GetKlinesAndSymbolUsecase } from '@/lib/api/dependancies/market/usecases/get-klines-and-symbol-usecase';
 
 export async function actionGetKlines({
   slug,

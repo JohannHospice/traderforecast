@@ -11,6 +11,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { formatNumber, formatPercent } from '@traderforecast/utils/string';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { Symbol } from '@/lib/api/dependancies/market/models/symbol';
 
 export function TableSymbols({
   symbols,

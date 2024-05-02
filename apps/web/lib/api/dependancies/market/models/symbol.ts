@@ -1,13 +1,4 @@
-interface Kline {
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-  openTime: number;
-  closeTime: number;
-}
-
-interface Symbol {
+export interface Symbol {
   slug: string;
   name: string;
   ticker?: string;
@@ -22,5 +13,3 @@ interface Symbol {
   daily_active_addresses?: number;
   market_segments?: string[];
 }
-
-type IntervalKeys = string;

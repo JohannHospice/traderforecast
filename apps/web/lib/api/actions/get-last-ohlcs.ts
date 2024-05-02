@@ -1,5 +1,5 @@
 'use server';
-import api from '@/lib/api';
+import api from '@/lib/api/dependancies';
 
 export async function actionGetLastOHLC(options: {
   interval: string;

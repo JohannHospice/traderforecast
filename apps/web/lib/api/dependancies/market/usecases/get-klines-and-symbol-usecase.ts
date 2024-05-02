@@ -1,7 +1,5 @@
-import {
-  GetKlinesAndSymbolParams,
-  MarketRepository,
-} from '../repositories/market';
+import { Symbol } from '../models/symbol';
+import { GetKlinesAndSymbolParams, MarketRepository } from '../repositories';
 
 export class GetKlinesAndSymbolUsecase {
   constructor(private market: MarketRepository) {}

@@ -1,7 +1,7 @@
 import {
   GetAllSymbolResponse,
   MarketRepository,
-} from '../api/repositories/market';
+} from '../api/dependancies/market/repositories';
 
 export class SymbolPagination {
   symbols?: GetAllSymbolResponse;

@@ -1,3 +1,7 @@
+import { Symbol } from '../models/symbol';
+import { IntervalKeys } from '../models/interval-keys';
+import { Kline } from '../models/kline';
+
 export interface MarketRepository {
   intervals: IntervalKeys[];
 

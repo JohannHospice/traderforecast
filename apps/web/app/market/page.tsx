@@ -1,6 +1,6 @@
 import { Container } from '@/components/container';
 import { Heading } from '@/components/heading';
-import api from '@/lib/api';
+import api from '@/lib/api/dependancies';
 import { decodeSearchParamList } from '@traderforecast/utils/string';
 import { SymbolPagination } from '@/lib/helpers/symbol-pagination';
 import { GridSymbols } from './_components/grid-symbols';

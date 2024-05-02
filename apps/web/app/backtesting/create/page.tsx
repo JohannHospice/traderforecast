@@ -1,7 +1,7 @@
 import { Container } from '@/components/container';
 import { BacktestingForm } from '@/components/forms/backtesting-form';
 import { Heading } from '@/components/heading';
-import api from '@/lib/api';
+import api from '@/lib/api/dependancies';
 import { ArrowLeft } from 'lucide-react';
 
 export default async function Page({

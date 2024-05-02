@@ -7,6 +7,7 @@ import { useItemsOnScroll } from '@/lib/hooks/use-items-on-scroll';
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
 import { useCallback } from 'react';
+import { Symbol } from '@/lib/api/dependancies/market/models/symbol';
 
 export function GridSymbols({
   symbols,

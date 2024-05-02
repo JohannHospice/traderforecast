@@ -9,6 +9,7 @@ import { formatNumber, formatPercent } from '@traderforecast/utils/string';
 import { PriceTitle } from './price-title';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Badge } from './ui/badge';
+import { Symbol } from '@/lib/api/dependancies/market/models/symbol';
 
 export default function CardSymbol({
   symbol,

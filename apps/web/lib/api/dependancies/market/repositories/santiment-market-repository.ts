@@ -1,11 +1,7 @@
 import { ApolloClient, gql } from '@apollo/client';
-import { mapOhlcToKline } from '../../mappers/ohlc';
-import {
-  GetAllSymbolResponse,
-  GetKlinesAndSymbolParams,
-  GetOHLCParams,
-  MarketRepository,
-} from '.';
+import { mapOhlcToKline } from '../mappers/ohlc';
+import { GetAllSymbolResponse, GetOHLCParams, MarketRepository } from '.';
+import { Symbol } from '../models/symbol';
 
 export class SantimentMarketRepository<T> implements MarketRepository {
   client: ApolloClient<T>;

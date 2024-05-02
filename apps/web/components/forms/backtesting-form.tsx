@@ -24,6 +24,7 @@ import { useMemo, useRef } from 'react';
 import { UseFormHandleSubmit, useForm } from 'react-hook-form';
 import { onBacktest } from '../../lib/helpers/backtest';
 import { StrategyOption } from '../strategy-option';
+import { Symbol } from '@/lib/api/dependancies/market/models/symbol';
 
 export function BacktestingForm({
   symbols,
