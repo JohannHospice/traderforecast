@@ -2,6 +2,25 @@ import { GetAllSymbolResponse, GetOHLCParams, MarketRepository } from '.';
 import { Symbol } from '../models/symbol';
 import data from '../.data/bitcoin_ohlc_utc-265d_15m.json';
 
+const market = {
+  bitcoin: {
+    symbol: {
+      slug: 'bitcoin',
+      name: 'bitcoin',
+    },
+    ohlc: {
+      '15m': data,
+    },
+  },
+} as {
+  [key: string]: {
+    symbol: Symbol;
+    ohlc: {
+      [key: string]: Kline[];
+    };
+  };
+};
+
 export class LocalMarketRepository implements MarketRepository {
   constructor() {}
 
@@ -11,7 +30,11 @@ export class LocalMarketRepository implements MarketRepository {
     slug: string;
     interval: string;
   }): Promise<Kline> {
-    return data[data.length - 1];
+    console.log({ params });
+    throw new Error('Method not implemented.');
+
+    const ohlcs = market[params.slug].ohlc[params.interval];
+    return ohlcs[ohlcs.length - 1];
   }
 
   async getOHLCs({
@@ -20,7 +43,7 @@ export class LocalMarketRepository implements MarketRepository {
     startTime,
     endTime,
   }: GetOHLCParams): Promise<Kline[]> {
-    return data.filter(
+    return market[slug].ohlc[interval].filter(
       ({ closeTime }) =>
         (startTime ? startTime <= closeTime : true) &&
         (endTime ? closeTime <= endTime : true)
@@ -39,10 +62,7 @@ export class LocalMarketRepository implements MarketRepository {
     endTime?: number | string;
   }): Promise<{ symbol: Symbol; klines: Kline[] }> {
     return {
-      symbol: {
-        slug: 'bitcoin',
-        name: 'bitcoin',
-      },
+      symbol: market[slug].symbol,
       klines: await this.getOHLCs({
         startTime: new Date(startTime).getTime(),
         endTime: new Date(endTime).getTime(),
@@ -53,23 +73,18 @@ export class LocalMarketRepository implements MarketRepository {
   }
 
   async getAllSymbols(): Promise<GetAllSymbolResponse> {
-    return [
-      {
-        slug: 'bitcoin',
-        marketSegments: [],
-        rank: null,
-        ticker: 'bitcoin',
-      },
-    ];
+    return Object.keys(market).map((key) => ({
+      ...market[key].symbol,
+      marketSegments: [],
+      rank: null,
+      ticker: key,
+    }));
   }
 
   async getSymbolsBySlugs(slugs: string[]): Promise<Symbol[]> {
-    return [
-      {
-        slug: 'bitcoin',
-        name: 'bitcoin',
-      },
-    ];
+    return Object.keys(market)
+      .filter((key) => slugs.includes(key))
+      .map((key) => market[key].symbol);
   }
 
   async getMarketSegments(): Promise<string[]> {
@@ -77,11 +92,6 @@ export class LocalMarketRepository implements MarketRepository {
   }
 
   async getSortedSymbols(): Promise<Symbol[]> {
-    return [
-      {
-        slug: 'bitcoin',
-        name: 'bitcoin',
-      },
-    ];
+    return Object.keys(market).map((key) => market[key].symbol);
   }
 }
