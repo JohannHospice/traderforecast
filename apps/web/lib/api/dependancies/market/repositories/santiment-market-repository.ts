@@ -1,5 +1,5 @@
 import { ApolloClient, gql } from '@apollo/client';
-import { mapOhlcToKline } from '../mappers/ohlc';
+import { mapOhlc } from '../mappers/ohlc';
 import { GetAllSymbolResponse, GetOHLCParams, MarketRepository } from '.';
 import { Symbol } from '../models/symbol';
 
@@ -123,7 +123,7 @@ export class SantimentMarketRepository<T> implements MarketRepository {
     }));
   }
 
-  async getKlinesAndSymbol({
+  async getOhlcsAndSymbol({
     slug,
     interval = '1d',
     startTime = 'utc_now-7d',
@@ -196,7 +196,7 @@ export class SantimentMarketRepository<T> implements MarketRepository {
 
     return {
       symbol: projectBySlug,
-      klines: ohlc.map(mapOhlcToKline),
+      klines: ohlc.map(mapOhlc),
     };
   }
 
@@ -284,7 +284,7 @@ export class SantimentMarketRepository<T> implements MarketRepository {
     return currenciesMarketSegments.map((segment) => segment.name);
   }
 
-  async getSortedSymbols(): Promise<Symbol[]> {
+  async getSymbolsSorted(): Promise<Symbol[]> {
     const {
       data: {
         allProjectsByFunction: { projects },

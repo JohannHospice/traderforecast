@@ -11,7 +11,7 @@ export default async function Page({
     symbol: string;
   };
 }) {
-  const symbols = await api.market.getSortedSymbols();
+  const symbols = await api.market.getSymbolsSorted();
 
   return (
     <>

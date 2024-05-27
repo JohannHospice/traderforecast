@@ -61,10 +61,10 @@ export class CachedMarketRepository implements MarketRepository {
     return this.market.getLatestKline(params);
   }
 
-  async getKlinesAndSymbol(
+  async getOhlcsAndSymbol(
     params: GetKlinesAndSymbolParams
   ): Promise<{ symbol: Symbol; klines: Kline[] }> {
-    return this.market.getKlinesAndSymbol(params);
+    return this.market.getOhlcsAndSymbol(params);
   }
 
   async getAllSymbols(): Promise<GetAllSymbolResponse> {
@@ -79,7 +79,7 @@ export class CachedMarketRepository implements MarketRepository {
     return this.market.getMarketSegments();
   }
 
-  async getSortedSymbols(): Promise<Symbol[]> {
-    return this.market.getSortedSymbols();
+  async getSymbolsSorted(): Promise<Symbol[]> {
+    return this.market.getSymbolsSorted();
   }
 }

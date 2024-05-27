@@ -30,9 +30,6 @@ export class LocalMarketRepository implements MarketRepository {
     slug: string;
     interval: string;
   }): Promise<Kline> {
-    console.log({ params });
-    throw new Error('Method not implemented.');
-
     const ohlcs = market[params.slug].ohlc[params.interval];
     return ohlcs[ohlcs.length - 1];
   }
@@ -50,7 +47,7 @@ export class LocalMarketRepository implements MarketRepository {
     );
   }
 
-  async getKlinesAndSymbol({
+  async getOhlcsAndSymbol({
     slug,
     interval = '1d',
     startTime = 'utc_now-7d',
@@ -91,7 +88,7 @@ export class LocalMarketRepository implements MarketRepository {
     return [];
   }
 
-  async getSortedSymbols(): Promise<Symbol[]> {
+  async getSymbolsSorted(): Promise<Symbol[]> {
     return Object.keys(market).map((key) => market[key].symbol);
   }
 }

@@ -1,12 +1,12 @@
 import dayjs from 'dayjs';
 
-export function mapOhlcToKline(kline: any) {
+export function mapOhlc(data: any) {
   return {
-    open: parseFloat(kline.openPriceUsd),
-    high: parseFloat(kline.highPriceUsd),
-    low: parseFloat(kline.lowPriceUsd),
-    close: parseFloat(kline.closePriceUsd),
-    openTime: dayjs(kline.datetime).valueOf(),
-    closeTime: dayjs(kline.datetime).valueOf(),
+    open: parseFloat(data.openPriceUsd),
+    high: parseFloat(data.highPriceUsd),
+    low: parseFloat(data.lowPriceUsd),
+    close: parseFloat(data.closePriceUsd),
+    openTime: dayjs(data.datetime).valueOf(),
+    closeTime: dayjs(data.datetime).valueOf(),
   };
 }

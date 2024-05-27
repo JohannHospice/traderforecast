@@ -8,11 +8,18 @@ export class GetKlinesAndSymbolUsecase {
     slug,
     interval,
     startTime,
-  }: GetKlinesAndSymbolParams): Promise<{ symbol: Symbol; klines: Kline[] }> {
-    return this.market.getKlinesAndSymbol({
-      slug,
-      interval,
-      startTime,
-    });
+  }: GetKlinesAndSymbolParams): Promise<{
+    symbol: Symbol;
+    klines: Kline[];
+    intervals: string[];
+  }> {
+    return {
+      ...(await this.market.getOhlcsAndSymbol({
+        slug,
+        interval,
+        startTime,
+      })),
+      intervals: this.market.intervals,
+    };
   }
 }

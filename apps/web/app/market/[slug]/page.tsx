@@ -26,36 +26,24 @@ export default async function Page({
     !searchParams[SEARCH_PARAMS.INTERVAL] ||
     !searchParams[SEARCH_PARAMS.START_TIME]
   ) {
-    const interval = '1d';
-    return redirect(
-      `?${SEARCH_PARAMS.INTERVAL}=${interval}&${SEARCH_PARAMS.START_TIME}=${formatInterval(
-        interval,
-        getDefaultNumberOfKlines(interval)
-      )}`
+    return redirectDefault(
+      api.market.intervals[api.market.intervals.length - 1]
     );
   }
 
   const interval = searchParams[SEARCH_PARAMS.INTERVAL] as IntervalKeys;
 
-  const startTime = searchParams[SEARCH_PARAMS.START_TIME];
-
-  const intervals = ['5m', '15m', '30m', '1h', '4h', '1d', '1w', '2w'];
-
-  const { symbol, klines } = await new GetKlinesAndSymbolUsecase(api.market)
+  const { symbol, klines, intervals } = await new GetKlinesAndSymbolUsecase(
+    api.market
+  )
     .execute({
       slug: slug,
-      interval: interval,
-      startTime: startTime,
+      interval: searchParams[SEARCH_PARAMS.INTERVAL],
+      startTime: searchParams[SEARCH_PARAMS.START_TIME],
     })
     .catch((error) => {
       console.error(error);
-
-      return redirect(
-        `?${SEARCH_PARAMS.INTERVAL}=${interval}&${SEARCH_PARAMS.START_TIME}=${formatInterval(
-          interval,
-          getDefaultNumberOfKlines(interval)
-        )}`
-      );
+      return redirectDefault(interval);
     });
 
   return (
@@ -108,5 +96,14 @@ export default async function Page({
         </div>
       </Container>
     </>
+  );
+}
+
+function redirectDefault(interval: string) {
+  return redirect(
+    `?${SEARCH_PARAMS.INTERVAL}=${interval}&${SEARCH_PARAMS.START_TIME}=${formatInterval(
+      interval,
+      getDefaultNumberOfKlines(interval)
+    )}`
   );
 }
